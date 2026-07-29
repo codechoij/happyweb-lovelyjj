@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Our 1st Anniversary</title>
+    <title>Our Love Story</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Single+Day&display=swap" rel="stylesheet" />
@@ -118,6 +118,24 @@
                   토끼지윤의 토끼기 능력 상승! (+1)
                 </p>
                 <button class="primary-btn" type="button" data-gift-finish-confirm>확인</button>
+              </div>
+            </div>
+          </div>
+          <div class="gift-video-modal" data-gift-video-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-video-title">
+            <div class="gift-video-box">
+              <div class="gift-video-heading">
+                <div>
+                  <p class="eyebrow">Gift</p>
+                  <h3 id="gift-video-title">1주년 축하 영상</h3>
+                </div>
+                <button class="ghost-btn" type="button" data-gift-video-close>나가기</button>
+              </div>
+              <video data-gift-video playsinline controls preload="metadata">
+                <source src="./assets/gift-videos/gift-2-anniversary-video_3.mp4" type="video/mp4" />
+              </video>
+              <div class="gift-video-actions" data-gift-video-actions hidden>
+                <button class="primary-btn" type="button" data-gift-video-replay>다시 보기</button>
+                <a class="ghost-btn" href="./assets/gift-videos/gift-2-anniversary-video_3.mp4" download="gift-2-anniversary-video_3.mp4">다운로드</a>
               </div>
             </div>
           </div>

@@ -9,7 +9,8 @@ const gifts = [
   },
   {
     title: "Gift 2",
-    result: "두 번째 선물은 아직 준비 중입니다.",
+    type: "video",
+    result: "1주년 축하 영상을 준비했어요.",
   },
   {
     title: "Gift 3",
@@ -26,6 +27,10 @@ const GIFT_PHOTO_CONFIG = {
   speedUpPerSecond: 100,
   minSpawnDelayMs: 250,
   maxSpawnDelayMs: 770,
+};
+
+const GIFT_VIDEO_CONFIG = {
+  src: "./assets/gift-videos/gift-2-anniversary-video_3.mp4",
 };
 
 const GUESTBOOK_CONFIG = {
@@ -398,6 +403,7 @@ function initGiftPhotoGame(photoUrls) {
 function initGifts() {
   const grid = $("[data-gift-grid]");
   const result = $("[data-gift-result]");
+  const startGiftVideo = initGiftVideo();
   let startPhotoGame = null;
   let photoGameReady = false;
 
@@ -431,10 +437,51 @@ function initGifts() {
         return;
       }
 
+      if (gift.type === "video") {
+        result.textContent = gift.result;
+        startGiftVideo();
+        return;
+      }
+
       result.textContent = gift.result;
     });
     grid.appendChild(button);
   });
+}
+
+function initGiftVideo() {
+  const modal = $("[data-gift-video-modal]");
+  const video = $("[data-gift-video]");
+  const actions = $("[data-gift-video-actions]");
+  const close = $("[data-gift-video-close]");
+  const replay = $("[data-gift-video-replay]");
+
+  function closeVideo() {
+    video.pause();
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+  }
+
+  function openVideo() {
+    modal.hidden = false;
+    actions.hidden = true;
+    document.body.classList.add("modal-open");
+    video.src = GIFT_VIDEO_CONFIG.src;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  }
+
+  close.addEventListener("click", closeVideo);
+  video.addEventListener("ended", () => {
+    actions.hidden = false;
+  });
+  replay.addEventListener("click", () => {
+    actions.hidden = true;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  });
+
+  return openVideo;
 }
 
 function initLetter() {
@@ -455,7 +502,9 @@ function initCamera() {
   const download = $("[data-download]");
   const captionDate = $("[data-polaroid-date]");
   const captionCopy = $("[data-polaroid-copy]");
+  const captureButton = $("[data-camera-capture]");
   let stream;
+  let captureVersion = 0;
 
   $("[data-camera-start]").addEventListener("click", async () => {
     try {
@@ -467,7 +516,7 @@ function initCamera() {
     }
   });
 
-  $("[data-camera-capture]").addEventListener("click", async () => {
+  captureButton.addEventListener("click", async () => {
     if (!stream) {
       status.textContent = "먼저 카메라를 켜주세요.";
       return;
@@ -482,14 +531,35 @@ function initCamera() {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
     const polaroidCaption = getPolaroidCaptionParts();
-    await ensurePolaroidFontsLoaded();
-    const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption);
+    const currentCapture = captureVersion + 1;
+    captureVersion = currentCapture;
+
     photo.src = dataUrl;
     captionDate.textContent = polaroidCaption.date;
     captionCopy.textContent = polaroidCaption.copy;
-    download.href = framedDataUrl;
+    download.href = "#";
     polaroid.hidden = false;
+    captureButton.textContent = "다시 찍기";
+    status.textContent = "사진을 폴라로이드로 준비하는 중입니다.";
+
+    await ensurePolaroidFontsLoaded();
+    const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption);
+    if (currentCapture !== captureVersion) return;
+    download.href = framedDataUrl;
     status.textContent = "사진이 준비됐습니다. 아래에서 저장할 수 있어요.";
+  });
+
+  download.addEventListener("click", (event) => {
+    if (download.getAttribute("href") === "#") {
+      event.preventDefault();
+      status.textContent = "저장 파일을 준비하는 중입니다. 잠시만 기다려주세요.";
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (stream && document.visibilityState === "visible") {
+      video.play().catch(() => {});
+    }
   });
 }
 
