@@ -3,18 +3,30 @@ const START_DATE = new Date("2025-08-14T00:00:00+09:00");
 
 const gifts = [
   {
-    title: "Gift A",
-    result: "첫 번째 선물 공개 영역입니다. 나중에 실제 선물명으로 바꾸면 됩니다.",
+    title: "Gift 1",
+    type: "photoGame",
+    result: "떨어지는 사진을 잡아 선물을 열어보세요.",
   },
   {
-    title: "Gift B",
-    result: "두 번째 선물 공개 영역입니다. 이미지나 쿠폰 UI를 붙일 수 있습니다.",
+    title: "Gift 2",
+    result: "두 번째 선물은 아직 준비 중입니다.",
   },
   {
-    title: "Gift C",
-    result: "세 번째 선물 공개 영역입니다. 이벤트성 꽝/진짜 선물도 가능합니다.",
+    title: "Gift 3",
+    result: "세 번째 선물은 아직 준비 중입니다.",
   },
 ];
+
+const GIFT_PHOTO_CONFIG = {
+  folder: "./assets/gift-photos/",
+  maxPhotos: 30,
+  extensions: ["jpg", "jpeg", "png", "webp"],
+  startFallMs: 2000,
+  minFallMs: 700,
+  speedUpPerSecond: 100,
+  minSpawnDelayMs: 250,
+  maxSpawnDelayMs: 770,
+};
 
 const GUESTBOOK_CONFIG = {
   formAction: "https://docs.google.com/forms/d/e/1FAIpQLScoA-gNf-jdBA9tcF0L5-QKDswANgDzUqh4-zgg2b_XrOIklg/formResponse",
@@ -102,10 +114,304 @@ function updateCountdown() {
   detail.textContent = "365 days with you";
 }
 
+function shuffleItems(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function discoverGiftPhotos() {
+  const candidates = [];
+
+  for (let index = 1; index <= GIFT_PHOTO_CONFIG.maxPhotos; index += 1) {
+    GIFT_PHOTO_CONFIG.extensions.forEach((extension) => {
+      candidates.push(`${GIFT_PHOTO_CONFIG.folder}photo (${index}).${extension}`);
+    });
+  }
+
+  return Promise.all(
+    candidates.map(
+      (url) =>
+        new Promise((resolve) => {
+          const image = new Image();
+          image.onload = () => resolve(url);
+          image.onerror = () => resolve(null);
+          image.src = `${url}?v=${Date.now()}`;
+        }),
+    ),
+  ).then((urls) => urls.filter(Boolean));
+}
+
+function initGiftPhotoGame(photoUrls) {
+  const modal = $("[data-gift-modal]");
+  const stage = $("[data-gift-stage]");
+  const gameStatus = $("[data-gift-game-status]");
+  const readyView = $("[data-gift-ready-view]");
+  const readyMessage = $("[data-gift-ready-message]");
+  const readyStart = $("[data-gift-ready-start]");
+  const captureView = $("[data-gift-capture-view]");
+  const capturedImage = $("[data-gift-captured-image]");
+  const download = $("[data-gift-download]");
+  const replay = $("[data-gift-replay]");
+  const close = $("[data-gift-close]");
+  const capturedClose = $("[data-gift-captured-close]");
+  const finishView = $("[data-gift-finish-view]");
+  const finishConfirm = $("[data-gift-finish-confirm]");
+  let spawnTimer;
+  let gameStartedAt = 0;
+  let photoQueue = [];
+  let speedMultiplier = 1;
+  let capturedPhotoUrl = "";
+
+  function stopSpawning() {
+    clearTimeout(spawnTimer);
+    spawnTimer = null;
+  }
+
+  function resetStage() {
+    stopSpawning();
+    stage.innerHTML = "";
+  }
+
+  function clearActivePhotos() {
+    stage.innerHTML = "";
+  }
+
+  function exitGame() {
+    resetStage();
+    modal.hidden = true;
+    readyView.hidden = false;
+    captureView.hidden = true;
+    finishView.hidden = true;
+    stage.hidden = false;
+    document.body.classList.remove("modal-open");
+  }
+
+  function getRandomSpeedMultiplier() {
+    return Math.round(randomBetween(3, 17)) / 10;
+  }
+
+  function getReadyPrefix() {
+    const speedText = speedMultiplier.toFixed(1);
+    if (speedMultiplier < 1) return `축하합니다! ${speedText} 속도에 당첨되었습니다! `;
+    if (speedMultiplier > 1) return `힘내세요! ${speedText} 속도군요... `;
+    return "";
+  }
+
+  function setReadyMessage() {
+    const prefix = getReadyPrefix();
+    const prefixMarkup = prefix ? `<p class="gift-speed-message">${prefix}</p>` : "";
+    readyMessage.innerHTML = `
+      ${prefixMarkup}
+      <p>화면 위에서 떨어지는 사진을 클릭해 잡는 게임입니다. 사진을 잡으면 크게 열리고 저장할 수 있어요. 한 번 지나간 사진은 다시 등장하지 않습니다.</p>
+      <strong>준비되셨나요?</strong>
+    `;
+  }
+
+  function getFallDuration() {
+    const elapsedSeconds = (Date.now() - gameStartedAt) / 1000;
+    // Difficulty lowered: do not multiply the time-based acceleration by speedMultiplier.
+    // const speedUp = GIFT_PHOTO_CONFIG.speedUpPerSecond * speedMultiplier;
+    const speedUp = GIFT_PHOTO_CONFIG.speedUpPerSecond;
+    const accelerated = GIFT_PHOTO_CONFIG.startFallMs - elapsedSeconds * speedUp;
+    const base = Math.max(GIFT_PHOTO_CONFIG.minFallMs, accelerated);
+    return randomBetween(base * 0.78, base * 1.18) / speedMultiplier;
+  }
+
+  function getPhotoFilename(url) {
+    return decodeURIComponent(url.split("/").pop() || "gift-photo.jpg");
+  }
+
+  function isMobileBrowser() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  async function getPhotoFile(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to load captured photo.");
+    const blob = await response.blob();
+    const filename = getPhotoFilename(url);
+    return new File([blob], filename, { type: blob.type || "image/jpeg" });
+  }
+
+  async function saveCapturedPhoto(event) {
+    event.preventDefault();
+    if (!capturedPhotoUrl) return;
+
+    try {
+      const file = await getPhotoFile(capturedPhotoUrl);
+
+      if (isMobileBrowser() && navigator.canShare?.({ files: [file] }) && navigator.share) {
+        await navigator.share({
+          files: [file],
+          title: "Gift photo",
+        });
+        gameStatus.textContent = "공유 창에서 사진을 저장할 수 있어요.";
+        return;
+      }
+
+      const objectUrl = URL.createObjectURL(file);
+      const anchor = document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = file.name;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(objectUrl);
+      gameStatus.textContent = "사진 다운로드를 시작했습니다.";
+    } catch (error) {
+      window.open(capturedPhotoUrl, "_blank", "noopener");
+      gameStatus.textContent = "새로 열린 사진을 길게 누르거나 저장 메뉴를 사용해주세요.";
+    }
+  }
+
+  function capturePhoto(url) {
+    stopSpawning();
+    clearActivePhotos();
+    stage.hidden = true;
+    captureView.hidden = false;
+    capturedPhotoUrl = url;
+    capturedImage.src = url;
+    download.href = url;
+    download.download = url.split("/").pop() || "gift-photo.jpg";
+    gameStatus.textContent = "잡은 사진을 저장할 수 있어요.";
+  }
+
+  function hasFinishedRound() {
+    return !photoQueue.length && !stage.querySelector(".falling-photo");
+  }
+
+  function setFinishedStatus() {
+    if (hasFinishedRound()) {
+      stopSpawning();
+      readyView.hidden = true;
+      captureView.hidden = true;
+      stage.hidden = true;
+      finishView.hidden = false;
+      gameStatus.textContent = "사진 잡기가 끝났습니다.";
+    }
+  }
+
+  function scheduleNextSpawn() {
+    stopSpawning();
+
+    if (!photoQueue.length) {
+      setFinishedStatus();
+      return;
+    }
+
+    const delay =
+      randomBetween(GIFT_PHOTO_CONFIG.minSpawnDelayMs, GIFT_PHOTO_CONFIG.maxSpawnDelayMs) / speedMultiplier;
+    spawnTimer = setTimeout(() => {
+      spawnPhoto();
+      scheduleNextSpawn();
+    }, delay);
+  }
+
+  function spawnPhoto() {
+    const url = photoQueue.shift();
+    if (!url) {
+      stopSpawning();
+      setFinishedStatus();
+      return;
+    }
+
+    const button = document.createElement("button");
+    const image = document.createElement("img");
+    const size = randomBetween(84, 180);
+    const duration = getFallDuration();
+
+    button.className = "falling-photo";
+    button.type = "button";
+    button.style.left = `${randomBetween(2, 86)}%`;
+    button.style.setProperty("--photo-size", `${size}px`);
+    button.style.setProperty("--fall-duration", `${duration}ms`);
+    button.style.setProperty("--rotate-start", `${randomBetween(-28, 28)}deg`);
+    button.style.setProperty("--rotate-end", `${randomBetween(-34, 34)}deg`);
+    button.style.setProperty("--drift", `${randomBetween(-70, 70)}px`);
+    image.src = url;
+    image.alt = "떨어지는 선물 사진";
+    image.draggable = false;
+
+    button.appendChild(image);
+    button.addEventListener("click", () => capturePhoto(url));
+    button.addEventListener("animationend", () => {
+      button.remove();
+      setFinishedStatus();
+    });
+    stage.appendChild(button);
+  }
+
+  function beginRound() {
+    resetStage();
+    readyView.hidden = true;
+    captureView.hidden = true;
+    finishView.hidden = true;
+    stage.hidden = false;
+    gameStartedAt = Date.now();
+    photoQueue = shuffleItems(photoUrls);
+    gameStatus.textContent = "사진마다 내려오는 속도가 조금씩 달라요.";
+    spawnPhoto();
+    scheduleNextSpawn();
+  }
+
+  function resumeRound() {
+    captureView.hidden = true;
+    stage.hidden = false;
+
+    if (!photoQueue.length) {
+      setFinishedStatus();
+      return;
+    }
+
+    gameStatus.textContent = "남은 사진을 이어서 잡아보세요.";
+    spawnPhoto();
+    scheduleNextSpawn();
+  }
+
+  function openReadyView() {
+    if (!photoUrls.length) return;
+    resetStage();
+    speedMultiplier = getRandomSpeedMultiplier();
+    modal.hidden = false;
+    readyView.hidden = false;
+    captureView.hidden = true;
+    finishView.hidden = true;
+    stage.hidden = true;
+    document.body.classList.add("modal-open");
+    gameStatus.textContent = "준비되면 네 버튼을 눌러주세요.";
+    setReadyMessage();
+  }
+
+  close.addEventListener("click", exitGame);
+  capturedClose.addEventListener("click", exitGame);
+  finishConfirm.addEventListener("click", exitGame);
+  replay.addEventListener("click", resumeRound);
+  readyStart.addEventListener("click", beginRound);
+  download.addEventListener("click", saveCapturedPhoto);
+
+  return openReadyView;
+}
+
 function initGifts() {
   const grid = $("[data-gift-grid]");
   const result = $("[data-gift-result]");
-  gifts.forEach((gift, index) => {
+  let startPhotoGame = null;
+  let photoGameReady = false;
+
+  discoverGiftPhotos().then((photoUrls) => {
+    startPhotoGame = initGiftPhotoGame(photoUrls);
+    photoGameReady = photoUrls.length > 0;
+    if (photoGameReady) {
+      result.textContent = "마음에 드는 상자를 하나 골라주세요.";
+      return;
+    }
+    result.textContent = "첫 번째 선물은 아직 준비 중입니다.";
+  });
+
+  shuffleItems(gifts).forEach((gift) => {
     const button = document.createElement("button");
     button.className = "gift-box";
     button.type = "button";
@@ -115,7 +421,17 @@ function initGifts() {
       <div class="gift-body">${gift.title}</div>
     `;
     button.addEventListener("click", () => {
-      result.textContent = `${index + 1}번 상자: ${gift.result}`;
+      if (gift.type === "photoGame") {
+        result.textContent = gift.result;
+        if (!photoGameReady || !startPhotoGame) {
+          result.textContent = "첫 번째 선물은 아직 준비 중입니다.";
+          return;
+        }
+        startPhotoGame();
+        return;
+      }
+
+      result.textContent = gift.result;
     });
     grid.appendChild(button);
   });

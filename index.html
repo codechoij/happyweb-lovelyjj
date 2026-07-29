@@ -83,6 +83,41 @@
           </div>
           <div class="gift-grid" data-gift-grid></div>
           <p class="result-text" data-gift-result>마음에 드는 상자를 하나 골라주세요.</p>
+          <div class="gift-game-modal" data-gift-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-game-title">
+            <div class="gift-game-toolbar">
+              <div>
+                <p class="eyebrow">Gift</p>
+                <h3 id="gift-game-title">사진을 잡아보세요</h3>
+              </div>
+              <p data-gift-game-status>떨어지는 사진을 클릭하세요.</p>
+              <button class="ghost-btn" type="button" data-gift-close>나가기</button>
+            </div>
+            <div class="gift-ready-view" data-gift-ready-view>
+              <div class="gift-ready-box">
+                <div data-gift-ready-message></div>
+                <button class="primary-btn" type="button" data-gift-ready-start>네</button>
+              </div>
+            </div>
+            <div class="gift-stage" data-gift-stage></div>
+            <div class="gift-capture-view" data-gift-capture-view hidden>
+              <img data-gift-captured-image alt="선택한 선물 사진" />
+              <div class="gift-capture-actions">
+                <a class="primary-btn" data-gift-download href="#" role="button" download="gift-photo.jpg">사진 저장하기</a>
+                <button class="ghost-btn" type="button" data-gift-replay>다시 잡기</button>
+                <button class="ghost-btn" type="button" data-gift-captured-close>닫기</button>
+              </div>
+            </div>
+            <div class="gift-finish-view" data-gift-finish-view hidden>
+              <div class="gift-finish-box">
+                <p>
+                  모든 사진이 지나갔어요. 다음기회를 노려보세요.<br />
+                  <br />
+                  토끼지윤의 토끼기 능력 상승! (+1)
+                </p>
+                <button class="primary-btn" type="button" data-gift-finish-confirm>확인</button>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section id="letter" class="page" aria-labelledby="letter-title">
