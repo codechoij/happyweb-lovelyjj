@@ -453,7 +453,7 @@ function initCamera() {
   const photo = $("[data-photo]");
   const polaroid = $("[data-polaroid]");
   const download = $("[data-download]");
-  const polaroidCaption = "2026.08.14 Our 1st Anniversary";
+  const caption = $("[data-polaroid-caption]");
   let stream;
 
   $("[data-camera-start]").addEventListener("click", async () => {
@@ -480,12 +480,30 @@ function initCamera() {
     context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+    const polaroidCaption = getPolaroidCaption();
     const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption);
     photo.src = dataUrl;
+    caption.textContent = polaroidCaption;
     download.href = framedDataUrl;
     polaroid.hidden = false;
     status.textContent = "사진이 준비됐습니다. 아래에서 저장할 수 있어요.";
   });
+}
+
+function getKstDateParts() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(new Date())
+    .split("-");
+}
+
+function getPolaroidCaption() {
+  const [year, month, day] = getKstDateParts();
+  return `${year}.${month}.${day} 소중한 오늘의 기록`;
 }
 
 function createPolaroidDataUrl(sourceCanvas, caption) {
@@ -494,7 +512,7 @@ function createPolaroidDataUrl(sourceCanvas, caption) {
   const topPadding = photoPadding;
   const sidePadding = photoPadding;
   const bottomPadding = Math.round(sourceCanvas.width * 0.18);
-  const captionSize = Math.max(30, Math.round(sourceCanvas.width * 0.045));
+  let captionSize = Math.max(28, Math.round(sourceCanvas.width * 0.038));
   const imageWidth = sourceCanvas.width;
   const imageHeight = sourceCanvas.height;
 
@@ -510,6 +528,10 @@ function createPolaroidDataUrl(sourceCanvas, caption) {
   context.font = `900 ${captionSize}px Arial, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "middle";
+  while (context.measureText(caption).width > frame.width - sidePadding * 2 && captionSize > 24) {
+    captionSize -= 2;
+    context.font = `900 ${captionSize}px Arial, sans-serif`;
+  }
   context.fillText(caption, frame.width / 2, topPadding + imageHeight + bottomPadding / 2);
 
   return frame.toDataURL("image/jpeg", 0.92);
