@@ -510,7 +510,8 @@ function initCamera() {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       video.srcObject = stream;
-      status.textContent = "카메라가 켜졌습니다. 찰칵 버튼을 눌러주세요.";
+      status.textContent =
+        "카메라가 켜졌습니다. 찰칵 버튼을 눌러주세요.\n페이지를 벗어나 카메라가 멈춘 경우, '카메라 켜기' 버튼을 다시 눌러주세요.";
     } catch (error) {
       status.textContent = "카메라 권한을 허용해야 사용할 수 있습니다.";
     }
