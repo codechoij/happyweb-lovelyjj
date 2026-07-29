@@ -17,12 +17,12 @@ const gifts = [
 ];
 
 const GUESTBOOK_CONFIG = {
-  formAction: "",
-  nameEntry: "",
-  messageEntry: "",
-  sheetCsvUrl: "",
-  nameColumn: "이름",
-  messageColumn: "메시지",
+  formAction: "https://docs.google.com/forms/d/e/1FAIpQLScoA-gNf-jdBA9tcF0L5-QKDswANgDzUqh4-zgg2b_XrOIklg/formResponse",
+  nameEntry: "entry.177558218",
+  messageEntry: "entry.14006226",
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/1-uyBD_odTyvnTdQAwG-sU8uEcm5kYOnKybg27EhhOzU/gviz/tq?tqx=out:csv&gid=0",
+  nameColumn: "닉네임",
+  messageColumn: "메세지",
   timestampColumn: "타임스탬프",
 };
 
@@ -31,6 +31,10 @@ const GUESTBOOK_FAIL_MESSAGE =
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+function isLocalFile() {
+  return window.location.protocol === "file:";
+}
 
 function isGuestbookConfigured() {
   return Boolean(
@@ -159,6 +163,7 @@ function initCamera() {
     photo.src = dataUrl;
     download.href = dataUrl;
     polaroid.hidden = false;
+    status.textContent = "사진이 준비됐습니다. 아래에서 저장할 수 있어요.";
   });
 }
 
@@ -287,7 +292,7 @@ function renderGuestbook(entries) {
   list.innerHTML = "";
 
   if (!entries.length) {
-    list.innerHTML = '<p class="empty-list">아직 남겨진 메시지가 없습니다.</p>';
+    list.innerHTML = '<p class="empty-list">아직 남겨진 메세지가 없습니다.</p>';
     return;
   }
 
@@ -363,7 +368,13 @@ function initGuestbook() {
     return;
   }
 
-  status.textContent = "메시지를 남길 수 있습니다.";
+  if (isLocalFile()) {
+    status.textContent = "준과 지윤에게 한 마디씩 남겨주세요!";
+    renderGuestbook([]);
+    return;
+  }
+
+  status.textContent = "준과 지윤에게 한 마디씩 남겨주세요!";
   loadGuestbookEntries()
     .then(renderGuestbook)
     .catch(() => {
@@ -378,7 +389,7 @@ function initGuestbook() {
     if (!name || !message) return;
 
     sendButton.disabled = true;
-    status.textContent = "소중한 메시지를 저장하는 중입니다.";
+    status.textContent = "소중한 메세지를 저장하는 중입니다.";
     submitGoogleForm(name, message);
 
     try {
@@ -386,7 +397,7 @@ function initGuestbook() {
       if (!entries) throw new Error("Saved entry was not found.");
       renderGuestbook(entries);
       form.reset();
-      status.textContent = "저장됐어요. 최신 메시지가 위에 표시됩니다.";
+      status.textContent = "저장됐어요. 최신 메세지가 위에 표시됩니다.";
     } catch (error) {
       await copyMessageToClipboard(message);
       alert(GUESTBOOK_FAIL_MESSAGE);
