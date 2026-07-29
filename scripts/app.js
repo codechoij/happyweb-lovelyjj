@@ -11,12 +11,25 @@ const gifts = [
     title: "Gift 2",
     type: "video",
     result: "1주년 축하 영상을 준비했어요.",
+    video: {
+      title: "1주년 축하 영상",
+      src: "./assets/gift-videos/video%20(1).mp4",
+      downloadName: "video (1).mp4",
+    },
   },
   {
     title: "Gift 3",
-    result: "세 번째 선물은 아직 준비 중입니다.",
+    type: "video",
+    result: "또 다른 축하 영상을 준비했어요.",
+    video: {
+      title: "또 다른 축하 영상",
+      src: "./assets/gift-videos/video%20(2).mp4",
+      downloadName: "video (2).mp4",
+    },
   },
 ];
+
+const VISIBLE_GIFT_COUNT = 3;
 
 const GIFT_PHOTO_CONFIG = {
   folder: "./assets/gift-photos/",
@@ -27,10 +40,6 @@ const GIFT_PHOTO_CONFIG = {
   speedUpPerSecond: 100,
   minSpawnDelayMs: 250,
   maxSpawnDelayMs: 770,
-};
-
-const GIFT_VIDEO_CONFIG = {
-  src: "./assets/gift-videos/gift-2-anniversary-video_3.mp4",
 };
 
 const GUESTBOOK_CONFIG = {
@@ -417,42 +426,46 @@ function initGifts() {
     result.textContent = "첫 번째 선물은 아직 준비 중입니다.";
   });
 
-  shuffleItems(gifts).forEach((gift) => {
-    const button = document.createElement("button");
-    button.className = "gift-box";
-    button.type = "button";
-    button.innerHTML = `
+  shuffleItems(gifts)
+    .slice(0, VISIBLE_GIFT_COUNT)
+    .forEach((gift) => {
+      const button = document.createElement("button");
+      button.className = "gift-box";
+      button.type = "button";
+      button.innerHTML = `
       <div class="gift-ribbon"></div>
       <div class="gift-lid"></div>
       <div class="gift-body">${gift.title}</div>
     `;
-    button.addEventListener("click", () => {
-      if (gift.type === "photoGame") {
-        result.textContent = gift.result;
-        if (!photoGameReady || !startPhotoGame) {
-          result.textContent = "첫 번째 선물은 아직 준비 중입니다.";
+      button.addEventListener("click", () => {
+        if (gift.type === "photoGame") {
+          result.textContent = gift.result;
+          if (!photoGameReady || !startPhotoGame) {
+            result.textContent = "첫 번째 선물은 아직 준비 중입니다.";
+            return;
+          }
+          startPhotoGame();
           return;
         }
-        startPhotoGame();
-        return;
-      }
 
-      if (gift.type === "video") {
+        if (gift.type === "video") {
+          result.textContent = gift.result;
+          startGiftVideo(gift.video);
+          return;
+        }
+
         result.textContent = gift.result;
-        startGiftVideo();
-        return;
-      }
-
-      result.textContent = gift.result;
+      });
+      grid.appendChild(button);
     });
-    grid.appendChild(button);
-  });
 }
 
 function initGiftVideo() {
   const modal = $("[data-gift-video-modal]");
+  const heading = $("[data-gift-video-title]");
   const video = $("[data-gift-video]");
   const actions = $("[data-gift-video-actions]");
+  const download = $("[data-gift-video-download]");
   const close = $("[data-gift-video-close]");
   const replay = $("[data-gift-video-replay]");
 
@@ -462,11 +475,15 @@ function initGiftVideo() {
     document.body.classList.remove("modal-open");
   }
 
-  function openVideo() {
+  function openVideo(config) {
+    if (!config?.src) return;
     modal.hidden = false;
     actions.hidden = true;
     document.body.classList.add("modal-open");
-    video.src = GIFT_VIDEO_CONFIG.src;
+    heading.textContent = config.title || "축하 영상";
+    video.src = config.src;
+    download.href = config.src;
+    download.download = config.downloadName || config.src.split("/").pop() || "gift-video.mp4";
     video.currentTime = 0;
     video.play().catch(() => {});
   }
