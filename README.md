@@ -20,7 +20,22 @@ Camera 기능은 브라우저 보안 정책 때문에 `file://`로 열었을 때
 - `styles/main.css`: 화면 스타일
 - `scripts/app.js`: 페이지 전환, Home 게이트, 카운트다운, 카메라, 달력 동작
 - `assets/`: 이미지 에셋
+- `assets/gift-photos/`: Gift 1 사진 잡기 게임용 사진 폴더
 - `ASSET_SOURCES.md`: 이미지 출처 기록
+
+## Gift 1 사진 추가
+
+Gift 1은 화면 위에서 아래로 떨어지는 사진을 클릭해 잡는 미니게임입니다. 사진을 잡으면 큰 화면으로 열리고 저장 버튼이 표시됩니다.
+
+정적 사이트에서는 브라우저가 폴더 안 파일명을 자동으로 읽을 수 없으므로, 관리자는 사진 파일을 아래 이름 규칙으로 추가합니다.
+
+```txt
+assets/gift-photos/photo (1).jpg
+assets/gift-photos/photo (2).jpg
+assets/gift-photos/photo (3).png
+```
+
+지원 확장자는 `jpg`, `jpeg`, `png`, `webp`이고, `photo (1)`부터 `photo (30)`까지 자동으로 찾습니다.
 
 ## Google Form 방명록 연결
 
