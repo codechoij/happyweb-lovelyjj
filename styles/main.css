@@ -624,6 +624,7 @@ video {
   border-radius: 8px;
   background: #241f27;
   object-fit: cover;
+  transform: scaleX(-1);
 }
 
 .polaroid {
