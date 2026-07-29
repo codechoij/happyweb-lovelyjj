@@ -9,13 +9,13 @@
     <meta property="og:title" content="Our Love Story" />
     <meta property="og:description" content="Jun and Jiyun's anniversary story." />
     <meta property="og:url" content="https://codechoij.github.io/happyweb-lovelyjj/" />
-    <meta property="og:image" content="https://codechoij.github.io/happyweb-lovelyjj/assets/og-image.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image" content="https://codechoij.github.io/happyweb-lovelyjj/assets/home-main.jpg" />
+    <meta property="og:image:width" content="2811" />
+    <meta property="og:image:height" content="2828" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Our Love Story" />
     <meta name="twitter:description" content="Jun and Jiyun's anniversary story." />
-    <meta name="twitter:image" content="https://codechoij.github.io/happyweb-lovelyjj/assets/og-image.jpg" />
+    <meta name="twitter:image" content="https://codechoij.github.io/happyweb-lovelyjj/assets/home-main.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Single+Day&display=swap" rel="stylesheet" />
@@ -41,7 +41,7 @@
         <section id="home" class="page page-home active" aria-labelledby="home-title">
           <div class="gate-card" data-gate>
             <p class="eyebrow">Private invitation</p>
-            <h1 id="home-title">연인 본인이신가요?</h1>
+            <h1 id="home-title">쭌이 본인이신가요?</h1>
             <p class="gate-copy">맞다면 우리의 1주년 페이지로 입장할 수 있어요.</p>
             <div class="gate-actions">
               <button class="primary-btn" type="button" data-gate-yes>맞아요</button>
@@ -54,9 +54,13 @@
               <p class="eyebrow">Access denied</p>
               <h2>나가세요!</h2>
               <p>여기는 아무나 들어오면 안 되는 곳입니다.</p>
-              <button class="ghost-btn" type="button" data-gate-reset>다시 물어보기</button>
+              <div class="kick-actions">
+                <button class="primary-btn" type="button" data-gate-reset>다시 시도</button>
+                <a class="ghost-btn" href="#camera">기념사진 찍기</a>
+                <a class="ghost-btn" href="#guestbook">축하하기</a>
+              </div>
             </div>
-            <img class="home-main-photo" src="./assets/home-main.jpg" alt="우리의 사랑이 가득 담긴 하트 사진" />
+            <img class="kick-foot-photo" src="./assets/kick-foot.png" alt="발차기 이미지" />
           </div>
 
           <div class="home-content" data-home-content hidden>
@@ -226,7 +230,7 @@
               </ul>
             </div>
           </div>
-          <section class="guestbook" aria-labelledby="guestbook-title">
+          <section id="guestbook" class="guestbook" aria-labelledby="guestbook-title">
             <div class="guestbook-heading">
               <div>
                 <p class="eyebrow">Guestbook</p>

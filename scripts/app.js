@@ -72,9 +72,17 @@ function isGuestbookConfigured() {
 }
 
 function setActivePage() {
-  const target = window.location.hash?.replace("#", "") || "home";
-  $$(".page").forEach((page) => page.classList.toggle("active", page.id === target));
-  $$(".nav a").forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${target}`));
+  const hashTarget = window.location.hash?.replace("#", "") || "home";
+  const pageTarget = hashTarget === "guestbook" ? "love" : hashTarget;
+  const hasPage = Boolean(document.getElementById(pageTarget)?.classList.contains("page"));
+  const activePage = hasPage ? pageTarget : "home";
+
+  $$(".page").forEach((page) => page.classList.toggle("active", page.id === activePage));
+  $$(".nav a").forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${activePage}`));
+
+  if (hashTarget !== activePage && document.getElementById(hashTarget)) {
+    requestAnimationFrame(() => document.getElementById(hashTarget)?.scrollIntoView({ block: "start" }));
+  }
 }
 
 function initGate() {
