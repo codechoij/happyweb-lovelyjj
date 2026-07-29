@@ -643,7 +643,16 @@ video {
 
 .polaroid p {
   color: var(--muted);
-  font-weight: 900;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+[data-polaroid-date] {
+  font-family: "Gamja Flower", cursive;
+}
+
+[data-polaroid-copy] {
+  font-family: "Single Day", cursive;
 }
 
 .download-link {
