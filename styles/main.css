@@ -543,6 +543,63 @@ h2 {
   gap: 10px;
 }
 
+.gift-video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(255, 217, 131, 0.32), transparent 24rem),
+    radial-gradient(circle at 84% 18%, rgba(121, 199, 180, 0.3), transparent 24rem),
+    rgba(255, 250, 247, 0.96);
+}
+
+.gift-video-box {
+  display: grid;
+  width: min(460px, 100%);
+  max-height: calc(100vh - 44px);
+  gap: 14px;
+}
+
+.gift-video-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow);
+}
+
+.gift-video-heading h3,
+.gift-video-heading p {
+  margin: 0;
+}
+
+.gift-video-box video {
+  display: block;
+  width: 100%;
+  aspect-ratio: auto;
+  max-height: calc(100vh - 190px);
+  border: 10px solid white;
+  border-radius: 8px;
+  background: #1d1a20;
+  box-shadow: var(--shadow);
+  object-fit: contain;
+  transform: none;
+}
+
+.gift-video-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
 @keyframes fall-photo {
   from {
     transform: translate3d(0, 0, 0) rotate(var(--rotate-start));
@@ -617,7 +674,7 @@ h2 {
   padding: 18px;
 }
 
-video {
+[data-video] {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
