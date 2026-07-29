@@ -25,12 +25,15 @@ Camera 기능은 브라우저 보안 정책 때문에 `file://`로 열었을 때
 ## Google Form 방명록 연결
 
 Love 페이지 방명록은 Google Form에 제출하고, 연결된 Google Sheet의 공개 CSV를 다시 읽어서 최신순으로 보여주는 구조입니다.
+Google Sheet CSV를 브라우저에서 읽어야 하므로 `file://`로 직접 열지 말고 GitHub Pages 같은 HTTPS 배포 주소나 `localhost` 서버에서 확인해야 합니다.
 
 1. Google Form을 만들고 질문 2개를 추가합니다.
-   - `이름`
-   - `메시지`
+   - `닉네임`
+   - `메세지`
 2. Form 응답을 Google Sheet와 연결합니다.
-3. Google Sheet에서 `File > Share > Publish to web`로 응답 시트를 CSV로 게시합니다.
+3. Google Sheet에서 응답 시트를 공개 CSV로 읽을 수 있게 설정합니다.
+   - 간단한 방식: `Share`에서 `링크가 있는 모든 사용자`를 `뷰어`로 바꾸고 `https://docs.google.com/spreadsheets/d/SHEET_ID/gviz/tq?tqx=out:csv&gid=0` 형식을 사용합니다.
+   - 게시 방식: `File > Share > Publish to web`로 응답 시트를 CSV로 게시하고 생성된 CSV URL을 사용합니다.
 4. Form 미리보기에서 개발자 도구를 열고 `entry.`를 검색해 각 질문의 entry id를 확인합니다.
 5. `scripts/app.js`의 `GUESTBOOK_CONFIG`를 채웁니다.
 
@@ -39,14 +42,14 @@ const GUESTBOOK_CONFIG = {
   formAction: "https://docs.google.com/forms/d/e/FORM_ID/formResponse",
   nameEntry: "entry.111111111",
   messageEntry: "entry.222222222",
-  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/SHEET_ID/pub?gid=0&single=true&output=csv",
-  nameColumn: "이름",
-  messageColumn: "메시지",
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/SHEET_ID/gviz/tq?tqx=out:csv&gid=0",
+  nameColumn: "닉네임",
+  messageColumn: "메세지",
   timestampColumn: "타임스탬프",
 };
 ```
 
-저장 확인은 Google Form 응답 직후 공개 CSV에서 같은 이름과 메시지가 조회되는지 확인하는 방식입니다. 실패하면 새로고침하지 않고 아래 문구를 팝업으로 띄웁니다.
+저장 확인은 Google Form 응답 직후 공개 CSV에서 같은 닉네임과 메세지가 조회되는지 확인하는 방식입니다. 실패하면 새로고침하지 않고 아래 문구를 팝업으로 띄웁니다.
 
 ```txt
 잠깐! 소중한 당신의 진심이 날라가지 않게 메세지를 먼저 클립보드에 복사해놔주세요...
