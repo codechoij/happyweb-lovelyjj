@@ -453,7 +453,8 @@ function initCamera() {
   const photo = $("[data-photo]");
   const polaroid = $("[data-polaroid]");
   const download = $("[data-download]");
-  const caption = $("[data-polaroid-caption]");
+  const captionDate = $("[data-polaroid-date]");
+  const captionCopy = $("[data-polaroid-copy]");
   let stream;
 
   $("[data-camera-start]").addEventListener("click", async () => {
@@ -466,7 +467,7 @@ function initCamera() {
     }
   });
 
-  $("[data-camera-capture]").addEventListener("click", () => {
+  $("[data-camera-capture]").addEventListener("click", async () => {
     if (!stream) {
       status.textContent = "먼저 카메라를 켜주세요.";
       return;
@@ -480,10 +481,12 @@ function initCamera() {
     context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
-    const polaroidCaption = getPolaroidCaption();
+    const polaroidCaption = getPolaroidCaptionParts();
+    await ensurePolaroidFontsLoaded();
     const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption);
     photo.src = dataUrl;
-    caption.textContent = polaroidCaption;
+    captionDate.textContent = polaroidCaption.date;
+    captionCopy.textContent = polaroidCaption.copy;
     download.href = framedDataUrl;
     polaroid.hidden = false;
     status.textContent = "사진이 준비됐습니다. 아래에서 저장할 수 있어요.";
@@ -501,9 +504,20 @@ function getKstDateParts() {
     .split("-");
 }
 
-function getPolaroidCaption() {
+function getPolaroidCaptionParts() {
   const [year, month, day] = getKstDateParts();
-  return `${year}.${month}.${day} 소중한 오늘의 기록`;
+  return {
+    date: `${year}.${month}.${day}`,
+    copy: "소중한 오늘의 기록",
+  };
+}
+
+async function ensurePolaroidFontsLoaded() {
+  if (!document.fonts?.load) return;
+  await Promise.all([
+    document.fonts.load('38px "Gamja Flower"'),
+    document.fonts.load('38px "Single Day"'),
+  ]);
 }
 
 function createPolaroidDataUrl(sourceCanvas, caption) {
@@ -524,15 +538,35 @@ function createPolaroidDataUrl(sourceCanvas, caption) {
   context.fillRect(0, 0, frame.width, frame.height);
   context.drawImage(sourceCanvas, sidePadding, topPadding, imageWidth, imageHeight);
 
-  context.fillStyle = "#756d78";
-  context.font = `900 ${captionSize}px Arial, sans-serif`;
-  context.textAlign = "center";
-  context.textBaseline = "middle";
-  while (context.measureText(caption).width > frame.width - sidePadding * 2 && captionSize > 24) {
+  const captionY = topPadding + imageHeight + bottomPadding / 2;
+  const gap = Math.round(captionSize * 0.28);
+
+  while (captionSize > 24) {
+    context.font = `${captionSize}px "Gamja Flower", cursive`;
+    const dateWidth = context.measureText(caption.date).width;
+    context.font = `${captionSize}px "Single Day", cursive`;
+    const copyWidth = context.measureText(caption.copy).width;
+    if (dateWidth + gap + copyWidth <= frame.width - sidePadding * 2) break;
     captionSize -= 2;
-    context.font = `900 ${captionSize}px Arial, sans-serif`;
   }
-  context.fillText(caption, frame.width / 2, topPadding + imageHeight + bottomPadding / 2);
+
+  context.fillStyle = "#756d78";
+  context.textBaseline = "middle";
+
+  context.font = `${captionSize}px "Gamja Flower", cursive`;
+  const dateWidth = context.measureText(caption.date).width;
+  context.font = `${captionSize}px "Single Day", cursive`;
+  const copyWidth = context.measureText(caption.copy).width;
+  const totalWidth = dateWidth + gap + copyWidth;
+  let cursorX = (frame.width - totalWidth) / 2;
+
+  context.font = `${captionSize}px "Gamja Flower", cursive`;
+  context.textAlign = "left";
+  context.fillText(caption.date, cursorX, captionY);
+  cursorX += dateWidth + gap;
+
+  context.font = `${captionSize}px "Single Day", cursive`;
+  context.fillText(caption.copy, cursorX, captionY);
 
   return frame.toDataURL("image/jpeg", 0.92);
 }
