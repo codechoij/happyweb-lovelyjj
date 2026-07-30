@@ -897,6 +897,187 @@ h2 {
   font-size: 12px;
 }
 
+.admin-page {
+  padding-top: 24px;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.admin-sidebar,
+.admin-card,
+.password-card {
+  border: 1px solid rgba(234, 217, 213, 0.9);
+  border-radius: 8px;
+  background: rgba(255, 250, 247, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.admin-sidebar {
+  position: sticky;
+  top: 88px;
+  display: grid;
+  min-height: calc(100vh - 136px);
+  gap: 18px;
+  padding: 18px;
+}
+
+.admin-sidebar-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-sidebar-head .eyebrow {
+  margin: 0 0 4px;
+  text-align: left;
+}
+
+.admin-sidebar-head strong {
+  font-size: 18px;
+}
+
+.admin-menu {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.admin-menu-item {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 11px 12px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  text-align: left;
+}
+
+.admin-menu-item.active {
+  color: white;
+  background: var(--ink);
+}
+
+.admin-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  margin-top: auto;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  font-weight: 900;
+}
+
+.admin-panel {
+  display: none;
+}
+
+.admin-panel.active {
+  display: block;
+}
+
+.admin-card {
+  padding: 28px;
+}
+
+.admin-card .section-heading {
+  margin-bottom: 22px;
+  text-align: left;
+}
+
+.admin-form {
+  display: grid;
+  max-width: 520px;
+  gap: 16px;
+}
+
+.admin-form label,
+.password-field {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.admin-form input,
+.password-field input {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 13px 14px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+  line-height: 1.45;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.admin-form input:focus,
+.password-field input:focus {
+  outline: none;
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(233, 93, 115, 0.14);
+}
+
+.admin-form-actions,
+.password-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.form-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.password-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(49, 44, 53, 0.34);
+  backdrop-filter: blur(12px);
+}
+
+.password-card {
+  display: grid;
+  width: min(420px, 100%);
+  gap: 16px;
+  padding: 28px;
+}
+
+.password-card .eyebrow {
+  margin-bottom: 0;
+}
+
+.password-card h2 {
+  font-size: clamp(30px, 5vw, 44px);
+}
+
+.password-actions {
+  justify-content: flex-end;
+}
+
 .hidden-frame {
   position: absolute;
   width: 1px;
@@ -925,8 +1106,25 @@ h2 {
   .gift-grid,
   .camera-layout,
   .love-layout,
-  .guestbook-form {
+  .guestbook-form,
+  .admin-layout {
     grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    position: static;
+    min-height: auto;
+  }
+
+  .admin-card,
+  .password-card {
+    padding: 22px;
+  }
+
+  .admin-form-actions .primary-btn,
+  .password-actions .primary-btn,
+  .password-actions .ghost-btn {
+    flex: 1 1 130px;
   }
 
   .gift-game-modal {
