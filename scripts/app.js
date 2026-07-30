@@ -55,8 +55,19 @@ const GUESTBOOK_CONFIG = {
 const GUESTBOOK_FAIL_MESSAGE =
   "잠깐! 소중한 당신의 진심이 날라가지 않게 메세지를 먼저 클립보드에 복사해놔주세요...";
 
+const ADMIN_API_URL =
+  "https://script.google.com/macros/s/AKfycbzApYhpcMCTY20XOao4v66kjoQuPS6MYtuTEwonVX-V04C5VinQlsghtkpsou7ANcWnFA/exec";
+
+const ADMIN_SESSION_TOKEN_KEY = "our-day-admin-session-token";
+
+const ADMIN_SHORTCUT_CLICK_COUNT = 15;
+const ADMIN_SHORTCUT_WINDOW_MS = 4500;
+
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+let lastPublicHash = "#home";
+let adminSessionToken = "";
 
 function isLocalFile() {
   return window.location.protocol === "file:";
@@ -71,17 +82,113 @@ function isGuestbookConfigured() {
   );
 }
 
+function readStoredValue(storage, key) {
+  try {
+    return storage.getItem(key);
+  } catch (error) {
+    return null;
+  }
+}
+
+function writeStoredValue(storage, key, value) {
+  try {
+    storage.setItem(key, value);
+    return true;
+  } catch (error) {
+    // Storage can be unavailable in strict privacy modes.
+    return false;
+  }
+}
+
+function isAdminAuthenticated() {
+  return Boolean(getAdminSessionToken());
+}
+
+function getAdminSessionToken() {
+  if (adminSessionToken) return adminSessionToken;
+  adminSessionToken = readStoredValue(sessionStorage, ADMIN_SESSION_TOKEN_KEY) || "";
+  return adminSessionToken;
+}
+
+function setAdminSessionToken(token) {
+  adminSessionToken = token;
+  writeStoredValue(sessionStorage, ADMIN_SESSION_TOKEN_KEY, token);
+}
+
+function clearAdminSessionToken() {
+  adminSessionToken = "";
+  try {
+    sessionStorage.removeItem(ADMIN_SESSION_TOKEN_KEY);
+  } catch (error) {
+    // Storage can be unavailable in strict privacy modes.
+  }
+}
+
+async function requestAdminApi(action, payload = {}) {
+  const response = await fetch(ADMIN_API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const data = await response.json();
+
+  if (!response.ok || !data.ok) {
+    const message = data.message || "관리자 요청을 처리하지 못했습니다.";
+    const error = new Error(message);
+    error.code = data.code;
+    throw error;
+  }
+
+  return data;
+}
+
+const adminAuth = {
+  async verifyPassword(password) {
+    const data = await requestAdminApi("verifyPassword", { password });
+    setAdminSessionToken(data.token);
+    return data;
+  },
+
+  async changePassword(newPassword) {
+    return requestAdminApi("changePassword", {
+      token: getAdminSessionToken(),
+      newPassword,
+    });
+  },
+};
+
+function getAdminErrorMessage(error) {
+  if (error.code === "BAD_PASSWORD") return "비밀번호가 틀렸습니다. 다시 입력해주세요.";
+  if (error.code === "LOCKED") return "비밀번호 시도가 많아 잠시 잠겼습니다. 나중에 다시 시도해주세요.";
+  if (error.code === "UNAUTHORIZED") return "관리자 인증이 만료됐습니다. 다시 들어와주세요.";
+  if (error.code === "WEAK_PASSWORD") return "비밀번호는 4자 이상으로 입력해주세요.";
+  return "관리자 서버와 통신하지 못했습니다. 잠시 후 다시 시도해주세요.";
+}
+
 function setActivePage() {
   const hashTarget = window.location.hash?.replace("#", "") || "home";
   const pageTarget = hashTarget === "guestbook" ? "love" : hashTarget;
   const hasPage = Boolean(document.getElementById(pageTarget)?.classList.contains("page"));
   const activePage = hasPage ? pageTarget : "home";
 
+  if (activePage === "admin" && !isAdminAuthenticated()) {
+    const fallbackTarget = lastPublicHash.replace("#", "") || "home";
+    const fallbackPage = fallbackTarget === "guestbook" ? "love" : fallbackTarget;
+
+    $$(".page").forEach((page) => page.classList.toggle("active", page.id === fallbackPage));
+    $$(".nav a").forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${fallbackPage}`));
+    openAdminAuthModal();
+    return;
+  }
+
   $$(".page").forEach((page) => page.classList.toggle("active", page.id === activePage));
   $$(".nav a").forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${activePage}`));
 
   if (hashTarget !== activePage && document.getElementById(hashTarget)) {
     requestAnimationFrame(() => document.getElementById(hashTarget)?.scrollIntoView({ block: "start" }));
+  }
+
+  if (activePage !== "admin") {
+    lastPublicHash = window.location.hash || "#home";
   }
 }
 
@@ -106,6 +213,140 @@ function initGate() {
     kick.hidden = true;
     content.hidden = true;
     gate.hidden = false;
+  });
+}
+
+function openAdminAuthModal() {
+  const modal = $("[data-admin-auth-modal]");
+  const input = $("[data-admin-auth-password]");
+  const status = $("[data-admin-auth-status]");
+
+  if (!modal || !input || !status) return;
+
+  modal.hidden = false;
+  document.body.classList.add("modal-open");
+  input.value = "";
+  status.textContent = "관리자 비밀번호를 입력해주세요.";
+  requestAnimationFrame(() => input.focus());
+}
+
+function closeAdminAuthModal() {
+  const modal = $("[data-admin-auth-modal]");
+  const form = $("[data-admin-auth-form]");
+  const status = $("[data-admin-auth-status]");
+
+  if (!modal || !form || !status) return;
+
+  modal.hidden = true;
+  form.reset();
+  status.textContent = "관리자 비밀번호를 입력해주세요.";
+  document.body.classList.remove("modal-open");
+
+  if (window.location.hash === "#admin") {
+    history.replaceState(null, "", lastPublicHash);
+    setActivePage();
+  }
+}
+
+function initAdminAuth() {
+  const form = $("[data-admin-auth-form]");
+  const input = $("[data-admin-auth-password]");
+  const status = $("[data-admin-auth-status]");
+  const exit = $("[data-admin-auth-exit]");
+  const shortcut = $("[data-admin-shortcut]");
+  let shortcutClicks = [];
+
+  if (!form || !input || !status || !exit || !shortcut) return;
+
+  shortcut.addEventListener("click", (event) => {
+    const now = Date.now();
+    shortcutClicks = shortcutClicks.filter((clickedAt) => now - clickedAt <= ADMIN_SHORTCUT_WINDOW_MS);
+    shortcutClicks.push(now);
+
+    if (shortcutClicks.length < ADMIN_SHORTCUT_CLICK_COUNT) return;
+
+    event.preventDefault();
+    shortcutClicks = [];
+
+    if (isAdminAuthenticated()) {
+      window.location.hash = "#admin";
+      return;
+    }
+
+    openAdminAuthModal();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const password = input.value;
+
+    if (!password) return;
+
+    status.textContent = "비밀번호를 확인하는 중입니다.";
+
+    try {
+      await adminAuth.verifyPassword(password);
+      form.reset();
+      status.textContent = "확인됐습니다.";
+      $("[data-admin-auth-modal]").hidden = true;
+      document.body.classList.remove("modal-open");
+      window.location.hash = "#admin";
+      setActivePage();
+    } catch (error) {
+      input.value = "";
+      status.textContent = getAdminErrorMessage(error);
+      input.focus();
+    }
+  });
+
+  exit.addEventListener("click", closeAdminAuthModal);
+}
+
+function initAdminPage() {
+  const tabs = $$("[data-admin-panel-tab]");
+  const panels = $$("[data-admin-panel]");
+  const form = $("[data-admin-password-form]");
+  const newPassword = $("[data-admin-new-password]");
+  const confirmPassword = $("[data-admin-confirm-password]");
+  const status = $("[data-admin-password-status]");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.adminPanelTab;
+      tabs.forEach((item) => item.classList.toggle("active", item === tab));
+      panels.forEach((panel) => panel.classList.toggle("active", panel.dataset.adminPanel === target));
+    });
+  });
+
+  if (!form || !newPassword || !confirmPassword || !status) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const password = newPassword.value.trim();
+    const confirmation = confirmPassword.value.trim();
+
+    if (password.length < 4) {
+      status.textContent = "비밀번호는 4자 이상으로 입력해주세요.";
+      newPassword.focus();
+      return;
+    }
+
+    if (password !== confirmation) {
+      status.textContent = "비밀번호 확인이 일치하지 않습니다.";
+      confirmPassword.focus();
+      return;
+    }
+
+    status.textContent = "비밀번호를 저장하는 중입니다.";
+
+    try {
+      await adminAuth.changePassword(password);
+      form.reset();
+      status.textContent = "비밀번호가 변경됐습니다.";
+    } catch (error) {
+      if (error.code === "UNAUTHORIZED") clearAdminSessionToken();
+      status.textContent = getAdminErrorMessage(error);
+    }
   });
 }
 
@@ -909,8 +1150,10 @@ function initGuestbook() {
 }
 
 window.addEventListener("hashchange", setActivePage);
-setActivePage();
 initGate();
+initAdminAuth();
+initAdminPage();
+setActivePage();
 initGifts();
 initLetter();
 initCamera();
