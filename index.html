@@ -24,72 +24,72 @@
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="#home" aria-label="Home" data-admin-shortcut>
+        <a class="brand" href="#home" aria-label="Home" data-admin-shortcut data-i18n-aria-label="NavHome">
           <span class="brand-mark">14</span>
-          <span>Our Day</span>
+          <span data-i18n="BrandName"></span>
         </a>
-        <nav class="nav" aria-label="Main navigation">
-          <a href="#home">Home</a>
-          <a href="#gift">Gift</a>
-          <a href="#letter">Letter</a>
-          <a href="#camera">Camera</a>
-          <a href="#love">Love</a>
+        <nav class="nav" aria-label="" data-i18n-aria-label="MainNavigationLabel">
+          <a href="#home" data-i18n="NavHome"></a>
+          <a href="#gift" data-i18n="NavGift"></a>
+          <a href="#letter" data-i18n="NavLetter"></a>
+          <a href="#camera" data-i18n="NavCamera"></a>
+          <a href="#love" data-i18n="NavLove"></a>
         </nav>
       </header>
 
       <main>
         <section id="home" class="page page-home active" aria-labelledby="home-title">
           <div class="gate-card" data-gate>
-            <p class="eyebrow">Private invitation</p>
-            <h1 id="home-title">쭌이 본인이신가요?</h1>
-            <p class="gate-copy">맞다면 우리의 1주년 페이지로 입장할 수 있어요.</p>
+            <p class="eyebrow" data-i18n="HomeGateEyebrow"></p>
+            <h1 id="home-title" data-i18n="HomeGateTitle"></h1>
+            <p class="gate-copy" data-i18n="HomeGateCopy"></p>
             <div class="gate-actions">
-              <button class="primary-btn" type="button" data-gate-yes>맞아요</button>
-              <button class="ghost-btn" type="button" data-gate-no>아니요</button>
+              <button class="primary-btn" type="button" data-gate-yes data-i18n="HomeGateYes"></button>
+              <button class="ghost-btn" type="button" data-gate-no data-i18n="HomeGateNo"></button>
             </div>
           </div>
 
           <div class="kick-screen" data-kick hidden>
             <div class="kick-copy">
-              <p class="eyebrow">Access denied</p>
-              <h2>나가세요!</h2>
-              <p>여기는 아무나 들어오면 안 되는 곳입니다.</p>
+              <p class="eyebrow" data-i18n="KickEyebrow"></p>
+              <h2 data-i18n="KickTitle"></h2>
+              <p data-i18n="KickCopy"></p>
               <div class="kick-actions">
-                <button class="primary-btn" type="button" data-gate-reset>다시 시도</button>
-                <a class="ghost-btn" href="#camera">기념사진 찍기</a>
-                <a class="ghost-btn" href="#guestbook">축하하기</a>
+                <button class="primary-btn" type="button" data-gate-reset data-i18n="RetryButton"></button>
+                <a class="ghost-btn" href="#camera" data-i18n="TakePhotoButton"></a>
+                <a class="ghost-btn" href="#guestbook" data-i18n="CelebrateButton"></a>
               </div>
             </div>
-            <img class="kick-foot-photo" src="./assets/kick-foot.png" alt="발차기 이미지" />
+            <img class="kick-foot-photo" src="./assets/kick-foot.png" alt="" data-i18n-alt="KickFootAlt" />
           </div>
 
           <div class="home-content" data-home-content hidden>
             <div class="hero-copy">
-              <p class="eyebrow">August 14</p>
-              <h1>우리의 사랑이 시작한 날</h1>
-              <p>처음 만난 설렘부터 오늘의 다정함까지 이 안에 담아둘게.</p>
+              <p class="eyebrow" data-i18n="HomeHeroEyebrow"></p>
+              <h1 data-i18n="HomeHeroTitle"></h1>
+              <p data-i18n="HomeHeroCopy"></p>
             </div>
             <div class="countdown-card" aria-live="polite">
-              <span class="count-label" data-count-label>기념일까지</span>
-              <strong data-count-main>D-0</strong>
-              <span data-count-detail>00:00:00</span>
+              <span class="count-label" data-count-label data-i18n="CountdownUntil"></span>
+              <strong data-count-main data-i18n="CountdownDefaultMain"></strong>
+              <span data-count-detail data-i18n="CountdownDefaultDetail"></span>
             </div>
             <div class="home-menu">
               <a class="feature-link" href="#gift">
-                <span>Gift</span>
-                <small>상자를 골라보는 선물 페이지</small>
+                <span data-i18n="NavGift"></span>
+                <small data-i18n="HomeMenuGiftCopy"></small>
               </a>
               <a class="feature-link" href="#letter">
-                <span>Letter</span>
-                <small>열어보는 편지 페이지</small>
+                <span data-i18n="NavLetter"></span>
+                <small data-i18n="HomeMenuLetterCopy"></small>
               </a>
               <a class="feature-link" href="#camera">
-                <span>Camera</span>
-                <small>폴라로이드 기념사진</small>
+                <span data-i18n="NavCamera"></span>
+                <small data-i18n="HomeMenuCameraCopy"></small>
               </a>
               <a class="feature-link" href="#love">
-                <span>Love</span>
-                <small>D+365와 8월 14일 달력</small>
+                <span data-i18n="NavLove"></span>
+                <small data-i18n="HomeMenuLoveCopy"></small>
               </a>
             </div>
           </div>
@@ -98,62 +98,58 @@
         <section id="gift" class="page" aria-labelledby="gift-title">
           <div class="protected-gate" data-protected-gate="gift">
             <div class="protected-card">
-              <p class="eyebrow">Private</p>
-              <h2>본인 확인하겠습니다!<br />쭌이가 아니라면 지금이라도 나가세요!</h2>
+              <p class="eyebrow" data-i18n="ProtectedEyebrow"></p>
+              <h2 data-i18n="ProtectedTitle"></h2>
               <div class="protected-actions">
-                <button class="primary-btn" type="button" data-protected-confirm="gift">본인확인</button>
-                <a class="ghost-btn" href="#camera">기념사진 찍기</a>
-                <a class="ghost-btn" href="#guestbook">축하하기</a>
+                <button class="primary-btn" type="button" data-protected-confirm="gift" data-i18n="ProtectedConfirmButton"></button>
+                <a class="ghost-btn" href="#camera" data-i18n="TakePhotoButton"></a>
+                <a class="ghost-btn" href="#guestbook" data-i18n="CelebrateButton"></a>
               </div>
               <form class="protected-password-form" data-protected-form="gift" hidden>
                 <label>
-                  <span>비밀번호</span>
+                  <span data-i18n="PasswordLabel"></span>
                   <input data-protected-password="gift" type="password" autocomplete="current-password" required />
                 </label>
-                <button class="primary-btn" type="submit">입장하기</button>
-                <p class="form-status" data-protected-status="gift" aria-live="polite">관리자 페이지에서 설정한 비밀번호를 입력해주세요.</p>
+                <button class="primary-btn" type="submit" data-i18n="EnterButton"></button>
+                <p class="form-status" data-protected-status="gift" aria-live="polite" data-i18n="ProtectedPasswordPrompt"></p>
               </form>
             </div>
           </div>
           <div data-protected-content="gift" hidden>
             <div class="section-heading">
-              <p class="eyebrow">Pick one</p>
-              <h2 id="gift-title">Gift</h2>
+              <p class="eyebrow" data-i18n="GiftPickEyebrow"></p>
+              <h2 id="gift-title" data-i18n="NavGift"></h2>
             </div>
             <div class="gift-grid" data-gift-grid></div>
-            <p class="result-text" data-gift-result>마음에 드는 상자를 하나 골라주세요.</p>
+            <p class="result-text" data-gift-result data-i18n="GiftResultDefault"></p>
             <div class="gift-game-modal" data-gift-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-game-title">
               <div class="gift-game-toolbar">
                 <div>
-                  <p class="eyebrow">Gift</p>
-                  <h3 id="gift-game-title">사진을 잡아보세요</h3>
-                </div>
-                <p data-gift-game-status>떨어지는 사진을 클릭하세요.</p>
-                <button class="ghost-btn" type="button" data-gift-close>나가기</button>
+                    <p class="eyebrow" data-i18n="NavGift"></p>
+                    <h3 id="gift-game-title" data-i18n="GiftGameTitle"></h3>
+                  </div>
+                <p data-gift-game-status data-i18n="GiftGameStatusInitial"></p>
+                <button class="ghost-btn" type="button" data-gift-close data-i18n="ExitButton"></button>
               </div>
               <div class="gift-ready-view" data-gift-ready-view>
                 <div class="gift-ready-box">
                   <div data-gift-ready-message></div>
-                  <button class="primary-btn" type="button" data-gift-ready-start>네</button>
+                  <button class="primary-btn" type="button" data-gift-ready-start data-i18n="YesButton"></button>
                 </div>
               </div>
               <div class="gift-stage" data-gift-stage></div>
               <div class="gift-capture-view" data-gift-capture-view hidden>
-                <img data-gift-captured-image alt="선택한 선물 사진" />
+                <img data-gift-captured-image alt="" data-i18n-alt="GiftCapturedAlt" />
                 <div class="gift-capture-actions">
-                  <a class="primary-btn" data-gift-download href="#" role="button" download="gift-photo.jpg">사진 저장하기</a>
-                  <button class="ghost-btn" type="button" data-gift-replay>다시 잡기</button>
-                  <button class="ghost-btn" type="button" data-gift-captured-close>닫기</button>
+                  <a class="primary-btn" data-gift-download href="#" role="button" download="gift-photo.jpg" data-i18n="SavePhotoButton"></a>
+                  <button class="ghost-btn" type="button" data-gift-replay data-i18n="CatchAgainButton"></button>
+                  <button class="ghost-btn" type="button" data-gift-captured-close data-i18n="CloseButton"></button>
                 </div>
               </div>
               <div class="gift-finish-view" data-gift-finish-view hidden>
                 <div class="gift-finish-box">
-                  <p>
-                    모든 사진이 지나갔어요. 다음기회를 노려보세요.<br />
-                    <br />
-                    토끼지윤의 토끼기 능력 상승! (+1)
-                  </p>
-                  <button class="primary-btn" type="button" data-gift-finish-confirm>확인</button>
+                  <p data-i18n="GiftFinishMessage"></p>
+                  <button class="primary-btn" type="button" data-gift-finish-confirm data-i18n="ConfirmButton"></button>
                 </div>
               </div>
             </div>
@@ -161,17 +157,17 @@
               <div class="gift-video-box">
                 <div class="gift-video-heading">
                   <div>
-                    <p class="eyebrow">Gift</p>
-                    <h3 id="gift-video-title" data-gift-video-title>1주년 축하 영상</h3>
+                    <p class="eyebrow" data-i18n="NavGift"></p>
+                    <h3 id="gift-video-title" data-gift-video-title data-i18n="GiftVideoOneTitle"></h3>
                   </div>
-                  <button class="ghost-btn" type="button" data-gift-video-close>나가기</button>
+                  <button class="ghost-btn" type="button" data-gift-video-close data-i18n="ExitButton"></button>
                 </div>
                 <video data-gift-video playsinline controls preload="metadata">
                   <source src="./assets/gift-videos/video%20(1).mp4" type="video/mp4" />
                 </video>
                 <div class="gift-video-actions" data-gift-video-actions hidden>
-                  <button class="primary-btn" type="button" data-gift-video-replay>다시 보기</button>
-                  <a class="ghost-btn" data-gift-video-download href="./assets/gift-videos/video%20(1).mp4" download="video (1).mp4">다운로드</a>
+                  <button class="primary-btn" type="button" data-gift-video-replay data-i18n="WatchAgainButton"></button>
+                  <a class="ghost-btn" data-gift-video-download href="./assets/gift-videos/video%20(1).mp4" download="video (1).mp4" data-i18n="DownloadButton"></a>
                 </div>
               </div>
             </div>
@@ -181,156 +177,152 @@
         <section id="letter" class="page" aria-labelledby="letter-title">
           <div class="protected-gate" data-protected-gate="letter">
             <div class="protected-card">
-              <p class="eyebrow">Private</p>
-              <h2>본인 확인하겠습니다!<br />쭌이가 아니라면 지금이라도 나가세요!</h2>
+              <p class="eyebrow" data-i18n="ProtectedEyebrow"></p>
+              <h2 data-i18n="ProtectedTitle"></h2>
               <div class="protected-actions">
-                <button class="primary-btn" type="button" data-protected-confirm="letter">본인확인</button>
-                <a class="ghost-btn" href="#camera">기념사진 찍기</a>
-                <a class="ghost-btn" href="#guestbook">축하하기</a>
+                <button class="primary-btn" type="button" data-protected-confirm="letter" data-i18n="ProtectedConfirmButton"></button>
+                <a class="ghost-btn" href="#camera" data-i18n="TakePhotoButton"></a>
+                <a class="ghost-btn" href="#guestbook" data-i18n="CelebrateButton"></a>
               </div>
               <form class="protected-password-form" data-protected-form="letter" hidden>
                 <label>
-                  <span>비밀번호</span>
+                  <span data-i18n="PasswordLabel"></span>
                   <input data-protected-password="letter" type="password" autocomplete="current-password" required />
                 </label>
-                <button class="primary-btn" type="submit">입장하기</button>
-                <p class="form-status" data-protected-status="letter" aria-live="polite">관리자 페이지에서 설정한 비밀번호를 입력해주세요.</p>
+                <button class="primary-btn" type="submit" data-i18n="EnterButton"></button>
+                <p class="form-status" data-protected-status="letter" aria-live="polite" data-i18n="ProtectedPasswordPrompt"></p>
               </form>
             </div>
           </div>
           <div data-protected-content="letter" hidden>
             <div class="section-heading">
-              <p class="eyebrow">For you</p>
-              <h2 id="letter-title">Letter</h2>
+              <p class="eyebrow" data-i18n="LetterEyebrow"></p>
+              <h2 id="letter-title" data-i18n="NavLetter"></h2>
             </div>
             <button class="letter-envelope" type="button" data-letter-toggle aria-expanded="false">
               <span class="envelope-flap"></span>
-              <span class="envelope-body">Open</span>
+              <span class="envelope-body" data-i18n="EnvelopeOpen"></span>
             </button>
             <article class="letter-paper" data-letter hidden>
-              <p>To. 가장 소중한 사람에게</p>
-              <p>
-                여기에 실제 편지 내용을 넣으면 돼요. 지금은 뼈대라서 짧은 문장만
-                넣어두었습니다. 나중에 여러 장 편지, 날짜별 공개, 비밀번호 확인 같은
-                기능을 붙일 수 있게 분리해둘 수 있습니다.
-              </p>
-              <p>From. 나</p>
+              <p data-i18n="LetterTo"></p>
+              <p data-i18n="LetterBody"></p>
+              <p data-i18n="LetterFrom"></p>
             </article>
           </div>
         </section>
 
         <section id="camera" class="page" aria-labelledby="camera-title">
           <div class="section-heading">
-            <p class="eyebrow">Memory shot</p>
-            <h2 id="camera-title">Camera</h2>
+            <p class="eyebrow" data-i18n="CameraEyebrow"></p>
+            <h2 id="camera-title" data-i18n="NavCamera"></h2>
           </div>
           <div class="camera-layout">
             <div class="camera-panel">
               <video data-video autoplay playsinline muted></video>
               <div class="camera-actions">
-                <button class="primary-btn" type="button" data-camera-start>카메라 켜기</button>
-                <button class="ghost-btn" type="button" data-camera-capture>찰칵</button>
+                <button class="primary-btn" type="button" data-camera-start data-i18n="CameraStartButton"></button>
+                <button class="ghost-btn" type="button" data-camera-capture data-i18n="CameraCaptureButton"></button>
               </div>
-              <p class="helper-text" data-camera-status>카메라를 켜고 당신의 하루를 남겨보세요.</p>
+              <p class="helper-text" data-camera-status data-i18n="CameraInitialStatus"></p>
             </div>
             <div class="polaroid" data-polaroid hidden>
-              <img data-photo alt="촬영한 기념사진" />
+              <img data-photo alt="" data-i18n-alt="CapturedPhotoAlt" />
               <p data-polaroid-caption>
                 <span data-polaroid-date></span>
-                <span data-polaroid-copy>소중한 오늘의 기록</span>
+                <span data-polaroid-copy data-i18n="PolaroidCaptionCopy"></span>
               </p>
-              <a class="download-link" data-download href="#" download="our-anniversary-photo.jpg">사진 저장하기</a>
+              <a class="download-link" data-download href="#" download="our-anniversary-photo.jpg" data-i18n="SavePhotoButton"></a>
             </div>
           </div>
         </section>
 
         <section id="love" class="page" aria-labelledby="love-title">
           <div class="section-heading">
-            <p class="eyebrow">D+365</p>
-            <h2 id="love-title">Love</h2>
+            <p class="eyebrow" data-i18n="LoveEyebrow"></p>
+            <h2 id="love-title" data-i18n="NavLove"></h2>
           </div>
           <div class="love-layout">
-            <div class="calendar" aria-label="2026년 8월 달력">
+            <div class="calendar" aria-label="" data-i18n-aria-label="LoveCalendarLabel">
               <div class="calendar-head">
-                <span>August</span>
+                <span data-i18n="MonthAugust"></span>
                 <strong>2026</strong>
               </div>
               <div class="weekdays">
-                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                <span data-i18n="WeekdaySun"></span><span data-i18n="WeekdayMon"></span><span data-i18n="WeekdayTue"></span><span data-i18n="WeekdayWed"></span><span data-i18n="WeekdayThu"></span><span data-i18n="WeekdayFri"></span><span data-i18n="WeekdaySat"></span>
               </div>
               <div class="days" data-calendar-days></div>
             </div>
             <div class="love-note">
-              <strong>D+365</strong>
-              <p>365 days with you</p>
-              <button class="primary-btn" type="button" data-music-toggle>배경음악 재생</button>
+              <strong data-i18n="LoveEyebrow"></strong>
+              <p data-i18n="LoveDurationText"></p>
+              <button class="primary-btn" type="button" data-music-toggle data-i18n="MusicPlayButton"></button>
               <audio data-audio src="" preload="none"></audio>
               <ul>
-                <li>처음처럼 설레는 날</li>
-                <li>가장 다정했던 365일</li>
-                <li>앞으로도 같이 기록할 우리</li>
+                <li data-i18n="LoveNoteOne"></li>
+                <li data-i18n="LoveNoteTwo"></li>
+                <li data-i18n="LoveNoteThree"></li>
               </ul>
             </div>
           </div>
           <section id="guestbook" class="guestbook" aria-labelledby="guestbook-title">
             <div class="guestbook-heading">
               <div>
-                <p class="eyebrow">Guestbook</p>
-                <h3 id="guestbook-title">우리에게 남기는 축하</h3>
+                <p class="eyebrow" data-i18n="GuestbookEyebrow"></p>
+                <h3 id="guestbook-title" data-i18n="GuestbookTitle"></h3>
               </div>
-              <p data-guestbook-status>준과 지윤에게 한 마디씩 남겨주세요!</p>
+              <p data-guestbook-status data-i18n="GuestbookPrompt"></p>
             </div>
             <form class="guestbook-form" data-guestbook-form>
               <label>
-                <span>닉네임</span>
-                <input data-guestbook-name type="text" maxlength="20" autocomplete="name" placeholder="닉네임" required />
+                <span data-i18n="GuestbookNameLabel"></span>
+                <input data-guestbook-name type="text" maxlength="20" autocomplete="name" placeholder="" data-i18n-placeholder="GuestbookNamePlaceholder" required />
               </label>
               <label>
-                <span>메세지</span>
-                <textarea data-guestbook-message maxlength="160" rows="2" placeholder="두 사람에게 축하 또는 하고 싶은 말을 남겨주세요." required></textarea>
+                <span data-i18n="GuestbookMessageLabel"></span>
+                <textarea data-guestbook-message maxlength="160" rows="2" placeholder="" data-i18n-placeholder="GuestbookMessagePlaceholder" required></textarea>
               </label>
-              <button class="primary-btn" type="submit" data-guestbook-send>Send</button>
+              <button class="primary-btn" type="submit" data-guestbook-send data-i18n="SendButton"></button>
             </form>
             <div class="guestbook-list" data-guestbook-list aria-live="polite"></div>
           </section>
-          <iframe class="hidden-frame" name="guestbook-submit-frame" title="guestbook submit frame"></iframe>
+          <iframe class="hidden-frame" name="guestbook-submit-frame" title="" data-i18n-title="GuestbookFrameTitle"></iframe>
         </section>
 
         <section id="admin" class="page admin-page" aria-labelledby="admin-title">
           <div class="admin-layout">
-            <aside class="admin-sidebar" aria-label="Admin menu">
+            <aside class="admin-sidebar" aria-label="" data-i18n-aria-label="AdminMenuLabel">
               <div class="admin-sidebar-head">
                 <span class="brand-mark">14</span>
                 <div>
-                  <p class="eyebrow">Admin</p>
-                  <strong>Our Day</strong>
+                  <p class="eyebrow" data-i18n="AdminEyebrow"></p>
+                  <strong data-i18n="BrandName"></strong>
                 </div>
               </div>
               <nav class="admin-menu">
-                <button class="admin-menu-item active" type="button" data-admin-panel-tab="password">비밀번호 관리</button>
+                <button class="admin-menu-item active" type="button" data-admin-panel-tab="password" data-i18n="AdminPasswordMenu"></button>
               </nav>
-              <a class="admin-back" href="#home">홈으로</a>
+              <a class="admin-back" href="#home" data-i18n="AdminBackHome"></a>
             </aside>
 
             <section class="admin-panel active" data-admin-panel="password" aria-labelledby="admin-title">
               <div class="admin-card">
                 <div class="section-heading">
-                  <p class="eyebrow">Password</p>
-                  <h2 id="admin-title">비밀번호 관리</h2>
+                  <p class="eyebrow" data-i18n="PasswordEyebrow"></p>
+                  <h2 id="admin-title" data-i18n="AdminPasswordTitle"></h2>
                 </div>
                 <form class="admin-form" data-admin-password-form>
                   <label>
-                    <span>새 비밀번호</span>
+                    <span data-i18n="AdminNewPasswordLabel"></span>
                     <input data-admin-new-password type="password" minlength="4" autocomplete="new-password" required />
                   </label>
                   <label>
-                    <span>비밀번호 확인</span>
+                    <span data-i18n="AdminConfirmPasswordLabel"></span>
                     <input data-admin-confirm-password type="password" minlength="4" autocomplete="new-password" required />
                   </label>
                   <div class="admin-form-actions">
-                    <button class="primary-btn" type="submit">변경 저장</button>
+                    <button class="primary-btn" type="submit" data-i18n="AdminSaveButton"></button>
                   </div>
-                  <p class="form-status" data-admin-password-status aria-live="polite">관리자와 보호 페이지 접근 비밀번호를 변경할 수 있습니다.</p>
+                  <p class="form-status" data-admin-password-status aria-live="polite" data-i18n="AdminPasswordHelp"></p>
                 </form>
               </div>
             </section>
@@ -341,16 +333,16 @@
 
     <div class="password-modal" data-admin-auth-modal hidden role="dialog" aria-modal="true" aria-labelledby="admin-auth-title">
       <form class="password-card" data-admin-auth-form>
-        <p class="eyebrow">Admin</p>
-        <h2 id="admin-auth-title">관리자 비밀번호</h2>
+        <p class="eyebrow" data-i18n="AdminEyebrow"></p>
+        <h2 id="admin-auth-title" data-i18n="AdminAuthTitle"></h2>
         <label class="password-field">
-          <span>비밀번호</span>
+          <span data-i18n="PasswordLabel"></span>
           <input data-admin-auth-password type="password" autocomplete="current-password" required />
         </label>
-        <p class="form-status" data-admin-auth-status aria-live="polite">관리자 비밀번호를 입력해주세요.</p>
+        <p class="form-status" data-admin-auth-status aria-live="polite" data-i18n="AdminPasswordPrompt"></p>
         <div class="password-actions">
-          <button class="ghost-btn" type="button" data-admin-auth-exit>나가기</button>
-          <button class="primary-btn" type="submit">확인</button>
+          <button class="ghost-btn" type="button" data-admin-auth-exit data-i18n="ExitButton"></button>
+          <button class="primary-btn" type="submit" data-i18n="ConfirmButton"></button>
         </div>
       </form>
     </div>

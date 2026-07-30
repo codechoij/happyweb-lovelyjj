@@ -1,28 +1,29 @@
 const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
 const START_DATE = new Date("2025-08-14T00:00:00+09:00");
+const RESOURCE_URL = "./resources/Strings.resx";
 
 const gifts = [
   {
-    title: "Gift 1",
+    titleKey: "GiftOneTitle",
     type: "photoGame",
-    result: "떨어지는 사진을 잡아 선물을 열어보세요.",
+    resultKey: "GiftPhotoGameResult",
   },
   {
-    title: "Gift 2",
+    titleKey: "GiftTwoTitle",
     type: "video",
-    result: "1주년 축하 영상을 준비했어요.",
+    resultKey: "GiftVideoOneResult",
     video: {
-      title: "1주년 축하 영상",
+      titleKey: "GiftVideoOneTitle",
       src: "./assets/gift-videos/video%20(1).mp4",
       downloadName: "video (1).mp4",
     },
   },
   {
-    title: "Gift 3",
+    titleKey: "GiftThreeTitle",
     type: "video",
-    result: "또 다른 축하 영상을 준비했어요.",
+    resultKey: "GiftVideoTwoResult",
     video: {
-      title: "또 다른 축하 영상",
+      titleKey: "GiftVideoTwoTitle",
       src: "./assets/gift-videos/video%20(2).mp4",
       downloadName: "video (2).mp4",
     },
@@ -47,13 +48,13 @@ const GUESTBOOK_CONFIG = {
   nameEntry: "entry.177558218",
   messageEntry: "entry.14006226",
   sheetCsvUrl: "https://docs.google.com/spreadsheets/d/1-uyBD_odTyvnTdQAwG-sU8uEcm5kYOnKybg27EhhOzU/gviz/tq?tqx=out:csv&gid=0",
-  nameColumn: "닉네임",
-  messageColumn: "메세지",
-  timestampColumn: "타임스탬프",
+  nameColumnKey: "GuestbookNameLabel",
+  messageColumnKey: "GuestbookMessageLabel",
+  timestampColumnKey: "GuestbookTimestampColumn",
 };
 
 const GUESTBOOK_FAIL_MESSAGE =
-  "잠깐! 소중한 당신의 진심이 날라가지 않게 메세지를 먼저 클립보드에 복사해놔주세요...";
+  "GuestbookFailMessage";
 
 const ADMIN_API_URL =
   "https://script.google.com/macros/s/AKfycbzApYhpcMCTY20XOao4v66kjoQuPS6MYtuTEwonVX-V04C5VinQlsghtkpsou7ANcWnFA/exec";
@@ -67,10 +68,65 @@ const PROTECTED_PAGE_IDS = ["gift", "letter"];
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
+let resourceStrings = {};
 let lastPublicHash = "#home";
 let adminSessionToken = "";
 let activePageId = "home";
 let unlockedProtectedPages = new Set();
+
+async function loadResourceStrings() {
+  const response = await fetch(RESOURCE_URL);
+  if (!response.ok) throw new Error("Failed to load resource strings.");
+
+  const xml = await response.text();
+  const documentXml = new DOMParser().parseFromString(xml, "application/xml");
+  const parseError = documentXml.querySelector("parsererror");
+  if (parseError) throw new Error("Failed to parse resource strings.");
+
+  resourceStrings = [...documentXml.querySelectorAll("data[name]")].reduce((items, node) => {
+    const key = node.getAttribute("name");
+    const value = node.querySelector("value")?.textContent ?? "";
+    if (key) items[key] = value;
+    return items;
+  }, {});
+}
+
+function t(key, values = {}) {
+  const template = resourceStrings[key] ?? key;
+  return Object.entries(values).reduce(
+    (text, [name, value]) => text.replaceAll(`{${name}}`, String(value)),
+    template,
+  );
+}
+
+function applyResourceStrings() {
+  $$("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+
+  $$("[data-i18n-placeholder]").forEach((element) => {
+    element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
+  });
+
+  $$("[data-i18n-alt]").forEach((element) => {
+    element.setAttribute("alt", t(element.dataset.i18nAlt));
+  });
+
+  $$("[data-i18n-aria-label]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  });
+
+  $$("[data-i18n-title]").forEach((element) => {
+    element.setAttribute("title", t(element.dataset.i18nTitle));
+  });
+
+  document.title = t("MetaTitle");
+  document.querySelector('meta[name="description"]')?.setAttribute("content", t("MetaDescription"));
+  document.querySelector('meta[property="og:title"]')?.setAttribute("content", t("MetaTitle"));
+  document.querySelector('meta[property="og:description"]')?.setAttribute("content", t("MetaDescription"));
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", t("MetaTitle"));
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", t("MetaDescription"));
+}
 
 function isLocalFile() {
   return window.location.protocol === "file:";
@@ -135,7 +191,7 @@ async function requestAdminApi(action, payload = {}) {
   const data = await response.json();
 
   if (!response.ok || !data.ok) {
-    const message = data.message || "관리자 요청을 처리하지 못했습니다.";
+    const message = data.message || t("AdminRequestFailed");
     const error = new Error(message);
     error.code = data.code;
     throw error;
@@ -166,11 +222,11 @@ const sharedPasswordAuth = {
 };
 
 function getAdminErrorMessage(error) {
-  if (error.code === "BAD_PASSWORD") return "비밀번호가 틀렸습니다. 다시 입력해주세요.";
-  if (error.code === "LOCKED") return "비밀번호 시도가 많아 잠시 잠겼습니다. 나중에 다시 시도해주세요.";
-  if (error.code === "UNAUTHORIZED") return "관리자 인증이 만료됐습니다. 다시 들어와주세요.";
-  if (error.code === "WEAK_PASSWORD") return "비밀번호는 4자 이상으로 입력해주세요.";
-  return "비밀번호 서버와 통신하지 못했습니다. 잠시 후 다시 시도해주세요.";
+  if (error.code === "BAD_PASSWORD") return t("PasswordBad");
+  if (error.code === "LOCKED") return t("PasswordLocked");
+  if (error.code === "UNAUTHORIZED") return t("AdminUnauthorized");
+  if (error.code === "WEAK_PASSWORD") return t("PasswordWeak");
+  return t("PasswordServerFailed");
 }
 
 function isProtectedPage(pageId) {
@@ -209,7 +265,7 @@ function resetProtectedPage(pageId) {
     form.reset();
   }
   if (input) input.value = "";
-  if (status) status.textContent = "관리자 페이지에서 설정한 비밀번호를 입력해주세요.";
+  if (status) status.textContent = t("ProtectedPasswordPrompt");
 }
 
 function unlockProtectedPage(pageId) {
@@ -303,7 +359,7 @@ function openAdminAuthModal() {
   modal.hidden = false;
   document.body.classList.add("modal-open");
   input.value = "";
-  status.textContent = "관리자 비밀번호를 입력해주세요.";
+  status.textContent = t("AdminPasswordPrompt");
   requestAnimationFrame(() => input.focus());
 }
 
@@ -316,7 +372,7 @@ function closeAdminAuthModal() {
 
   modal.hidden = true;
   form.reset();
-  status.textContent = "관리자 비밀번호를 입력해주세요.";
+  status.textContent = t("AdminPasswordPrompt");
   document.body.classList.remove("modal-open");
 
   if (window.location.hash === "#admin") {
@@ -359,12 +415,12 @@ function initAdminAuth() {
 
     if (!password) return;
 
-    status.textContent = "비밀번호를 확인하는 중입니다.";
+    status.textContent = t("PasswordChecking");
 
     try {
       await adminAuth.verifyPassword(password);
       form.reset();
-      status.textContent = "확인됐습니다.";
+      status.textContent = t("PasswordConfirmed");
       $("[data-admin-auth-modal]").hidden = true;
       document.body.classList.remove("modal-open");
       window.location.hash = "#admin";
@@ -403,23 +459,23 @@ function initAdminPage() {
     const confirmation = confirmPassword.value.trim();
 
     if (password.length < 4) {
-      status.textContent = "비밀번호는 4자 이상으로 입력해주세요.";
+      status.textContent = t("PasswordWeak");
       newPassword.focus();
       return;
     }
 
     if (password !== confirmation) {
-      status.textContent = "비밀번호 확인이 일치하지 않습니다.";
+      status.textContent = t("PasswordMismatch");
       confirmPassword.focus();
       return;
     }
 
-    status.textContent = "비밀번호를 저장하는 중입니다.";
+    status.textContent = t("PasswordSaving");
 
     try {
       await adminAuth.changePassword(password);
       form.reset();
-      status.textContent = "비밀번호가 변경됐습니다.";
+      status.textContent = t("PasswordChanged");
     } catch (error) {
       if (error.code === "UNAUTHORIZED") clearAdminSessionToken();
       status.textContent = getAdminErrorMessage(error);
@@ -436,7 +492,7 @@ function initProtectedPages() {
       if (!form || !input || !status) return;
 
       form.hidden = false;
-      status.textContent = "관리자 페이지에서 설정한 비밀번호를 입력해주세요.";
+      status.textContent = t("ProtectedPasswordPrompt");
       requestAnimationFrame(() => input.focus());
     });
   });
@@ -450,11 +506,11 @@ function initProtectedPages() {
 
       if (!pageId || !input || !status || !password) return;
 
-      status.textContent = "비밀번호를 확인하는 중입니다.";
+      status.textContent = t("PasswordChecking");
 
       try {
         await sharedPasswordAuth.verifyPassword(password);
-        status.textContent = "확인됐습니다.";
+        status.textContent = t("PasswordConfirmed");
         unlockProtectedPage(pageId);
       } catch (error) {
         input.value = "";
@@ -481,7 +537,7 @@ function updateCountdown() {
     const hours = Math.floor((remaining % 86400000) / 3600000);
     const minutes = Math.floor((remaining % 3600000) / 60000);
     const seconds = Math.floor((remaining % 60000) / 1000);
-    label.textContent = "기념일까지";
+    label.textContent = t("CountdownUntil");
     main.textContent = `D-${days}`;
     detail.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     return;
@@ -489,9 +545,9 @@ function updateCountdown() {
 
   const together = now.getTime() - START_DATE.getTime();
   const daysTogether = Math.floor(together / 86400000);
-  label.textContent = "우리가 함께한 지";
+  label.textContent = t("CountdownTogether");
   main.textContent = `D+${daysTogether}`;
-  detail.textContent = "365 days with you";
+  detail.textContent = t("CountdownDetailAfter");
 }
 
 function shuffleItems(items) {
@@ -575,8 +631,8 @@ function initGiftPhotoGame(photoUrls) {
 
   function getReadyPrefix() {
     const speedText = speedMultiplier.toFixed(1);
-    if (speedMultiplier < 1) return `축하합니다! ${speedText} 속도에 당첨되었습니다! `;
-    if (speedMultiplier > 1) return `힘내세요! ${speedText} 속도군요... `;
+    if (speedMultiplier < 1) return t("GiftSpeedLucky", { speed: speedText });
+    if (speedMultiplier > 1) return t("GiftSpeedHard", { speed: speedText });
     return "";
   }
 
@@ -585,8 +641,8 @@ function initGiftPhotoGame(photoUrls) {
     const prefixMarkup = prefix ? `<p class="gift-speed-message">${prefix}</p>` : "";
     readyMessage.innerHTML = `
       ${prefixMarkup}
-      <p>화면 위에서 떨어지는 사진을 클릭해 잡는 게임입니다. 사진을 잡으면 크게 열리고 저장할 수 있어요. 한 번 지나간 사진은 다시 등장하지 않습니다.</p>
-      <strong>준비되셨나요?</strong>
+      <p>${t("GiftReadyDescription")}</p>
+      <strong>${t("GiftReadyQuestion")}</strong>
     `;
   }
 
@@ -626,9 +682,9 @@ function initGiftPhotoGame(photoUrls) {
       if (isMobileBrowser() && navigator.canShare?.({ files: [file] }) && navigator.share) {
         await navigator.share({
           files: [file],
-          title: "Gift photo",
+          title: t("GiftCapturedAlt"),
         });
-        gameStatus.textContent = "공유 창에서 사진을 저장할 수 있어요.";
+        gameStatus.textContent = t("GiftStatusShareSave");
         return;
       }
 
@@ -640,10 +696,10 @@ function initGiftPhotoGame(photoUrls) {
       anchor.click();
       anchor.remove();
       URL.revokeObjectURL(objectUrl);
-      gameStatus.textContent = "사진 다운로드를 시작했습니다.";
+      gameStatus.textContent = t("GiftStatusDownloadStarted");
     } catch (error) {
       window.open(capturedPhotoUrl, "_blank", "noopener");
-      gameStatus.textContent = "새로 열린 사진을 길게 누르거나 저장 메뉴를 사용해주세요.";
+      gameStatus.textContent = t("GiftStatusOpenPhotoToSave");
     }
   }
 
@@ -656,7 +712,7 @@ function initGiftPhotoGame(photoUrls) {
     capturedImage.src = url;
     download.href = url;
     download.download = url.split("/").pop() || "gift-photo.jpg";
-    gameStatus.textContent = "잡은 사진을 저장할 수 있어요.";
+    gameStatus.textContent = t("GiftStatusCaptured");
   }
 
   function hasFinishedRound() {
@@ -670,7 +726,7 @@ function initGiftPhotoGame(photoUrls) {
       captureView.hidden = true;
       stage.hidden = true;
       finishView.hidden = false;
-      gameStatus.textContent = "사진 잡기가 끝났습니다.";
+      gameStatus.textContent = t("GiftStatusFinished");
     }
   }
 
@@ -712,7 +768,7 @@ function initGiftPhotoGame(photoUrls) {
     button.style.setProperty("--rotate-end", `${randomBetween(-34, 34)}deg`);
     button.style.setProperty("--drift", `${randomBetween(-70, 70)}px`);
     image.src = url;
-    image.alt = "떨어지는 선물 사진";
+    image.alt = t("GiftFallingPhotoAlt");
     image.draggable = false;
 
     button.appendChild(image);
@@ -732,7 +788,7 @@ function initGiftPhotoGame(photoUrls) {
     stage.hidden = false;
     gameStartedAt = Date.now();
     photoQueue = shuffleItems(photoUrls);
-    gameStatus.textContent = "사진마다 내려오는 속도가 조금씩 달라요.";
+    gameStatus.textContent = t("GiftStatusPlaying");
     spawnPhoto();
     scheduleNextSpawn();
   }
@@ -746,7 +802,7 @@ function initGiftPhotoGame(photoUrls) {
       return;
     }
 
-    gameStatus.textContent = "남은 사진을 이어서 잡아보세요.";
+    gameStatus.textContent = t("GiftStatusResume");
     spawnPhoto();
     scheduleNextSpawn();
   }
@@ -761,7 +817,7 @@ function initGiftPhotoGame(photoUrls) {
     finishView.hidden = true;
     stage.hidden = true;
     document.body.classList.add("modal-open");
-    gameStatus.textContent = "준비되면 네 버튼을 눌러주세요.";
+    gameStatus.textContent = t("GiftReadyPromptStatus");
     setReadyMessage();
   }
 
@@ -786,10 +842,10 @@ function initGifts() {
     startPhotoGame = initGiftPhotoGame(photoUrls);
     photoGameReady = photoUrls.length > 0;
     if (photoGameReady) {
-      result.textContent = "마음에 드는 상자를 하나 골라주세요.";
+      result.textContent = t("GiftResultDefault");
       return;
     }
-    result.textContent = "첫 번째 선물은 아직 준비 중입니다.";
+    result.textContent = t("GiftNotReady");
   });
 
   shuffleItems(gifts)
@@ -801,13 +857,13 @@ function initGifts() {
       button.innerHTML = `
       <div class="gift-ribbon"></div>
       <div class="gift-lid"></div>
-      <div class="gift-body">${gift.title}</div>
+      <div class="gift-body">${t(gift.titleKey)}</div>
     `;
       button.addEventListener("click", () => {
         if (gift.type === "photoGame") {
-          result.textContent = gift.result;
+          result.textContent = t(gift.resultKey);
           if (!photoGameReady || !startPhotoGame) {
-            result.textContent = "첫 번째 선물은 아직 준비 중입니다.";
+            result.textContent = t("GiftNotReady");
             return;
           }
           startPhotoGame();
@@ -815,12 +871,12 @@ function initGifts() {
         }
 
         if (gift.type === "video") {
-          result.textContent = gift.result;
+          result.textContent = t(gift.resultKey);
           startGiftVideo(gift.video);
           return;
         }
 
-        result.textContent = gift.result;
+        result.textContent = t(gift.resultKey);
       });
       grid.appendChild(button);
     });
@@ -846,7 +902,7 @@ function initGiftVideo() {
     modal.hidden = false;
     actions.hidden = true;
     document.body.classList.add("modal-open");
-    heading.textContent = config.title || "축하 영상";
+    heading.textContent = config.titleKey ? t(config.titleKey) : t("GiftVideoFallbackTitle");
     video.src = config.src;
     download.href = config.src;
     download.download = config.downloadName || config.src.split("/").pop() || "gift-video.mp4";
@@ -893,16 +949,15 @@ function initCamera() {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       video.srcObject = stream;
-      status.textContent =
-        "카메라가 켜졌습니다. 찰칵 버튼을 눌러주세요.\n페이지를 벗어나 카메라가 멈춘 경우, '카메라 켜기' 버튼을 다시 눌러주세요.";
+      status.textContent = t("CameraStartedStatus");
     } catch (error) {
-      status.textContent = "카메라 권한을 허용해야 사용할 수 있습니다.";
+      status.textContent = t("CameraPermissionStatus");
     }
   });
 
   captureButton.addEventListener("click", async () => {
     if (!stream) {
-      status.textContent = "먼저 카메라를 켜주세요.";
+      status.textContent = t("CameraNeedsStartStatus");
       return;
     }
 
@@ -923,20 +978,20 @@ function initCamera() {
     captionCopy.textContent = polaroidCaption.copy;
     download.href = "#";
     polaroid.hidden = false;
-    captureButton.textContent = "다시 찍기";
-    status.textContent = "사진을 폴라로이드로 준비하는 중입니다.";
+    captureButton.textContent = t("CameraRetakeButton");
+    status.textContent = t("CameraPreparingStatus");
 
     await ensurePolaroidFontsLoaded();
     const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption);
     if (currentCapture !== captureVersion) return;
     download.href = framedDataUrl;
-    status.textContent = "사진이 준비됐습니다. 아래에서 저장할 수 있어요.";
+    status.textContent = t("CameraReadyStatus");
   });
 
   download.addEventListener("click", (event) => {
     if (download.getAttribute("href") === "#") {
       event.preventDefault();
-      status.textContent = "저장 파일을 준비하는 중입니다. 잠시만 기다려주세요.";
+      status.textContent = t("CameraDownloadPreparingStatus");
     }
   });
 
@@ -962,7 +1017,7 @@ function getPolaroidCaptionParts() {
   const [year, month, day] = getKstDateParts();
   return {
     date: `${year}.${month}.${day}`,
-    copy: "소중한 오늘의 기록",
+    copy: t("PolaroidCaptionCopy"),
   };
 }
 
@@ -1049,16 +1104,16 @@ function initMusic() {
 
   button.addEventListener("click", async () => {
     if (!audio.getAttribute("src")) {
-      button.textContent = "음악 파일 준비중";
+      button.textContent = t("MusicPreparingButton");
       return;
     }
 
     if (audio.paused) {
       await audio.play();
-      button.textContent = "배경음악 일시정지";
+      button.textContent = t("MusicPauseButton");
     } else {
       audio.pause();
-      button.textContent = "배경음악 재생";
+      button.textContent = t("MusicPlayButton");
     }
   });
 }
@@ -1115,9 +1170,9 @@ function mapGuestbookRows(csvText) {
   if (rows.length < 2) return [];
 
   const headers = rows[0].map((header) => header.trim());
-  const nameIndex = headers.indexOf(GUESTBOOK_CONFIG.nameColumn);
-  const messageIndex = headers.indexOf(GUESTBOOK_CONFIG.messageColumn);
-  const timestampIndex = headers.indexOf(GUESTBOOK_CONFIG.timestampColumn);
+  const nameIndex = headers.indexOf(t(GUESTBOOK_CONFIG.nameColumnKey));
+  const messageIndex = headers.indexOf(t(GUESTBOOK_CONFIG.messageColumnKey));
+  const timestampIndex = headers.indexOf(t(GUESTBOOK_CONFIG.timestampColumnKey));
 
   if (nameIndex === -1 || messageIndex === -1) return [];
 
@@ -1150,7 +1205,10 @@ function renderGuestbook(entries) {
   list.innerHTML = "";
 
   if (!entries.length) {
-    list.innerHTML = '<p class="empty-list">아직 남겨진 메세지가 없습니다.</p>';
+    const empty = document.createElement("p");
+    empty.className = "empty-list";
+    empty.textContent = t("GuestbookEmpty");
+    list.appendChild(empty);
     return;
   }
 
@@ -1221,22 +1279,22 @@ function initGuestbook() {
 
   if (!isGuestbookConfigured()) {
     sendButton.disabled = true;
-    status.textContent = "Google Form/Sheet 연결 후 저장과 목록 조회가 활성화됩니다.";
+    status.textContent = t("GuestbookNotConfigured");
     renderGuestbook([]);
     return;
   }
 
   if (isLocalFile()) {
-    status.textContent = "준과 지윤에게 한 마디씩 남겨주세요!";
+    status.textContent = t("GuestbookPrompt");
     renderGuestbook([]);
     return;
   }
 
-  status.textContent = "준과 지윤에게 한 마디씩 남겨주세요!";
+  status.textContent = t("GuestbookPrompt");
   loadGuestbookEntries()
     .then(renderGuestbook)
     .catch(() => {
-      status.textContent = "방명록을 불러오지 못했습니다.";
+      status.textContent = t("GuestbookLoadFailed");
     });
 
   form.addEventListener("submit", async (event) => {
@@ -1247,7 +1305,7 @@ function initGuestbook() {
     if (!name || !message) return;
 
     sendButton.disabled = true;
-    status.textContent = "소중한 메세지를 저장하는 중입니다.";
+    status.textContent = t("GuestbookSavingStatus");
     submitGoogleForm(name, message);
 
     try {
@@ -1255,28 +1313,39 @@ function initGuestbook() {
       if (!entries) throw new Error("Saved entry was not found.");
       renderGuestbook(entries);
       form.reset();
-      status.textContent = "저장됐어요. 최신 메세지가 위에 표시됩니다.";
+      status.textContent = t("GuestbookSavedStatus");
     } catch (error) {
       await copyMessageToClipboard(message);
-      alert(GUESTBOOK_FAIL_MESSAGE);
-      status.textContent = "저장 여부를 확인하지 못했습니다.";
+      alert(t(GUESTBOOK_FAIL_MESSAGE));
+      status.textContent = t("GuestbookSaveUnknownStatus");
     } finally {
       sendButton.disabled = false;
     }
   });
 }
 
-window.addEventListener("hashchange", setActivePage);
-initGate();
-initAdminAuth();
-initAdminPage();
-initProtectedPages();
-setActivePage();
-initGifts();
-initLetter();
-initCamera();
-initCalendar();
-initMusic();
-initGuestbook();
-updateCountdown();
-setInterval(updateCountdown, 1000);
+async function boot() {
+  try {
+    await loadResourceStrings();
+  } catch (error) {
+    console.error(error);
+  }
+
+  applyResourceStrings();
+  window.addEventListener("hashchange", setActivePage);
+  initGate();
+  initAdminAuth();
+  initAdminPage();
+  initProtectedPages();
+  setActivePage();
+  initGifts();
+  initLetter();
+  initCamera();
+  initCalendar();
+  initMusic();
+  initGuestbook();
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+}
+
+boot();
