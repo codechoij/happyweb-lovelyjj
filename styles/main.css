@@ -490,6 +490,7 @@ h2 {
   color: var(--ink);
   line-height: 1.7;
   font-weight: 400;
+  white-space: pre-line;
 }
 
 .gift-ready-box .gift-speed-message {
@@ -631,6 +632,7 @@ h2 {
   font-size: clamp(20px, 3vw, 30px);
   font-weight: 600;
   line-height: 1.45;
+  white-space: pre-line;
 }
 
 .protected-password-form {
