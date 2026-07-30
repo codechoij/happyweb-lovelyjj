@@ -71,7 +71,8 @@ a {
 .calendar,
 .love-note,
 .letter-paper,
-.guestbook {
+.guestbook,
+.protected-card {
   border: 1px solid rgba(234, 217, 213, 0.9);
   background: rgba(255, 250, 247, 0.84);
   box-shadow: var(--shadow);
@@ -109,7 +110,7 @@ a {
   min-height: 38px;
   padding: 9px 13px;
   border-radius: 999px;
-  color: var(--muted);
+  color: var(--ink);
   font-size: 14px;
   font-weight: 700;
 }
@@ -141,7 +142,8 @@ a {
 
 .gate-card,
 .home-content,
-.kick-screen {
+.kick-screen,
+.protected-gate {
   width: min(780px, 100%);
   margin: 0 auto;
   text-align: center;
@@ -193,7 +195,8 @@ h2 {
 
 .gate-actions,
 .camera-actions,
-.kick-actions {
+.kick-actions,
+.protected-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -611,6 +614,40 @@ h2 {
   gap: 10px;
 }
 
+.protected-gate {
+  display: grid;
+  min-height: calc(100vh - 190px);
+  place-items: center;
+}
+
+.protected-card {
+  width: 100%;
+  padding: 42px 28px;
+  border-radius: 8px;
+}
+
+.protected-card h2 {
+  color: var(--ink);
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.protected-password-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  width: min(520px, 100%);
+  margin: 22px auto 0;
+  text-align: left;
+}
+
+.protected-password-form .form-status {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
 @keyframes fall-photo {
   from {
     transform: translate3d(0, 0, 0) rotate(var(--rotate-start));
@@ -1004,7 +1041,8 @@ h2 {
 }
 
 .admin-form label,
-.password-field {
+.password-field,
+.protected-password-form label {
   display: grid;
   gap: 8px;
   color: var(--muted);
@@ -1013,7 +1051,8 @@ h2 {
 }
 
 .admin-form input,
-.password-field input {
+.password-field input,
+.protected-password-form input {
   width: 100%;
   min-height: 50px;
   border: 1px solid var(--line);
@@ -1027,7 +1066,8 @@ h2 {
 }
 
 .admin-form input:focus,
-.password-field input:focus {
+.password-field input:focus,
+.protected-password-form input:focus {
   outline: none;
   border-color: var(--rose);
   box-shadow: 0 0 0 3px rgba(233, 93, 115, 0.14);
@@ -1107,8 +1147,13 @@ h2 {
   .camera-layout,
   .love-layout,
   .guestbook-form,
-  .admin-layout {
+  .admin-layout,
+  .protected-password-form {
     grid-template-columns: 1fr;
+  }
+
+  .protected-password-form .primary-btn {
+    width: 100%;
   }
 
   .admin-sidebar {
