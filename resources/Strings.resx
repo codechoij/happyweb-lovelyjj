@@ -148,11 +148,11 @@
   <data name="PasswordEyebrow" xml:space="preserve"><value>Password</value></data>
   <data name="AdminPasswordMenu" xml:space="preserve"><value>비밀번호 관리</value></data>
   <data name="AdminBackHome" xml:space="preserve"><value>홈으로</value></data>
-  <data name="AdminPasswordTitle" xml:space="preserve"><value>비밀번호 관리</value></data>
+  <data name="AdminPasswordTitle" xml:space="preserve"><value>페이지 접근 비밀번호 관리</value></data>
   <data name="AdminNewPasswordLabel" xml:space="preserve"><value>새 비밀번호</value></data>
   <data name="AdminConfirmPasswordLabel" xml:space="preserve"><value>비밀번호 확인</value></data>
   <data name="AdminSaveButton" xml:space="preserve"><value>변경 저장</value></data>
-  <data name="AdminPasswordHelp" xml:space="preserve"><value>관리자와 보호 페이지 접근 비밀번호를 변경할 수 있습니다.</value></data>
+  <data name="AdminPasswordHelp" xml:space="preserve"><value>사용자 접근 제어 페이지에 접근할 때 입력하는 비밀번호만 변경됩니다.</value></data>
   <data name="AdminAuthTitle" xml:space="preserve"><value>관리자 비밀번호</value></data>
   <data name="AdminPasswordPrompt" xml:space="preserve"><value>관리자 비밀번호를 입력해주세요.</value></data>
   <data name="AdminRequestFailed" xml:space="preserve"><value>관리자 요청을 처리하지 못했습니다.</value></data>

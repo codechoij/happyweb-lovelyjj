@@ -202,7 +202,7 @@ async function requestAdminApi(action, payload = {}) {
 
 const adminAuth = {
   async verifyPassword(password) {
-    const data = await sharedPasswordAuth.verifyPassword(password);
+    const data = await requestAdminApi("verifyAdminPassword", { password });
     setAdminSessionToken(data.token);
     return data;
   },
@@ -222,7 +222,7 @@ const sharedPasswordAuth = {
 };
 
 function getAdminErrorMessage(error) {
-  if (error.code === "BAD_PASSWORD") return t("PasswordBad");
+  if (error.code === "BAD_PASSWORD" || error.code === "BAD_ADMIN_PASSWORD") return t("PasswordBad");
   if (error.code === "LOCKED") return t("PasswordLocked");
   if (error.code === "UNAUTHORIZED") return t("AdminUnauthorized");
   if (error.code === "WEAK_PASSWORD") return t("PasswordWeak");
