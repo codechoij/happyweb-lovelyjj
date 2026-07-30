@@ -62,12 +62,15 @@ const ADMIN_SESSION_TOKEN_KEY = "our-day-admin-session-token";
 
 const ADMIN_SHORTCUT_CLICK_COUNT = 15;
 const ADMIN_SHORTCUT_WINDOW_MS = 4500;
+const PROTECTED_PAGE_IDS = ["gift", "letter"];
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
 let lastPublicHash = "#home";
 let adminSessionToken = "";
+let activePageId = "home";
+let unlockedProtectedPages = new Set();
 
 function isLocalFile() {
   return window.location.protocol === "file:";
@@ -143,7 +146,7 @@ async function requestAdminApi(action, payload = {}) {
 
 const adminAuth = {
   async verifyPassword(password) {
-    const data = await requestAdminApi("verifyPassword", { password });
+    const data = await sharedPasswordAuth.verifyPassword(password);
     setAdminSessionToken(data.token);
     return data;
   },
@@ -156,12 +159,74 @@ const adminAuth = {
   },
 };
 
+const sharedPasswordAuth = {
+  verifyPassword(password) {
+    return requestAdminApi("verifyPassword", { password });
+  },
+};
+
 function getAdminErrorMessage(error) {
   if (error.code === "BAD_PASSWORD") return "비밀번호가 틀렸습니다. 다시 입력해주세요.";
   if (error.code === "LOCKED") return "비밀번호 시도가 많아 잠시 잠겼습니다. 나중에 다시 시도해주세요.";
   if (error.code === "UNAUTHORIZED") return "관리자 인증이 만료됐습니다. 다시 들어와주세요.";
   if (error.code === "WEAK_PASSWORD") return "비밀번호는 4자 이상으로 입력해주세요.";
-  return "관리자 서버와 통신하지 못했습니다. 잠시 후 다시 시도해주세요.";
+  return "비밀번호 서버와 통신하지 못했습니다. 잠시 후 다시 시도해주세요.";
+}
+
+function isProtectedPage(pageId) {
+  return PROTECTED_PAGE_IDS.includes(pageId);
+}
+
+function getProtectedPageElements(pageId) {
+  return {
+    gate: $(`[data-protected-gate="${pageId}"]`),
+    content: $(`[data-protected-content="${pageId}"]`),
+    form: $(`[data-protected-form="${pageId}"]`),
+    input: $(`[data-protected-password="${pageId}"]`),
+    status: $(`[data-protected-status="${pageId}"]`),
+  };
+}
+
+function resetProtectedPage(pageId) {
+  const { gate, content, form, input, status } = getProtectedPageElements(pageId);
+
+  if (pageId === "gift") {
+    const giftModal = $("[data-gift-modal]");
+    const giftVideoModal = $("[data-gift-video-modal]");
+    const giftVideo = $("[data-gift-video]");
+
+    if (giftModal) giftModal.hidden = true;
+    if (giftVideoModal) giftVideoModal.hidden = true;
+    if (giftVideo) giftVideo.pause();
+    document.body.classList.remove("modal-open");
+  }
+
+  unlockedProtectedPages.delete(pageId);
+  if (gate) gate.hidden = false;
+  if (content) content.hidden = true;
+  if (form) {
+    form.hidden = true;
+    form.reset();
+  }
+  if (input) input.value = "";
+  if (status) status.textContent = "관리자 페이지에서 설정한 비밀번호를 입력해주세요.";
+}
+
+function unlockProtectedPage(pageId) {
+  const { gate, content, form } = getProtectedPageElements(pageId);
+
+  unlockedProtectedPages.add(pageId);
+  if (gate) gate.hidden = true;
+  if (content) content.hidden = false;
+  if (form) form.reset();
+}
+
+function syncProtectedPage(pageId) {
+  const { gate, content } = getProtectedPageElements(pageId);
+  const isUnlocked = unlockedProtectedPages.has(pageId);
+
+  if (gate) gate.hidden = isUnlocked;
+  if (content) content.hidden = !isUnlocked;
 }
 
 function setActivePage() {
@@ -180,8 +245,18 @@ function setActivePage() {
     return;
   }
 
+  if (activePageId !== activePage) {
+    PROTECTED_PAGE_IDS.forEach((pageId) => {
+      if (pageId !== activePage) resetProtectedPage(pageId);
+    });
+  }
+
   $$(".page").forEach((page) => page.classList.toggle("active", page.id === activePage));
   $$(".nav a").forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${activePage}`));
+
+  if (isProtectedPage(activePage)) {
+    syncProtectedPage(activePage);
+  }
 
   if (hashTarget !== activePage && document.getElementById(hashTarget)) {
     requestAnimationFrame(() => document.getElementById(hashTarget)?.scrollIntoView({ block: "start" }));
@@ -190,6 +265,8 @@ function setActivePage() {
   if (activePage !== "admin") {
     lastPublicHash = window.location.hash || "#home";
   }
+
+  activePageId = activePage;
 }
 
 function initGate() {
@@ -348,6 +425,46 @@ function initAdminPage() {
       status.textContent = getAdminErrorMessage(error);
     }
   });
+}
+
+function initProtectedPages() {
+  $$("[data-protected-confirm]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const pageId = button.dataset.protectedConfirm;
+      const { form, input, status } = getProtectedPageElements(pageId);
+
+      if (!form || !input || !status) return;
+
+      form.hidden = false;
+      status.textContent = "관리자 페이지에서 설정한 비밀번호를 입력해주세요.";
+      requestAnimationFrame(() => input.focus());
+    });
+  });
+
+  $$("[data-protected-form]").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const pageId = form.dataset.protectedForm;
+      const { input, status } = getProtectedPageElements(pageId);
+      const password = input?.value || "";
+
+      if (!pageId || !input || !status || !password) return;
+
+      status.textContent = "비밀번호를 확인하는 중입니다.";
+
+      try {
+        await sharedPasswordAuth.verifyPassword(password);
+        status.textContent = "확인됐습니다.";
+        unlockProtectedPage(pageId);
+      } catch (error) {
+        input.value = "";
+        status.textContent = getAdminErrorMessage(error);
+        input.focus();
+      }
+    });
+  });
+
+  PROTECTED_PAGE_IDS.forEach(resetProtectedPage);
 }
 
 function updateCountdown() {
@@ -1153,6 +1270,7 @@ window.addEventListener("hashchange", setActivePage);
 initGate();
 initAdminAuth();
 initAdminPage();
+initProtectedPages();
 setActivePage();
 initGifts();
 initLetter();

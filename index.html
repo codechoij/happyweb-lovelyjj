@@ -96,85 +96,127 @@
         </section>
 
         <section id="gift" class="page" aria-labelledby="gift-title">
-          <div class="section-heading">
-            <p class="eyebrow">Pick one</p>
-            <h2 id="gift-title">Gift</h2>
-          </div>
-          <div class="gift-grid" data-gift-grid></div>
-          <p class="result-text" data-gift-result>마음에 드는 상자를 하나 골라주세요.</p>
-          <div class="gift-game-modal" data-gift-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-game-title">
-            <div class="gift-game-toolbar">
-              <div>
-                <p class="eyebrow">Gift</p>
-                <h3 id="gift-game-title">사진을 잡아보세요</h3>
+          <div class="protected-gate" data-protected-gate="gift">
+            <div class="protected-card">
+              <p class="eyebrow">Private</p>
+              <h2>본인 확인하겠습니다!<br />쭌이가 아니라면 지금이라도 나가세요!</h2>
+              <div class="protected-actions">
+                <button class="primary-btn" type="button" data-protected-confirm="gift">본인확인</button>
+                <a class="ghost-btn" href="#camera">기념사진 찍기</a>
+                <a class="ghost-btn" href="#guestbook">축하하기</a>
               </div>
-              <p data-gift-game-status>떨어지는 사진을 클릭하세요.</p>
-              <button class="ghost-btn" type="button" data-gift-close>나가기</button>
-            </div>
-            <div class="gift-ready-view" data-gift-ready-view>
-              <div class="gift-ready-box">
-                <div data-gift-ready-message></div>
-                <button class="primary-btn" type="button" data-gift-ready-start>네</button>
-              </div>
-            </div>
-            <div class="gift-stage" data-gift-stage></div>
-            <div class="gift-capture-view" data-gift-capture-view hidden>
-              <img data-gift-captured-image alt="선택한 선물 사진" />
-              <div class="gift-capture-actions">
-                <a class="primary-btn" data-gift-download href="#" role="button" download="gift-photo.jpg">사진 저장하기</a>
-                <button class="ghost-btn" type="button" data-gift-replay>다시 잡기</button>
-                <button class="ghost-btn" type="button" data-gift-captured-close>닫기</button>
-              </div>
-            </div>
-            <div class="gift-finish-view" data-gift-finish-view hidden>
-              <div class="gift-finish-box">
-                <p>
-                  모든 사진이 지나갔어요. 다음기회를 노려보세요.<br />
-                  <br />
-                  토끼지윤의 토끼기 능력 상승! (+1)
-                </p>
-                <button class="primary-btn" type="button" data-gift-finish-confirm>확인</button>
-              </div>
+              <form class="protected-password-form" data-protected-form="gift" hidden>
+                <label>
+                  <span>비밀번호</span>
+                  <input data-protected-password="gift" type="password" autocomplete="current-password" required />
+                </label>
+                <button class="primary-btn" type="submit">입장하기</button>
+                <p class="form-status" data-protected-status="gift" aria-live="polite">관리자 페이지에서 설정한 비밀번호를 입력해주세요.</p>
+              </form>
             </div>
           </div>
-          <div class="gift-video-modal" data-gift-video-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-video-title">
-            <div class="gift-video-box">
-              <div class="gift-video-heading">
+          <div data-protected-content="gift" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">Pick one</p>
+              <h2 id="gift-title">Gift</h2>
+            </div>
+            <div class="gift-grid" data-gift-grid></div>
+            <p class="result-text" data-gift-result>마음에 드는 상자를 하나 골라주세요.</p>
+            <div class="gift-game-modal" data-gift-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-game-title">
+              <div class="gift-game-toolbar">
                 <div>
                   <p class="eyebrow">Gift</p>
-                  <h3 id="gift-video-title" data-gift-video-title>1주년 축하 영상</h3>
+                  <h3 id="gift-game-title">사진을 잡아보세요</h3>
                 </div>
-                <button class="ghost-btn" type="button" data-gift-video-close>나가기</button>
+                <p data-gift-game-status>떨어지는 사진을 클릭하세요.</p>
+                <button class="ghost-btn" type="button" data-gift-close>나가기</button>
               </div>
-              <video data-gift-video playsinline controls preload="metadata">
-                <source src="./assets/gift-videos/video%20(1).mp4" type="video/mp4" />
-              </video>
-              <div class="gift-video-actions" data-gift-video-actions hidden>
-                <button class="primary-btn" type="button" data-gift-video-replay>다시 보기</button>
-                <a class="ghost-btn" data-gift-video-download href="./assets/gift-videos/video%20(1).mp4" download="video (1).mp4">다운로드</a>
+              <div class="gift-ready-view" data-gift-ready-view>
+                <div class="gift-ready-box">
+                  <div data-gift-ready-message></div>
+                  <button class="primary-btn" type="button" data-gift-ready-start>네</button>
+                </div>
+              </div>
+              <div class="gift-stage" data-gift-stage></div>
+              <div class="gift-capture-view" data-gift-capture-view hidden>
+                <img data-gift-captured-image alt="선택한 선물 사진" />
+                <div class="gift-capture-actions">
+                  <a class="primary-btn" data-gift-download href="#" role="button" download="gift-photo.jpg">사진 저장하기</a>
+                  <button class="ghost-btn" type="button" data-gift-replay>다시 잡기</button>
+                  <button class="ghost-btn" type="button" data-gift-captured-close>닫기</button>
+                </div>
+              </div>
+              <div class="gift-finish-view" data-gift-finish-view hidden>
+                <div class="gift-finish-box">
+                  <p>
+                    모든 사진이 지나갔어요. 다음기회를 노려보세요.<br />
+                    <br />
+                    토끼지윤의 토끼기 능력 상승! (+1)
+                  </p>
+                  <button class="primary-btn" type="button" data-gift-finish-confirm>확인</button>
+                </div>
+              </div>
+            </div>
+            <div class="gift-video-modal" data-gift-video-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-video-title">
+              <div class="gift-video-box">
+                <div class="gift-video-heading">
+                  <div>
+                    <p class="eyebrow">Gift</p>
+                    <h3 id="gift-video-title" data-gift-video-title>1주년 축하 영상</h3>
+                  </div>
+                  <button class="ghost-btn" type="button" data-gift-video-close>나가기</button>
+                </div>
+                <video data-gift-video playsinline controls preload="metadata">
+                  <source src="./assets/gift-videos/video%20(1).mp4" type="video/mp4" />
+                </video>
+                <div class="gift-video-actions" data-gift-video-actions hidden>
+                  <button class="primary-btn" type="button" data-gift-video-replay>다시 보기</button>
+                  <a class="ghost-btn" data-gift-video-download href="./assets/gift-videos/video%20(1).mp4" download="video (1).mp4">다운로드</a>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         <section id="letter" class="page" aria-labelledby="letter-title">
-          <div class="section-heading">
-            <p class="eyebrow">For you</p>
-            <h2 id="letter-title">Letter</h2>
+          <div class="protected-gate" data-protected-gate="letter">
+            <div class="protected-card">
+              <p class="eyebrow">Private</p>
+              <h2>본인 확인하겠습니다!<br />쭌이가 아니라면 지금이라도 나가세요!</h2>
+              <div class="protected-actions">
+                <button class="primary-btn" type="button" data-protected-confirm="letter">본인확인</button>
+                <a class="ghost-btn" href="#camera">기념사진 찍기</a>
+                <a class="ghost-btn" href="#guestbook">축하하기</a>
+              </div>
+              <form class="protected-password-form" data-protected-form="letter" hidden>
+                <label>
+                  <span>비밀번호</span>
+                  <input data-protected-password="letter" type="password" autocomplete="current-password" required />
+                </label>
+                <button class="primary-btn" type="submit">입장하기</button>
+                <p class="form-status" data-protected-status="letter" aria-live="polite">관리자 페이지에서 설정한 비밀번호를 입력해주세요.</p>
+              </form>
+            </div>
           </div>
-          <button class="letter-envelope" type="button" data-letter-toggle aria-expanded="false">
-            <span class="envelope-flap"></span>
-            <span class="envelope-body">Open</span>
-          </button>
-          <article class="letter-paper" data-letter hidden>
-            <p>To. 가장 소중한 사람에게</p>
-            <p>
-              여기에 실제 편지 내용을 넣으면 돼요. 지금은 뼈대라서 짧은 문장만
-              넣어두었습니다. 나중에 여러 장 편지, 날짜별 공개, 비밀번호 확인 같은
-              기능을 붙일 수 있게 분리해둘 수 있습니다.
-            </p>
-            <p>From. 나</p>
-          </article>
+          <div data-protected-content="letter" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">For you</p>
+              <h2 id="letter-title">Letter</h2>
+            </div>
+            <button class="letter-envelope" type="button" data-letter-toggle aria-expanded="false">
+              <span class="envelope-flap"></span>
+              <span class="envelope-body">Open</span>
+            </button>
+            <article class="letter-paper" data-letter hidden>
+              <p>To. 가장 소중한 사람에게</p>
+              <p>
+                여기에 실제 편지 내용을 넣으면 돼요. 지금은 뼈대라서 짧은 문장만
+                넣어두었습니다. 나중에 여러 장 편지, 날짜별 공개, 비밀번호 확인 같은
+                기능을 붙일 수 있게 분리해둘 수 있습니다.
+              </p>
+              <p>From. 나</p>
+            </article>
+          </div>
         </section>
 
         <section id="camera" class="page" aria-labelledby="camera-title">
@@ -288,7 +330,7 @@
                   <div class="admin-form-actions">
                     <button class="primary-btn" type="submit">변경 저장</button>
                   </div>
-                  <p class="form-status" data-admin-password-status aria-live="polite">관리자 페이지 접근 비밀번호를 변경할 수 있습니다.</p>
+                  <p class="form-status" data-admin-password-status aria-live="polite">관리자와 보호 페이지 접근 비밀번호를 변경할 수 있습니다.</p>
                 </form>
               </div>
             </section>
