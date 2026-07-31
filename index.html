@@ -205,11 +205,42 @@
               <span class="envelope-flap"></span>
               <span class="envelope-body" data-i18n="EnvelopeOpen"></span>
             </button>
-            <article class="letter-paper" data-letter hidden>
-              <p data-i18n="LetterTo"></p>
-              <p data-i18n="LetterBody"></p>
-              <p data-i18n="LetterFrom"></p>
-            </article>
+            <div class="letter-book" data-letter hidden>
+              <article class="letter-description-bubble" data-letter-description-page>
+                <p class="eyebrow" data-i18n="LetterDescriptionEyebrow"></p>
+                <h3 data-i18n="LetterDescriptionTitle"></h3>
+                <p data-i18n="LetterDescriptionBody"></p>
+                <button class="primary-btn" type="button" data-letter-start data-i18n="LetterDescriptionOpenButton"></button>
+              </article>
+
+              <article class="letter-paper letter-page" data-letter-page hidden>
+                <p class="letter-signature letter-to" data-letter-to data-i18n="LetterTo"></p>
+                <p data-letter-page-body></p>
+                <p class="letter-signature letter-from" data-letter-from data-i18n="LetterFrom"></p>
+                <p class="letter-page-number" data-letter-page-number></p>
+              </article>
+
+              <article class="letter-paper letter-page letter-page-locked" data-letter-locked-page hidden>
+                <div class="letter-locked-preview" aria-hidden="true">
+                  <p class="letter-signature letter-to" data-letter-locked-to data-i18n="LetterTo"></p>
+                  <p data-letter-locked-body></p>
+                  <p class="letter-signature letter-from" data-letter-locked-from data-i18n="LetterFrom"></p>
+                </div>
+                <div class="letter-locked-message">
+                  <p class="eyebrow" data-i18n="LetterLockedEyebrow"></p>
+                  <h3 data-i18n="LetterLockedTitle"></h3>
+                  <p data-letter-locked-release></p>
+                </div>
+              </article>
+
+              <div class="letter-page-actions" data-letter-actions hidden>
+                <button class="ghost-btn" type="button" data-letter-prev data-i18n="LetterPreviousButton" aria-label="이전 장" title="이전 장"></button>
+                <button class="primary-btn" type="button" data-letter-next data-i18n="LetterNextButton" aria-label="다음 장" title="다음 장"></button>
+                <a class="ghost-btn" href="#home" data-letter-home data-i18n="LetterHomeButton"></a>
+                <button class="primary-btn" type="button" data-letter-save data-i18n="LetterSaveButton"></button>
+              </div>
+              <p class="form-status letter-status" data-letter-status aria-live="polite"></p>
+            </div>
           </div>
         </section>
 
