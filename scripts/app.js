@@ -1145,6 +1145,32 @@ function initCamera() {
     status.textContent = t("CameraReadyStatus");
   }
 
+  async function showCapturedCanvas(canvas) {
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+    const polaroidCaption = getPolaroidCaptionParts();
+    const currentCapture = captureVersion + 1;
+    captureVersion = currentCapture;
+    const currentRender = ++renderVersion;
+    capturedCanvas = canvas;
+    capturedCaption = polaroidCaption;
+
+    photo.src = dataUrl;
+    polaroid.style.setProperty("--polaroid-photo-ratio", `${canvas.width} / ${canvas.height}`);
+    captionDate.textContent = polaroidCaption.date;
+    captionCopy.textContent = polaroidCaption.copy;
+    download.href = "#";
+    polaroid.hidden = false;
+    refreshPolaroidPreview();
+    captureButton.textContent = t("CameraRetakeButton");
+    status.textContent = t("CameraPreparingStatus");
+
+    await ensurePolaroidFontsLoaded();
+    const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption, getSelectedPolaroidOptions());
+    if (currentCapture !== captureVersion || currentRender !== renderVersion) return;
+    download.href = framedDataUrl;
+    status.textContent = t("CameraReadyStatus");
+  }
+
   styleInputs.forEach((input) => {
     input.addEventListener("change", () => {
       refreshPolaroidPreview();
@@ -1177,29 +1203,7 @@ function initCamera() {
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
-    const polaroidCaption = getPolaroidCaptionParts();
-    const currentCapture = captureVersion + 1;
-    captureVersion = currentCapture;
-    const currentRender = ++renderVersion;
-    capturedCanvas = canvas;
-    capturedCaption = polaroidCaption;
-
-    photo.src = dataUrl;
-    polaroid.style.setProperty("--polaroid-photo-ratio", `${canvas.width} / ${canvas.height}`);
-    captionDate.textContent = polaroidCaption.date;
-    captionCopy.textContent = polaroidCaption.copy;
-    download.href = "#";
-    polaroid.hidden = false;
-    refreshPolaroidPreview();
-    captureButton.textContent = t("CameraRetakeButton");
-    status.textContent = t("CameraPreparingStatus");
-
-    await ensurePolaroidFontsLoaded();
-    const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption, getSelectedPolaroidOptions());
-    if (currentCapture !== captureVersion || currentRender !== renderVersion) return;
-    download.href = framedDataUrl;
-    status.textContent = t("CameraReadyStatus");
+    await showCapturedCanvas(canvas);
   });
 
   download.addEventListener("click", (event) => {
@@ -1346,7 +1350,7 @@ function drawPolaroidPattern(context, frame, pattern, accentColor, regions = nul
   if (pattern === "dots") {
     context.save();
     applyFrameRegions();
-    context.globalAlpha = 1;
+    context.globalAlpha = 0.24;
     context.fillStyle = accentColor;
 
     const gap = Math.max(42, Math.round(frame.width * 0.055));
@@ -1367,13 +1371,13 @@ function drawPolaroidPattern(context, frame, pattern, accentColor, regions = nul
   if (pattern === "hearts") {
     context.save();
     applyFrameRegions();
-    context.globalAlpha = 1;
+    context.globalAlpha = 0.2;
     context.fillStyle = accentColor;
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.font = `${Math.max(24, Math.round(frame.width * 0.025))}px Arial, sans-serif`;
+    context.font = `${Math.max(17, Math.round(frame.width * 0.019))}px Arial, sans-serif`;
 
-    const gap = Math.max(46, Math.round(frame.width * 0.038));
+    const gap = Math.max(58, Math.round(frame.width * 0.052));
     for (let y = gap / 2; y < frame.height; y += gap) {
       for (let x = gap / 2; x < frame.width; x += gap) {
         context.fillText("♥", x, y);
