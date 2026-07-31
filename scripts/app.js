@@ -69,6 +69,44 @@ const TRUSTED_TIME_SYNC_INTERVAL_MS = 60 * 1000;
 const TRUSTED_TIME_RETRY_INTERVAL_MS = 10 * 1000;
 const PROTECTED_PAGE_IDS = ["gift", "letter"];
 
+const POLAROID_FRAME_STYLES = {
+  classic: {
+    background: "#ffffff",
+    captionColor: "#756d78",
+    accent: "#ead9d5",
+  },
+  rose: {
+    background: "#fff0f2",
+    captionColor: "#9d3950",
+    accent: "#e95d73",
+  },
+  mint: {
+    background: "#edf9f5",
+    captionColor: "#357667",
+    accent: "#79c7b4",
+  },
+  butter: {
+    background: "#fff7df",
+    captionColor: "#8c6930",
+    accent: "#ffd983",
+  },
+};
+
+const POLAROID_FONT_STYLES = {
+  default: {
+    dateFamily: '"Gamja Flower", cursive',
+    copyFamily: '"Single Day", cursive',
+  },
+  gamja: {
+    dateFamily: '"Gamja Flower", cursive',
+    copyFamily: '"Gamja Flower", cursive',
+  },
+  single: {
+    dateFamily: '"Single Day", cursive',
+    copyFamily: '"Single Day", cursive',
+  },
+};
+
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
@@ -1081,8 +1119,39 @@ function initCamera() {
   const captionDate = $("[data-polaroid-date]");
   const captionCopy = $("[data-polaroid-copy]");
   const captureButton = $("[data-camera-capture]");
+  const styleInputs = $$("[data-polaroid-style], [data-polaroid-pattern], [data-polaroid-font]");
   let stream;
   let captureVersion = 0;
+  let capturedCanvas = null;
+  let capturedCaption = null;
+
+  function refreshPolaroidPreview() {
+    const options = getSelectedPolaroidOptions();
+    applyPolaroidPreviewStyle(polaroid, options);
+  }
+
+  async function refreshPolaroidDownload() {
+    if (!capturedCanvas || !capturedCaption || polaroid.hidden) return;
+
+    const currentCapture = captureVersion;
+    download.href = "#";
+    status.textContent = t("CameraPreparingStatus");
+
+    await ensurePolaroidFontsLoaded();
+    const framedDataUrl = createPolaroidDataUrl(capturedCanvas, capturedCaption, getSelectedPolaroidOptions());
+    if (currentCapture !== captureVersion) return;
+    download.href = framedDataUrl;
+    status.textContent = t("CameraReadyStatus");
+  }
+
+  styleInputs.forEach((input) => {
+    input.addEventListener("change", () => {
+      refreshPolaroidPreview();
+      refreshPolaroidDownload();
+    });
+  });
+
+  refreshPolaroidPreview();
 
   $("[data-camera-start]").addEventListener("click", async () => {
     try {
@@ -1111,17 +1180,20 @@ function initCamera() {
     const polaroidCaption = getPolaroidCaptionParts();
     const currentCapture = captureVersion + 1;
     captureVersion = currentCapture;
+    capturedCanvas = canvas;
+    capturedCaption = polaroidCaption;
 
     photo.src = dataUrl;
     captionDate.textContent = polaroidCaption.date;
     captionCopy.textContent = polaroidCaption.copy;
     download.href = "#";
     polaroid.hidden = false;
+    refreshPolaroidPreview();
     captureButton.textContent = t("CameraRetakeButton");
     status.textContent = t("CameraPreparingStatus");
 
     await ensurePolaroidFontsLoaded();
-    const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption);
+    const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption, getSelectedPolaroidOptions());
     if (currentCapture !== captureVersion) return;
     download.href = framedDataUrl;
     status.textContent = t("CameraReadyStatus");
@@ -1139,6 +1211,36 @@ function initCamera() {
       video.play().catch(() => {});
     }
   });
+}
+
+function getCheckedValue(selector, fallback) {
+  return document.querySelector(`${selector}:checked`)?.value || fallback;
+}
+
+function getSelectedPolaroidOptions() {
+  const frame = getCheckedValue("[data-polaroid-style]", "classic");
+  const pattern = getCheckedValue("[data-polaroid-pattern]", "none");
+  const font = getCheckedValue("[data-polaroid-font]", "default");
+
+  return {
+    frame: POLAROID_FRAME_STYLES[frame] ? frame : "classic",
+    pattern: ["none", "dots", "hearts"].includes(pattern) ? pattern : "none",
+    font: POLAROID_FONT_STYLES[font] ? font : "default",
+  };
+}
+
+function applyPolaroidPreviewStyle(polaroid, options) {
+  const frameStyle = POLAROID_FRAME_STYLES[options.frame] || POLAROID_FRAME_STYLES.classic;
+  const fontStyle = POLAROID_FONT_STYLES[options.font] || POLAROID_FONT_STYLES.default;
+
+  polaroid.dataset.frame = options.frame;
+  polaroid.dataset.pattern = options.pattern;
+  polaroid.dataset.font = options.font;
+  polaroid.style.setProperty("--polaroid-bg", frameStyle.background);
+  polaroid.style.setProperty("--polaroid-caption", frameStyle.captionColor);
+  polaroid.style.setProperty("--polaroid-accent", frameStyle.accent);
+  polaroid.style.setProperty("--polaroid-date-font", fontStyle.dateFamily);
+  polaroid.style.setProperty("--polaroid-copy-font", fontStyle.copyFamily);
 }
 
 function getKstDateParts() {
@@ -1168,7 +1270,7 @@ async function ensurePolaroidFontsLoaded() {
   ]);
 }
 
-function createPolaroidDataUrl(sourceCanvas, caption) {
+function createPolaroidDataUrl(sourceCanvas, caption, options = getSelectedPolaroidOptions()) {
   const frame = document.createElement("canvas");
   const photoPadding = Math.round(sourceCanvas.width * 0.055);
   const topPadding = photoPadding;
@@ -1177,46 +1279,89 @@ function createPolaroidDataUrl(sourceCanvas, caption) {
   let captionSize = Math.max(28, Math.round(sourceCanvas.width * 0.038));
   const imageWidth = sourceCanvas.width;
   const imageHeight = sourceCanvas.height;
+  const frameStyle = POLAROID_FRAME_STYLES[options.frame] || POLAROID_FRAME_STYLES.classic;
+  const fontStyle = POLAROID_FONT_STYLES[options.font] || POLAROID_FONT_STYLES.default;
 
   frame.width = imageWidth + sidePadding * 2;
   frame.height = imageHeight + topPadding + bottomPadding;
 
   const context = frame.getContext("2d");
-  context.fillStyle = "#ffffff";
+  context.fillStyle = frameStyle.background;
   context.fillRect(0, 0, frame.width, frame.height);
+  drawPolaroidPattern(context, frame, options.pattern, frameStyle.accent);
   context.drawImage(sourceCanvas, sidePadding, topPadding, imageWidth, imageHeight);
 
   const captionY = topPadding + imageHeight + bottomPadding / 2;
   const gap = Math.round(captionSize * 0.28);
 
   while (captionSize > 24) {
-    context.font = `${captionSize}px "Gamja Flower", cursive`;
+    context.font = `${captionSize}px ${fontStyle.dateFamily}`;
     const dateWidth = context.measureText(caption.date).width;
-    context.font = `${captionSize}px "Single Day", cursive`;
+    context.font = `${captionSize}px ${fontStyle.copyFamily}`;
     const copyWidth = context.measureText(caption.copy).width;
     if (dateWidth + gap + copyWidth <= frame.width - sidePadding * 2) break;
     captionSize -= 2;
   }
 
-  context.fillStyle = "#756d78";
+  context.fillStyle = frameStyle.captionColor;
   context.textBaseline = "middle";
 
-  context.font = `${captionSize}px "Gamja Flower", cursive`;
+  context.font = `${captionSize}px ${fontStyle.dateFamily}`;
   const dateWidth = context.measureText(caption.date).width;
-  context.font = `${captionSize}px "Single Day", cursive`;
+  context.font = `${captionSize}px ${fontStyle.copyFamily}`;
   const copyWidth = context.measureText(caption.copy).width;
   const totalWidth = dateWidth + gap + copyWidth;
   let cursorX = (frame.width - totalWidth) / 2;
 
-  context.font = `${captionSize}px "Gamja Flower", cursive`;
+  context.font = `${captionSize}px ${fontStyle.dateFamily}`;
   context.textAlign = "left";
   context.fillText(caption.date, cursorX, captionY);
   cursorX += dateWidth + gap;
 
-  context.font = `${captionSize}px "Single Day", cursive`;
+  context.font = `${captionSize}px ${fontStyle.copyFamily}`;
   context.fillText(caption.copy, cursorX, captionY);
 
   return frame.toDataURL("image/jpeg", 0.92);
+}
+
+function drawPolaroidPattern(context, frame, pattern, accentColor) {
+  if (pattern === "dots") {
+    context.save();
+    context.globalAlpha = 0.24;
+    context.fillStyle = accentColor;
+
+    const gap = Math.max(42, Math.round(frame.width * 0.055));
+    const radius = Math.max(3, Math.round(frame.width * 0.004));
+
+    for (let y = gap / 2; y < frame.height; y += gap) {
+      for (let x = gap / 2; x < frame.width; x += gap) {
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        context.fill();
+      }
+    }
+
+    context.restore();
+    return;
+  }
+
+  if (pattern === "hearts") {
+    context.save();
+    context.globalAlpha = 0.2;
+    context.fillStyle = accentColor;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.font = `${Math.max(22, Math.round(frame.width * 0.026))}px Arial, sans-serif`;
+
+    const gap = Math.max(82, Math.round(frame.width * 0.095));
+    for (let y = gap / 2; y < frame.height; y += gap) {
+      for (let x = gap / 2; x < frame.width; x += gap) {
+        context.fillText("♥", x, y);
+      }
+    }
+
+    context.restore();
+  }
 }
 
 function initCalendar() {

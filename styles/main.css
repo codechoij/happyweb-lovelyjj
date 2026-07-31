@@ -743,12 +743,106 @@ h2 {
   transform: scaleX(-1);
 }
 
-.polaroid {
+.camera-style-panel {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.style-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.style-group legend {
+  flex: 0 0 100%;
+  margin-bottom: 2px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.style-choice {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
   background: white;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.style-choice input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--rose);
+}
+
+.style-swatch {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(49, 44, 53, 0.14);
+  border-radius: 50%;
+}
+
+.swatch-classic {
+  background: #ffffff;
+}
+
+.swatch-rose {
+  background: #fff0f2;
+}
+
+.swatch-mint {
+  background: #edf9f5;
+}
+
+.swatch-butter {
+  background: #fff7df;
+}
+
+.polaroid {
+  position: relative;
+  overflow: hidden;
+  background: var(--polaroid-bg, white);
   text-align: center;
 }
 
+.polaroid::before {
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  pointer-events: none;
+  content: "";
+}
+
+.polaroid[data-pattern="dots"]::before {
+  background-image: radial-gradient(circle, var(--polaroid-accent, var(--line)) 0 2px, transparent 2.5px);
+  background-size: 28px 28px;
+}
+
+.polaroid[data-pattern="hearts"]::before {
+  content: "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥";
+  color: var(--polaroid-accent, var(--rose));
+  font-size: 20px;
+  line-height: 2.6;
+  letter-spacing: 12px;
+  text-align: center;
+  white-space: normal;
+}
+
 .polaroid img {
+  position: relative;
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -758,20 +852,22 @@ h2 {
 }
 
 .polaroid p {
-  color: var(--muted);
+  position: relative;
+  color: var(--polaroid-caption, var(--muted));
   font-size: 24px;
   line-height: 1.2;
 }
 
 [data-polaroid-date] {
-  font-family: "Gamja Flower", cursive;
+  font-family: var(--polaroid-date-font, "Gamja Flower", cursive);
 }
 
 [data-polaroid-copy] {
-  font-family: "Single Day", cursive;
+  font-family: var(--polaroid-copy-font, "Single Day", cursive);
 }
 
 .download-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
 }
