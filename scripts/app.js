@@ -1,7 +1,7 @@
-const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
-const START_DATE = new Date("2025-08-14T00:00:00+09:00");
-const TIMECAPSULE_OPEN_DATE = new Date("2026-08-14T18:00:00+09:00");
-const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-14T19:00:00+09:00");
+const ANNIVERSARY_DATE = new Date("2026-07-14T00:00:00+09:00");
+const START_DATE = new Date("2025-07-14T00:00:00+09:00");
+const TIMECAPSULE_OPEN_DATE = new Date("2026-07-14T18:00:00+09:00");
+const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-07-14T19:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
 
 const gifts = [
@@ -111,27 +111,27 @@ const LETTER_DESCRIPTION_RELEASE_DATE = new Date("2026-08-14T00:00:00+09:00");
 const LETTER_PAGES = [
   {
     bodyKey: "LetterPageOneBody",
-    releaseAt: new Date("2026-08-15T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-15T00:00:00+09:00"),
   },
   {
     bodyKey: "LetterPageTwoBody",
-    releaseAt: new Date("2026-08-16T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-16T00:00:00+09:00"),
   },
   {
     bodyKey: "LetterPageThreeBody",
-    releaseAt: new Date("2026-08-17T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-17T00:00:00+09:00"),
   },
   {
     bodyKey: "LetterPageFourBody",
-    releaseAt: new Date("2026-08-18T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-18T00:00:00+09:00"),
   },
   {
     bodyKey: "LetterPageFiveBody",
-    releaseAt: new Date("2026-08-19T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-19T00:00:00+09:00"),
   },
   {
     bodyKey: "LetterPageSixBody",
-    releaseAt: new Date("2026-08-20T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-31T14:30:00+09:00"),
   },
 ];
 
