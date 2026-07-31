@@ -74,25 +74,21 @@ const POLAROID_FRAME_STYLES = {
     background: "#ffffff",
     captionColor: "#756d78",
     accent: "#ead9d5",
-    patternColor: "#d8c7c2",
   },
   rose: {
     background: "#fff0f2",
     captionColor: "#9d3950",
     accent: "#e95d73",
-    patternColor: "#ffffff",
   },
   mint: {
     background: "#edf9f5",
     captionColor: "#357667",
     accent: "#79c7b4",
-    patternColor: "#ffffff",
   },
   butter: {
     background: "#fff7df",
     captionColor: "#8c6930",
     accent: "#ffd983",
-    patternColor: "#ffffff",
   },
 };
 
@@ -1245,7 +1241,7 @@ function applyPolaroidPreviewStyle(polaroid, options) {
   polaroid.style.setProperty("--polaroid-bg", frameStyle.background);
   polaroid.style.setProperty("--polaroid-caption", frameStyle.captionColor);
   polaroid.style.setProperty("--polaroid-accent", frameStyle.accent);
-  polaroid.style.setProperty("--polaroid-pattern-color", frameStyle.patternColor);
+  polaroid.style.setProperty("--polaroid-pattern-color", frameStyle.accent);
   polaroid.style.setProperty("--polaroid-date-font", fontStyle.dateFamily);
   polaroid.style.setProperty("--polaroid-copy-font", fontStyle.copyFamily);
 }
@@ -1296,7 +1292,7 @@ function createPolaroidDataUrl(sourceCanvas, caption, options = getSelectedPolar
   context.fillStyle = frameStyle.background;
   context.fillRect(0, 0, frame.width, frame.height);
   context.drawImage(sourceCanvas, sidePadding, topPadding, imageWidth, imageHeight);
-  drawPolaroidPattern(context, frame, options.pattern, frameStyle.patternColor, [
+  drawPolaroidPattern(context, frame, options.pattern, frameStyle.accent, [
     { x: 0, y: 0, width: frame.width, height: topPadding },
     { x: 0, y: topPadding, width: sidePadding, height: imageHeight },
     { x: sidePadding + imageWidth, y: topPadding, width: sidePadding, height: imageHeight },
@@ -1374,9 +1370,9 @@ function drawPolaroidPattern(context, frame, pattern, accentColor, regions = nul
     context.fillStyle = accentColor;
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.font = `${Math.max(22, Math.round(frame.width * 0.026))}px Arial, sans-serif`;
+    context.font = `${Math.max(24, Math.round(frame.width * 0.025))}px Arial, sans-serif`;
 
-    const gap = Math.max(82, Math.round(frame.width * 0.095));
+    const gap = Math.max(46, Math.round(frame.width * 0.038));
     for (let y = gap / 2; y < frame.height; y += gap) {
       for (let x = gap / 2; x < frame.width; x += gap) {
         context.fillText("♥", x, y);
