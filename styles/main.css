@@ -812,6 +812,7 @@ h2 {
 }
 
 .polaroid {
+  isolation: isolate;
   position: relative;
   overflow: hidden;
   background: var(--polaroid-bg, white);
@@ -821,19 +822,21 @@ h2 {
 .polaroid::before {
   position: absolute;
   inset: 0;
-  opacity: 0.2;
+  z-index: 0;
+  opacity: 1;
   pointer-events: none;
   content: "";
 }
 
 .polaroid[data-pattern="dots"]::before {
-  background-image: radial-gradient(circle, var(--polaroid-accent, var(--line)) 0 2px, transparent 2.5px);
+  background-image: radial-gradient(circle, var(--polaroid-pattern-color, white) 0 2px, transparent 2.5px);
   background-size: 28px 28px;
 }
 
 .polaroid[data-pattern="hearts"]::before {
   content: "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥";
-  color: var(--polaroid-accent, var(--rose));
+  color: var(--polaroid-pattern-color, white);
+  opacity: 1;
   font-size: 20px;
   line-height: 2.6;
   letter-spacing: 12px;
@@ -843,6 +846,7 @@ h2 {
 
 .polaroid img {
   position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -853,6 +857,7 @@ h2 {
 
 .polaroid p {
   position: relative;
+  z-index: 1;
   color: var(--polaroid-caption, var(--muted));
   font-size: 24px;
   line-height: 1.2;
@@ -868,6 +873,7 @@ h2 {
 
 .download-link {
   position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
 }
