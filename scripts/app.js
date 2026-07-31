@@ -107,6 +107,7 @@ const POLAROID_FONT_STYLES = {
   },
 };
 
+//<<<<<<< develop_testDownZip
 const BUILTIN_LETTER_CONFIG = {
   descriptionReleaseAt: "2026-07-31T14:37:00+09:00",
   pages: [
@@ -125,6 +126,35 @@ const LETTER_PAGES = LETTER_CONFIG.pages.map((item) => ({
   bodyKey: item.bodyKey,
   releaseAt: new Date(item.releaseAt),
 }));
+//=======
+//const LETTER_DESCRIPTION_RELEASE_DATE = new Date("2026-07-31T14:37:00+09:00");
+//const LETTER_PAGES = [
+//  {
+//    bodyKey: "LetterPageOneBody",
+//    releaseAt: new Date("2026-07-31T14:37:10+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageTwoBody",
+//    releaseAt: new Date("2026-07-31T14:37:30+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageThreeBody",
+//    releaseAt: new Date("2026-07-31T14:37:40+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageFourBody",
+//    releaseAt: new Date("2026-07-31T14:37:50+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageFiveBody",
+//    releaseAt: new Date("2026-07-31T14:38:00+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageSixBody",
+//    releaseAt: new Date("2026-07-31T14:39:00+09:00"),
+//  },
+//];
+//>>>>>>> main
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
