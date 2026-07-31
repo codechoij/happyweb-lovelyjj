@@ -1,0 +1,14 @@
+{
+  "name": "happyweb-letter-download-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker that proxies the GitHub Pages letters.zip with download headers",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.80.0"
+  }
+}
