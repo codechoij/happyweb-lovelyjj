@@ -107,31 +107,31 @@ const POLAROID_FONT_STYLES = {
   },
 };
 
-const LETTER_DESCRIPTION_RELEASE_DATE = new Date("2026-08-14T00:00:00+09:00");
+const LETTER_DESCRIPTION_RELEASE_DATE = new Date("2026-07-31T14:37:00+09:00");
 const LETTER_PAGES = [
   {
     bodyKey: "LetterPageOneBody",
-    releaseAt: new Date("2026-07-15T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-31T14:37:10+09:00"),
   },
   {
     bodyKey: "LetterPageTwoBody",
-    releaseAt: new Date("2026-07-16T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-31T14:37:30+09:00"),
   },
   {
     bodyKey: "LetterPageThreeBody",
-    releaseAt: new Date("2026-07-17T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-31T14:37:40+09:00"),
   },
   {
     bodyKey: "LetterPageFourBody",
-    releaseAt: new Date("2026-07-18T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-31T14:37:50+09:00"),
   },
   {
     bodyKey: "LetterPageFiveBody",
-    releaseAt: new Date("2026-07-19T00:00:00+09:00"),
+    releaseAt: new Date("2026-07-31T14:38:00+09:00"),
   },
   {
     bodyKey: "LetterPageSixBody",
-    releaseAt: new Date("2026-07-31T14:30:00+09:00"),
+    releaseAt: new Date("2026-07-31T14:39:00+09:00"),
   },
 ];
 
