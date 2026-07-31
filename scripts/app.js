@@ -1186,6 +1186,7 @@ function initCamera() {
     capturedCaption = polaroidCaption;
 
     photo.src = dataUrl;
+    polaroid.style.setProperty("--polaroid-photo-ratio", `${canvas.width} / ${canvas.height}`);
     captionDate.textContent = polaroidCaption.date;
     captionCopy.textContent = polaroidCaption.copy;
     download.href = "#";

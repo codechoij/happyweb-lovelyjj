@@ -848,8 +848,8 @@ h2 {
   z-index: 1;
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  aspect-ratio: var(--polaroid-photo-ratio, 4 / 3);
+  object-fit: contain;
   border-radius: 4px;
   background: #f1eeee;
 }
