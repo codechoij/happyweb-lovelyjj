@@ -74,21 +74,25 @@ const POLAROID_FRAME_STYLES = {
     background: "#ffffff",
     captionColor: "#756d78",
     accent: "#ead9d5",
+    patternColor: "#d8c7c2",
   },
   rose: {
     background: "#fff0f2",
     captionColor: "#9d3950",
     accent: "#e95d73",
+    patternColor: "#ffffff",
   },
   mint: {
     background: "#edf9f5",
     captionColor: "#357667",
     accent: "#79c7b4",
+    patternColor: "#ffffff",
   },
   butter: {
     background: "#fff7df",
     captionColor: "#8c6930",
     accent: "#ffd983",
+    patternColor: "#ffffff",
   },
 };
 
@@ -1122,6 +1126,7 @@ function initCamera() {
   const styleInputs = $$("[data-polaroid-style], [data-polaroid-pattern], [data-polaroid-font]");
   let stream;
   let captureVersion = 0;
+  let renderVersion = 0;
   let capturedCanvas = null;
   let capturedCaption = null;
 
@@ -1133,13 +1138,13 @@ function initCamera() {
   async function refreshPolaroidDownload() {
     if (!capturedCanvas || !capturedCaption || polaroid.hidden) return;
 
-    const currentCapture = captureVersion;
+    const currentRender = ++renderVersion;
     download.href = "#";
     status.textContent = t("CameraPreparingStatus");
 
     await ensurePolaroidFontsLoaded();
     const framedDataUrl = createPolaroidDataUrl(capturedCanvas, capturedCaption, getSelectedPolaroidOptions());
-    if (currentCapture !== captureVersion) return;
+    if (currentRender !== renderVersion) return;
     download.href = framedDataUrl;
     status.textContent = t("CameraReadyStatus");
   }
@@ -1180,6 +1185,7 @@ function initCamera() {
     const polaroidCaption = getPolaroidCaptionParts();
     const currentCapture = captureVersion + 1;
     captureVersion = currentCapture;
+    const currentRender = ++renderVersion;
     capturedCanvas = canvas;
     capturedCaption = polaroidCaption;
 
@@ -1194,7 +1200,7 @@ function initCamera() {
 
     await ensurePolaroidFontsLoaded();
     const framedDataUrl = createPolaroidDataUrl(canvas, polaroidCaption, getSelectedPolaroidOptions());
-    if (currentCapture !== captureVersion) return;
+    if (currentCapture !== captureVersion || currentRender !== renderVersion) return;
     download.href = framedDataUrl;
     status.textContent = t("CameraReadyStatus");
   });
@@ -1239,6 +1245,7 @@ function applyPolaroidPreviewStyle(polaroid, options) {
   polaroid.style.setProperty("--polaroid-bg", frameStyle.background);
   polaroid.style.setProperty("--polaroid-caption", frameStyle.captionColor);
   polaroid.style.setProperty("--polaroid-accent", frameStyle.accent);
+  polaroid.style.setProperty("--polaroid-pattern-color", frameStyle.patternColor);
   polaroid.style.setProperty("--polaroid-date-font", fontStyle.dateFamily);
   polaroid.style.setProperty("--polaroid-copy-font", fontStyle.copyFamily);
 }
@@ -1288,8 +1295,13 @@ function createPolaroidDataUrl(sourceCanvas, caption, options = getSelectedPolar
   const context = frame.getContext("2d");
   context.fillStyle = frameStyle.background;
   context.fillRect(0, 0, frame.width, frame.height);
-  drawPolaroidPattern(context, frame, options.pattern, frameStyle.accent);
   context.drawImage(sourceCanvas, sidePadding, topPadding, imageWidth, imageHeight);
+  drawPolaroidPattern(context, frame, options.pattern, frameStyle.patternColor, [
+    { x: 0, y: 0, width: frame.width, height: topPadding },
+    { x: 0, y: topPadding, width: sidePadding, height: imageHeight },
+    { x: sidePadding + imageWidth, y: topPadding, width: sidePadding, height: imageHeight },
+    { x: 0, y: topPadding + imageHeight, width: frame.width, height: bottomPadding },
+  ]);
 
   const captionY = topPadding + imageHeight + bottomPadding / 2;
   const gap = Math.round(captionSize * 0.28);
@@ -1324,10 +1336,20 @@ function createPolaroidDataUrl(sourceCanvas, caption, options = getSelectedPolar
   return frame.toDataURL("image/jpeg", 0.92);
 }
 
-function drawPolaroidPattern(context, frame, pattern, accentColor) {
+function drawPolaroidPattern(context, frame, pattern, accentColor, regions = null) {
+  const applyFrameRegions = () => {
+    if (!regions) return;
+    context.beginPath();
+    regions.forEach((region) => {
+      context.rect(region.x, region.y, region.width, region.height);
+    });
+    context.clip();
+  };
+
   if (pattern === "dots") {
     context.save();
-    context.globalAlpha = 0.24;
+    applyFrameRegions();
+    context.globalAlpha = 1;
     context.fillStyle = accentColor;
 
     const gap = Math.max(42, Math.round(frame.width * 0.055));
@@ -1347,7 +1369,8 @@ function drawPolaroidPattern(context, frame, pattern, accentColor) {
 
   if (pattern === "hearts") {
     context.save();
-    context.globalAlpha = 0.2;
+    applyFrameRegions();
+    context.globalAlpha = 1;
     context.fillStyle = accentColor;
     context.textAlign = "center";
     context.textBaseline = "middle";
