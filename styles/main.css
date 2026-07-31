@@ -712,9 +712,143 @@ h2 {
 .letter-paper {
   width: min(680px, 100%);
   margin: 18px auto 0;
-  padding: 34px;
+  padding: 30px;
   border-radius: 8px;
-  line-height: 1.9;
+  line-height: 1.8;
+}
+
+.letter-book {
+  display: grid;
+  width: min(720px, 100%);
+  gap: 16px;
+  margin: 18px auto 0;
+}
+
+.letter-description-bubble {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  padding: 36px;
+  border: 1px solid rgba(234, 217, 213, 0.9);
+  border-radius: 42px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.letter-description-bubble::before,
+.letter-description-bubble::after {
+  position: absolute;
+  border: 1px solid rgba(234, 217, 213, 0.9);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  content: "";
+}
+
+.letter-description-bubble::before {
+  right: 54px;
+  bottom: -18px;
+  width: 34px;
+  height: 34px;
+}
+
+.letter-description-bubble::after {
+  right: 26px;
+  bottom: -34px;
+  width: 18px;
+  height: 18px;
+}
+
+.letter-description-bubble h3,
+.letter-page h3,
+.letter-description-bubble p,
+.letter-page p {
+  margin: 0;
+}
+
+.letter-page {
+  display: grid;
+  gap: 14px;
+  min-height: 360px;
+  white-space: pre-line;
+}
+
+.letter-page h3 {
+  color: var(--ink);
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.letter-description-bubble p:not(.eyebrow),
+.letter-page [data-letter-page-body],
+.letter-page [data-letter-locked-body] {
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.letter-signature {
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.letter-from {
+  justify-self: end;
+  text-align: right;
+}
+
+.letter-page-number {
+  align-self: end;
+  justify-self: center;
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.letter-page-locked {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+}
+
+.letter-locked-preview {
+  display: grid;
+  gap: 16px;
+  filter: blur(7px);
+  opacity: 0.42;
+  pointer-events: none;
+  user-select: none;
+}
+
+.letter-locked-message {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  padding: 26px;
+  background: rgba(255, 250, 247, 0.64);
+  text-align: center;
+}
+
+.letter-locked-message h3 {
+  color: var(--ink);
+  font-size: 26px;
+}
+
+.letter-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.letter-status {
+  text-align: center;
 }
 
 .camera-layout,
