@@ -225,6 +225,63 @@
                 <button class="primary-btn" type="button" data-camera-start data-i18n="CameraStartButton"></button>
                 <button class="ghost-btn" type="button" data-camera-capture data-i18n="CameraCaptureButton"></button>
               </div>
+              <div class="camera-style-panel" aria-label="" data-i18n-aria-label="PolaroidStyleLabel">
+                <fieldset class="style-group">
+                  <legend data-i18n="PolaroidFrameLabel"></legend>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-frame" value="classic" data-polaroid-style checked />
+                    <span class="style-swatch swatch-classic" aria-hidden="true"></span>
+                    <span data-i18n="PolaroidFrameClassic"></span>
+                  </label>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-frame" value="rose" data-polaroid-style />
+                    <span class="style-swatch swatch-rose" aria-hidden="true"></span>
+                    <span data-i18n="PolaroidFrameRose"></span>
+                  </label>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-frame" value="mint" data-polaroid-style />
+                    <span class="style-swatch swatch-mint" aria-hidden="true"></span>
+                    <span data-i18n="PolaroidFrameMint"></span>
+                  </label>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-frame" value="butter" data-polaroid-style />
+                    <span class="style-swatch swatch-butter" aria-hidden="true"></span>
+                    <span data-i18n="PolaroidFrameButter"></span>
+                  </label>
+                </fieldset>
+
+                <fieldset class="style-group">
+                  <legend data-i18n="PolaroidPatternLabel"></legend>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-pattern" value="none" data-polaroid-pattern checked />
+                    <span data-i18n="PolaroidPatternNone"></span>
+                  </label>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-pattern" value="dots" data-polaroid-pattern />
+                    <span data-i18n="PolaroidPatternDots"></span>
+                  </label>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-pattern" value="hearts" data-polaroid-pattern />
+                    <span data-i18n="PolaroidPatternHearts"></span>
+                  </label>
+                </fieldset>
+
+                <fieldset class="style-group">
+                  <legend data-i18n="PolaroidFontLabel"></legend>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-font" value="default" data-polaroid-font checked />
+                    <span data-i18n="PolaroidFontDefault"></span>
+                  </label>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-font" value="gamja" data-polaroid-font />
+                    <span data-i18n="PolaroidFontGamja"></span>
+                  </label>
+                  <label class="style-choice">
+                    <input type="radio" name="polaroid-font" value="single" data-polaroid-font />
+                    <span data-i18n="PolaroidFontSingle"></span>
+                  </label>
+                </fieldset>
+              </div>
               <p class="helper-text" data-camera-status data-i18n="CameraInitialStatus"></p>
             </div>
             <div class="polaroid" data-polaroid hidden>
