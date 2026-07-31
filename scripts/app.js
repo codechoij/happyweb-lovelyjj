@@ -1119,6 +1119,7 @@ function initCamera() {
   const captionDate = $("[data-polaroid-date]");
   const captionCopy = $("[data-polaroid-copy]");
   const captureButton = $("[data-camera-capture]");
+  const stylePanel = $("[data-camera-style-panel]");
   const styleInputs = $$("[data-polaroid-style], [data-polaroid-pattern], [data-polaroid-font]");
   let stream;
   let captureVersion = 0;
@@ -1129,6 +1130,11 @@ function initCamera() {
   function refreshPolaroidPreview() {
     const options = getSelectedPolaroidOptions();
     applyPolaroidPreviewStyle(polaroid, options);
+  }
+
+  function syncCameraPreviewRatio() {
+    if (!video.videoWidth || !video.videoHeight) return;
+    video.style.setProperty("--camera-video-ratio", `${video.videoWidth} / ${video.videoHeight}`);
   }
 
   async function refreshPolaroidDownload() {
@@ -1160,6 +1166,7 @@ function initCamera() {
     captionCopy.textContent = polaroidCaption.copy;
     download.href = "#";
     polaroid.hidden = false;
+    stylePanel.hidden = false;
     refreshPolaroidPreview();
     captureButton.textContent = t("CameraRetakeButton");
     status.textContent = t("CameraPreparingStatus");
@@ -1179,11 +1186,13 @@ function initCamera() {
   });
 
   refreshPolaroidPreview();
+  video.addEventListener("loadedmetadata", syncCameraPreviewRatio);
 
   $("[data-camera-start]").addEventListener("click", async () => {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       video.srcObject = stream;
+      syncCameraPreviewRatio();
       status.textContent = t("CameraStartedStatus");
     } catch (error) {
       status.textContent = t("CameraPermissionStatus");
