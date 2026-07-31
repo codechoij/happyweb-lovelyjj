@@ -225,7 +225,8 @@
                 <button class="primary-btn" type="button" data-camera-start data-i18n="CameraStartButton"></button>
                 <button class="ghost-btn" type="button" data-camera-capture data-i18n="CameraCaptureButton"></button>
               </div>
-              <div class="camera-style-panel" aria-label="" data-i18n-aria-label="PolaroidStyleLabel">
+              <p class="helper-text" data-camera-status data-i18n="CameraInitialStatus"></p>
+              <div class="camera-style-panel" aria-label="" data-i18n-aria-label="PolaroidStyleLabel" data-camera-style-panel hidden>
                 <fieldset class="style-group">
                   <legend data-i18n="PolaroidFrameLabel"></legend>
                   <label class="style-choice">
@@ -282,7 +283,6 @@
                   </label>
                 </fieldset>
               </div>
-              <p class="helper-text" data-camera-status data-i18n="CameraInitialStatus"></p>
             </div>
             <div class="polaroid" data-polaroid hidden>
               <img data-photo alt="" data-i18n-alt="CapturedPhotoAlt" />
