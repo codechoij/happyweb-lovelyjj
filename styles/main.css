@@ -733,10 +733,15 @@ h2 {
   padding: 18px;
 }
 
+.polaroid-result {
+  display: grid;
+  gap: 16px;
+}
+
 [data-video] {
   display: block;
   width: 100%;
-  aspect-ratio: var(--camera-video-ratio, 4 / 3);
+  aspect-ratio: 3 / 4;
   border-radius: 8px;
   background: #241f27;
   object-fit: contain;

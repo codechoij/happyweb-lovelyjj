@@ -226,7 +226,17 @@
                 <button class="ghost-btn" type="button" data-camera-capture data-i18n="CameraCaptureButton"></button>
               </div>
               <p class="helper-text" data-camera-status data-i18n="CameraInitialStatus"></p>
-              <div class="camera-style-panel" aria-label="" data-i18n-aria-label="PolaroidStyleLabel" data-camera-style-panel hidden>
+            </div>
+            <div class="polaroid-result" data-polaroid-result hidden>
+              <div class="polaroid" data-polaroid>
+                <img data-photo alt="" data-i18n-alt="CapturedPhotoAlt" />
+                <p data-polaroid-caption>
+                  <span data-polaroid-date></span>
+                  <span data-polaroid-copy data-i18n="PolaroidCaptionCopy"></span>
+                </p>
+                <a class="download-link" data-download href="#" download="our-anniversary-photo.jpg" data-i18n="SavePhotoButton"></a>
+              </div>
+              <div class="camera-style-panel" aria-label="" data-i18n-aria-label="PolaroidStyleLabel">
                 <fieldset class="style-group">
                   <legend data-i18n="PolaroidFrameLabel"></legend>
                   <label class="style-choice">
@@ -283,14 +293,6 @@
                   </label>
                 </fieldset>
               </div>
-            </div>
-            <div class="polaroid" data-polaroid hidden>
-              <img data-photo alt="" data-i18n-alt="CapturedPhotoAlt" />
-              <p data-polaroid-caption>
-                <span data-polaroid-date></span>
-                <span data-polaroid-copy data-i18n="PolaroidCaptionCopy"></span>
-              </p>
-              <a class="download-link" data-download href="#" download="our-anniversary-photo.jpg" data-i18n="SavePhotoButton"></a>
             </div>
           </div>
         </section>

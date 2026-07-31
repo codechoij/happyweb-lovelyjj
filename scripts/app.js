@@ -1114,12 +1114,12 @@ function initCamera() {
   const video = $("[data-video]");
   const status = $("[data-camera-status]");
   const photo = $("[data-photo]");
+  const polaroidResult = $("[data-polaroid-result]");
   const polaroid = $("[data-polaroid]");
   const download = $("[data-download]");
   const captionDate = $("[data-polaroid-date]");
   const captionCopy = $("[data-polaroid-copy]");
   const captureButton = $("[data-camera-capture]");
-  const stylePanel = $("[data-camera-style-panel]");
   const styleInputs = $$("[data-polaroid-style], [data-polaroid-pattern], [data-polaroid-font]");
   let stream;
   let captureVersion = 0;
@@ -1132,13 +1132,8 @@ function initCamera() {
     applyPolaroidPreviewStyle(polaroid, options);
   }
 
-  function syncCameraPreviewRatio() {
-    if (!video.videoWidth || !video.videoHeight) return;
-    video.style.setProperty("--camera-video-ratio", `${video.videoWidth} / ${video.videoHeight}`);
-  }
-
   async function refreshPolaroidDownload() {
-    if (!capturedCanvas || !capturedCaption || polaroid.hidden) return;
+    if (!capturedCanvas || !capturedCaption || polaroidResult.hidden) return;
 
     const currentRender = ++renderVersion;
     download.href = "#";
@@ -1165,8 +1160,7 @@ function initCamera() {
     captionDate.textContent = polaroidCaption.date;
     captionCopy.textContent = polaroidCaption.copy;
     download.href = "#";
-    polaroid.hidden = false;
-    stylePanel.hidden = false;
+    polaroidResult.hidden = false;
     refreshPolaroidPreview();
     captureButton.textContent = t("CameraRetakeButton");
     status.textContent = t("CameraPreparingStatus");
@@ -1186,13 +1180,18 @@ function initCamera() {
   });
 
   refreshPolaroidPreview();
-  video.addEventListener("loadedmetadata", syncCameraPreviewRatio);
 
   $("[data-camera-start]").addEventListener("click", async () => {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 960 },
+          height: { ideal: 1280 },
+          aspectRatio: { ideal: 0.75 },
+        },
+        audio: false,
+      });
       video.srcObject = stream;
-      syncCameraPreviewRatio();
       status.textContent = t("CameraStartedStatus");
     } catch (error) {
       status.textContent = t("CameraPermissionStatus");
