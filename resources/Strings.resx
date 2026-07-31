@@ -52,6 +52,15 @@
   <data name="PasswordLabel" xml:space="preserve"><value>비밀번호</value></data>
   <data name="EnterButton" xml:space="preserve"><value>입장하기</value></data>
   <data name="ProtectedPasswordPrompt" xml:space="preserve"><value>정말 본인인지 확인하겠습니다. 준이가 맞다면 비밀번호를 알고 있겠죠?</value></data>
+  <data name="TimecapsuleTitle" xml:space="preserve"><value>아직 열 수 없는 타임캡슐이에요.
+2026년 8월 14일 오후 6시에 공개됩니다.</value></data>
+  <data name="TimecapsuleCheckingTitle" xml:space="preserve"><value>타임캡슐 공개 시간을 확인하는 중입니다.</value></data>
+  <data name="TimecapsuleOpenAt" xml:space="preserve"><value>공개 시간: 2026년 8월 14일 오후 6시 KST</value></data>
+  <data name="TimecapsuleCountdown" xml:space="preserve"><value>{days}일 {hours}시간 {minutes}분 {seconds}초 남았습니다.</value></data>
+  <data name="TimecapsuleOpenStatus" xml:space="preserve"><value>타임캡슐이 열렸습니다. 본인 확인 후 입장해주세요.</value></data>
+  <data name="TimecapsuleLockedButton" xml:space="preserve"><value>공개 대기중</value></data>
+  <data name="TimecapsulePasswordLocked" xml:space="preserve"><value>공개 시간이 되면 비밀번호를 입력할 수 있어요.</value></data>
+  <data name="TimecapsuleTimeUnavailable" xml:space="preserve"><value>서버 시간을 확인하지 못했습니다. 잠시 후 다시 시도해주세요.</value></data>
   <data name="GiftPickEyebrow" xml:space="preserve"><value>Pick one</value></data>
   <data name="GiftResultDefault" xml:space="preserve"><value>마음에 드는 상자를 하나 골라주세요.</value></data>
   <data name="GiftPhotoGameResult" xml:space="preserve"><value>떨어지는 사진을 잡아 선물을 열어보세요.</value></data>

@@ -635,6 +635,15 @@ h2 {
   white-space: pre-line;
 }
 
+.timecapsule-status {
+  width: min(520px, 100%);
+  margin: 18px auto 0;
+  color: var(--rose);
+  font-weight: 900;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
 .protected-password-form {
   display: grid;
   grid-template-columns: minmax(180px, 1fr) auto;
