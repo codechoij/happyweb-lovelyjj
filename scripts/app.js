@@ -1,5 +1,7 @@
 const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
 const START_DATE = new Date("2025-08-14T00:00:00+09:00");
+const TIMECAPSULE_OPEN_DATE = new Date("2026-08-14T18:00:00+09:00");
+const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-14T19:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
 
 const gifts = [
@@ -63,6 +65,8 @@ const ADMIN_SESSION_TOKEN_KEY = "our-day-admin-session-token";
 
 const ADMIN_SHORTCUT_CLICK_COUNT = 15;
 const ADMIN_SHORTCUT_WINDOW_MS = 4500;
+const TRUSTED_TIME_SYNC_INTERVAL_MS = 60 * 1000;
+const TRUSTED_TIME_RETRY_INTERVAL_MS = 10 * 1000;
 const PROTECTED_PAGE_IDS = ["gift", "letter"];
 
 const $ = (selector) => document.querySelector(selector);
@@ -73,6 +77,9 @@ let lastPublicHash = "#home";
 let adminSessionToken = "";
 let activePageId = "home";
 let unlockedProtectedPages = new Set();
+let trustedTimeOffsetMs = null;
+let trustedTimeSyncedAt = 0;
+let trustedTimeLastAttemptAt = 0;
 
 async function loadResourceStrings() {
   const response = await fetch(RESOURCE_URL);
@@ -202,7 +209,7 @@ async function requestAdminApi(action, payload = {}) {
 
 const adminAuth = {
   async verifyPassword(password) {
-    const data = await sharedPasswordAuth.verifyPassword(password);
+    const data = await requestAdminApi("verifyAdminPassword", { password });
     setAdminSessionToken(data.token);
     return data;
   },
@@ -221,8 +228,41 @@ const sharedPasswordAuth = {
   },
 };
 
+async function syncTrustedTime() {
+  trustedTimeLastAttemptAt = Date.now();
+  const data = await requestAdminApi("getServerTime");
+  const epochMs = Number(data.epochMs);
+
+  if (!Number.isFinite(epochMs)) throw new Error("Invalid server time.");
+
+  trustedTimeOffsetMs = epochMs - Date.now();
+  trustedTimeSyncedAt = Date.now();
+  return getTrustedNow();
+}
+
+function getTrustedNow() {
+  if (trustedTimeOffsetMs === null) return null;
+  return new Date(Date.now() + trustedTimeOffsetMs);
+}
+
+function needsTrustedTimeSync() {
+  const now = Date.now();
+  if (trustedTimeOffsetMs === null) return now - trustedTimeLastAttemptAt > TRUSTED_TIME_RETRY_INTERVAL_MS;
+  return now - trustedTimeSyncedAt > TRUSTED_TIME_SYNC_INTERVAL_MS;
+}
+
+async function refreshTrustedTimeIfNeeded() {
+  if (!needsTrustedTimeSync()) return;
+
+  try {
+    await syncTrustedTime();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function getAdminErrorMessage(error) {
-  if (error.code === "BAD_PASSWORD") return t("PasswordBad");
+  if (error.code === "BAD_PASSWORD" || error.code === "BAD_ADMIN_PASSWORD") return t("PasswordBad");
   if (error.code === "LOCKED") return t("PasswordLocked");
   if (error.code === "UNAUTHORIZED") return t("AdminUnauthorized");
   if (error.code === "WEAK_PASSWORD") return t("PasswordWeak");
@@ -240,7 +280,85 @@ function getProtectedPageElements(pageId) {
     form: $(`[data-protected-form="${pageId}"]`),
     input: $(`[data-protected-password="${pageId}"]`),
     status: $(`[data-protected-status="${pageId}"]`),
+    title: $(`[data-protected-title="${pageId}"]`),
+    confirm: $(`[data-protected-confirm="${pageId}"]`),
+    timecapsuleStatus: $(`[data-timecapsule-status="${pageId}"]`),
   };
+}
+
+function isTimecapsuleOpen(now = getTrustedNow()) {
+  if (!now) return false;
+  return now.getTime() >= TIMECAPSULE_OPEN_DATE.getTime();
+}
+
+function shouldShowTimecapsuleOpenNotice(now = getTrustedNow()) {
+  if (!now) return false;
+  const time = now.getTime();
+  return time >= TIMECAPSULE_OPEN_DATE.getTime() && time < TIMECAPSULE_OPEN_NOTICE_END_DATE.getTime();
+}
+
+function getTimecapsuleRemainingParts(now = getTrustedNow()) {
+  if (!now) return null;
+  const remaining = Math.max(0, TIMECAPSULE_OPEN_DATE.getTime() - now.getTime());
+  const days = Math.floor(remaining / 86400000);
+  const hours = Math.floor((remaining % 86400000) / 3600000);
+  const minutes = Math.floor((remaining % 3600000) / 60000);
+  const seconds = Math.floor((remaining % 60000) / 1000);
+  return { days, hours, minutes, seconds };
+}
+
+function formatTimecapsuleOpenAt() {
+  return t("TimecapsuleOpenAt");
+}
+
+function updateTimecapsuleGate(pageId, now = getTrustedNow()) {
+  const { title, confirm, form, input, status, timecapsuleStatus } = getProtectedPageElements(pageId);
+  const hasTrustedTime = Boolean(now);
+  const opened = isTimecapsuleOpen(now);
+
+  if (title) {
+    title.textContent = opened
+      ? t("ProtectedTitle")
+      : hasTrustedTime
+        ? t("TimecapsuleTitle")
+        : t("TimecapsuleCheckingTitle");
+  }
+
+  if (confirm) {
+    confirm.disabled = !opened;
+    confirm.textContent = opened ? t("ProtectedConfirmButton") : t("TimecapsuleLockedButton");
+  }
+
+  if (!opened && form) {
+    form.hidden = true;
+    form.reset();
+  }
+
+  if (!opened && input) input.value = "";
+  if (!opened && status) status.textContent = t("TimecapsulePasswordLocked");
+
+  if (timecapsuleStatus) {
+    timecapsuleStatus.hidden = false;
+
+    if (opened) {
+      if (shouldShowTimecapsuleOpenNotice(now)) {
+        timecapsuleStatus.textContent = t("TimecapsuleOpenStatus");
+      } else {
+        timecapsuleStatus.textContent = "";
+        timecapsuleStatus.hidden = true;
+      }
+      return;
+    }
+
+    const parts = getTimecapsuleRemainingParts(now);
+    timecapsuleStatus.textContent = parts
+      ? `${formatTimecapsuleOpenAt()}\n${t("TimecapsuleCountdown", parts)}`
+      : t("TimecapsuleTimeUnavailable");
+  }
+}
+
+function updateTimecapsuleGates() {
+  PROTECTED_PAGE_IDS.forEach((pageId) => updateTimecapsuleGate(pageId));
 }
 
 function resetProtectedPage(pageId) {
@@ -266,6 +384,7 @@ function resetProtectedPage(pageId) {
   }
   if (input) input.value = "";
   if (status) status.textContent = t("ProtectedPasswordPrompt");
+  updateTimecapsuleGate(pageId);
 }
 
 function unlockProtectedPage(pageId) {
@@ -281,8 +400,17 @@ function syncProtectedPage(pageId) {
   const { gate, content } = getProtectedPageElements(pageId);
   const isUnlocked = unlockedProtectedPages.has(pageId);
 
+  if (!isTimecapsuleOpen()) {
+    updateTimecapsuleGate(pageId);
+    if (gate) gate.hidden = false;
+    if (content) content.hidden = true;
+    unlockedProtectedPages.delete(pageId);
+    return;
+  }
+
   if (gate) gate.hidden = isUnlocked;
   if (content) content.hidden = !isUnlocked;
+  updateTimecapsuleGate(pageId);
 }
 
 function setActivePage() {
@@ -490,6 +618,11 @@ function initProtectedPages() {
       const { form, input, status } = getProtectedPageElements(pageId);
 
       if (!form || !input || !status) return;
+      if (!isTimecapsuleOpen()) {
+        updateTimecapsuleGate(pageId);
+        refreshTrustedTimeIfNeeded();
+        return;
+      }
 
       form.hidden = false;
       status.textContent = t("ProtectedPasswordPrompt");
@@ -505,6 +638,11 @@ function initProtectedPages() {
       const password = input?.value || "";
 
       if (!pageId || !input || !status || !password) return;
+      if (!isTimecapsuleOpen()) {
+        updateTimecapsuleGate(pageId);
+        refreshTrustedTimeIfNeeded();
+        return;
+      }
 
       status.textContent = t("PasswordChecking");
 
@@ -521,6 +659,7 @@ function initProtectedPages() {
   });
 
   PROTECTED_PAGE_IDS.forEach(resetProtectedPage);
+  updateTimecapsuleGates();
 }
 
 function updateCountdown() {
@@ -1337,6 +1476,7 @@ async function boot() {
   initAdminAuth();
   initAdminPage();
   initProtectedPages();
+  await refreshTrustedTimeIfNeeded();
   setActivePage();
   initGifts();
   initLetter();
@@ -1345,7 +1485,12 @@ async function boot() {
   initMusic();
   initGuestbook();
   updateCountdown();
-  setInterval(updateCountdown, 1000);
+  updateTimecapsuleGates();
+  setInterval(() => {
+    updateCountdown();
+    refreshTrustedTimeIfNeeded();
+    updateTimecapsuleGates();
+  }, 1000);
 }
 
 boot();
