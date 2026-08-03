@@ -1,7 +1,7 @@
-const ANNIVERSARY_DATE = new Date("2026-07-14T00:00:00+09:00");
-const START_DATE = new Date("2025-07-14T00:00:00+09:00");
+const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
+const START_DATE = new Date("2025-08-14T00:00:00+09:00");
 const TIMECAPSULE_OPEN_DATE = new Date("2026-07-14T18:00:00+09:00");
-const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-07-14T19:00:00+09:00");
+const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-14T19:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
 
 const gifts = [
