@@ -1,0 +1,19 @@
+{
+  // Cloudflare Worker configuration for the letters.zip download proxy.
+  //
+  // The worker name is already set. If this name is taken in your account,
+  // change it to any lowercase name with dashes only (e.g. "my-letter-zip").
+  //
+  // Account ID / API token are NEVER stored here. `wrangler login` fetches
+  // the account id automatically; from CI, pass CLOUDFLARE_API_TOKEN and
+  // CLOUDFLARE_ACCOUNT_ID as environment variables / GitHub Secrets.
+  //
+  // The upstream ZIP URL default lives in src/index.js; override it without
+  // redeploying by setting the `ORIGIN_ZIP_URL` var:
+  //   npx wrangler deploy --var ORIGIN_ZIP_URL:https://example.com/letters.zip
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "happyweb-letter-download",
+  "main": "src/index.js",
+  "compatibility_date": "2024-11-01",
+  "workers_dev": true
+}

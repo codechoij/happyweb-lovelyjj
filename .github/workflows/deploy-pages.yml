@@ -1,0 +1,65 @@
+name: Deploy GitHub Pages with letters.zip
+
+# Trigger on pushes to the branches actually used by this repo.
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "develop_*"
+  workflow_dispatch:
+
+# Grant GITHUB_TOKEN permission to deploy to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deployment per run group; cancel superseded runs.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-letter-zip:
+    name: Build letters.zip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Note: npm cache is disabled because package-lock.json is intentionally
+      # not committed (this repo has no local Node toolchain).
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build letters.zip (headless Chromium)
+        run: npm run build:letter
+
+      - name: Verify letters.zip contents
+        run: npm run verify:letter
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: build-letter-zip
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,16 @@
+.video-deps/
+__pycache__/
+assets/gift-videos/for_videos/
+assets/gift-videos/_preview/
+
+# Node + build output
+node_modules/
+package-lock.json
+assets/downloads/
+
+# Cloudflare Wrangler local state
+.wrangler/
+cloudflare-worker/.wrangler/
+cloudflare-worker/node_modules/
+cloudflare-worker/package-lock.json
+cloudflare-worker/.dev.vars

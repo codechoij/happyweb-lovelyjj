@@ -144,7 +144,8 @@
   <data name="LetterHomeButton" xml:space="preserve"><value>홈으로 가기</value></data>
   <data name="LetterSaveButton" xml:space="preserve"><value>편지 저장하기</value></data>
   <data name="LetterSavingStatus" xml:space="preserve"><value>편지를 이미지로 저장하는 중입니다.</value></data>
-  <data name="LetterSavedStatus" xml:space="preserve"><value>편지 이미지 묶음 저장을 시작했습니다.</value></data>
+  <data name="LetterSavedStatus" xml:space="preserve"><value>편지 이미지 묶음 다운로드를 시작합니다.</value></data>
+  <data name="LetterSaveUnavailableStatus" xml:space="preserve"><value>아직 다운로드 서버가 설정되지 않았습니다. 관리자에게 문의해주세요.</value></data>
   <data name="LetterFrom" xml:space="preserve"><value>From. 사랑스러운 지윤이가♥️</value></data>
   <data name="CameraEyebrow" xml:space="preserve"><value>Memory shot</value></data>
   <data name="CameraStartButton" xml:space="preserve"><value>카메라 켜기</value></data>
