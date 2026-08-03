@@ -1,4 +1,6 @@
 .video-deps/
+.tmp-video-check/
+tools/
 __pycache__/
 assets/gift-videos/for_videos/
 assets/gift-videos/_preview/
