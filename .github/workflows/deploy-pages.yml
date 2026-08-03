@@ -1,12 +1,10 @@
 name: Deploy GitHub Pages with letters.zip
 
-# Trigger on pushes to the branches actually used by this repo.
+# Trigger only on pushes to the production branch.
 on:
   push:
     branches:
       - main
-      - develop
-      - "develop_*"
   workflow_dispatch:
 
 # Grant GITHUB_TOKEN permission to deploy to Pages.
