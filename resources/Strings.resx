@@ -111,12 +111,30 @@
   
   Gift 페이지에 선물은 랜덤이라 계속 바뀌고 꽝도 있는데 운이 좋다면 그 안에 숨겨진 선물도 볼 수 있을거야🤗 여기까진 페이지 가이드 겸 쫑알쫑알이고 이제 진짜 편지 보러가! 참고로 편지도 매일매일 한 장씩 더 공개돼! 내가 한국으로 돌아오는 동안 계속 계속 다음 편지를 기다리며 즐겁게 잠들면 돼 하하!</value></data>
   <data name="LetterDescriptionOpenButton" xml:space="preserve"><value>편지 보러 가기</value></data>
-  <data name="LetterPageOneBody" xml:space="preserve"><value>１일차 편지</value></data>
-  <data name="LetterPageTwoBody" xml:space="preserve"><value>２일차 편지</value></data>
-  <data name="LetterPageThreeBody" xml:space="preserve"><value>３일차 편지</value></data>
-  <data name="LetterPageFourBody" xml:space="preserve"><value>４일차 편지</value></data>
-  <data name="LetterPageFiveBody" xml:space="preserve"><value>５일차 편지</value></data>
-  <data name="LetterPageSixBody" xml:space="preserve"><value>６일차 편지</value></data>
+  <data name="LetterPageOneBody" xml:space="preserve"><value>안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. </value></data>
+  <data name="LetterPageTwoBody" xml:space="preserve"><value>안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. </value></data>
+  <data name="LetterPageThreeBody" xml:space="preserve"><value>안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. </value></data>
+  <data name="LetterPageFourBody" xml:space="preserve"><value>안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. </value></data>
+  <data name="LetterPageFiveBody" xml:space="preserve"><value>안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. </value></data>
+  <data name="LetterPageSixBody" xml:space="preserve"><value>안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 안녕하세요. 이것은 테스트 메세지 코드입니다. 
+  
+  안녕하세요. 이것은 테스트 메세지 코드입니다. </value></data>
   <data name="LetterLockedEyebrow" xml:space="preserve"><value>Coming soon</value></data>
   <data name="LetterLockedTitle" xml:space="preserve"><value>아직 공개되지 않은 편지예요.</value></data>
   <data name="LetterLockedReleaseMessage" xml:space="preserve"><value>{release}에 공개됩니다.</value></data>
@@ -126,7 +144,8 @@
   <data name="LetterHomeButton" xml:space="preserve"><value>홈으로 가기</value></data>
   <data name="LetterSaveButton" xml:space="preserve"><value>편지 저장하기</value></data>
   <data name="LetterSavingStatus" xml:space="preserve"><value>편지를 이미지로 저장하는 중입니다.</value></data>
-  <data name="LetterSavedStatus" xml:space="preserve"><value>편지 이미지 묶음 저장을 시작했습니다.</value></data>
+  <data name="LetterSavedStatus" xml:space="preserve"><value>편지 이미지 묶음 다운로드를 시작합니다.</value></data>
+  <data name="LetterSaveUnavailableStatus" xml:space="preserve"><value>아직 다운로드 서버가 설정되지 않았습니다. 관리자에게 문의해주세요.</value></data>
   <data name="LetterFrom" xml:space="preserve"><value>From. 사랑스러운 지윤이가♥️</value></data>
   <data name="CameraEyebrow" xml:space="preserve"><value>Memory shot</value></data>
   <data name="CameraStartButton" xml:space="preserve"><value>카메라 켜기</value></data>

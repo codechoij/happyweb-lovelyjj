@@ -1,7 +1,7 @@
-const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
-const START_DATE = new Date("2025-08-14T00:00:00+09:00");
-const TIMECAPSULE_OPEN_DATE = new Date("2026-08-14T18:00:00+09:00");
-const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-14T19:00:00+09:00");
+const ANNIVERSARY_DATE = new Date("2026-07-14T00:00:00+09:00");
+const START_DATE = new Date("2025-07-14T00:00:00+09:00");
+const TIMECAPSULE_OPEN_DATE = new Date("2026-07-14T18:00:00+09:00");
+const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-07-14T19:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
 
 const gifts = [
@@ -133,7 +133,7 @@ const BUILTIN_LETTER_CONFIG = {
     { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-03T03:00:00+09:00" },
     { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-03T04:00:00+09:00" },
     { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-03T05:00:00+09:00" },
-    { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-03T15:20:00+09:00" },
+    { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-03T15:25:00+09:00" },
   ],
 };
 
@@ -143,6 +143,36 @@ const LETTER_PAGES = LETTER_CONFIG.pages.map((item) => ({
   bodyKey: item.bodyKey,
   releaseAt: new Date(item.releaseAt),
 }));
+
+//=======
+//const LETTER_DESCRIPTION_RELEASE_DATE = new Date("2026-07-31T14:37:00+09:00");
+//const LETTER_PAGES = [
+//  {
+//    bodyKey: "LetterPageOneBody",
+//    releaseAt: new Date("2026-07-31T14:37:10+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageTwoBody",
+//    releaseAt: new Date("2026-07-31T14:37:30+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageThreeBody",
+//    releaseAt: new Date("2026-07-31T14:37:40+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageFourBody",
+//    releaseAt: new Date("2026-07-31T14:37:50+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageFiveBody",
+//    releaseAt: new Date("2026-07-31T14:38:00+09:00"),
+//  },
+//  {
+//    bodyKey: "LetterPageSixBody",
+//    releaseAt: new Date("2026-07-31T14:39:00+09:00"),
+//  },
+//];
+//>>>>>>> main
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -1273,272 +1303,29 @@ function initLetter() {
     if (currentPageIndex > 0) showLetterPage(currentPageIndex - 1);
   });
   next.addEventListener("click", () => showLetterPage(currentPageIndex + 1));
-  save.addEventListener("click", async () => {
-    status.textContent = t("LetterSavingStatus");
-    await saveAllLetterImages();
-    status.textContent = t("LetterSavedStatus");
-  });
-}
+  save.addEventListener("click", (event) => {
+    event.preventDefault();
+    const downloadUrl = getLetterZipUrl();
 
-async function saveAllLetterImages() {
-  await ensureLetterFontsLoaded();
-  const pages = [
-    {
-      filename: "letter-description.jpg",
-      title: t("LetterDescriptionTitle"),
-      body: t("LetterDescriptionBody"),
-      eyebrow: t("LetterDescriptionEyebrow"),
-      shape: "bubble",
-    },
-    ...LETTER_PAGES.map((item, index) => ({
-      filename: `letter-page-${index + 1}.jpg`,
-      body: t(item.bodyKey).trim(),
-      shape: "paper",
-      pageIndex: index,
-    })),
-  ];
-  const files = pages.map((item) => ({
-    filename: item.filename,
-    bytes: dataUrlToBytes(createLetterDataUrl(item)),
-  }));
-
-  downloadBlob(createZipBlob(files), "letters.zip");
-}
-
-async function ensureLetterFontsLoaded() {
-  if (!document.fonts?.load) return;
-  await Promise.all([
-    document.fonts.load('42px "Apple SD Gothic Neo"'),
-    document.fonts.load('42px "Malgun Gothic"'),
-  ]);
-}
-
-function createLetterDataUrl(item) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 1600;
-  const context = canvas.getContext("2d");
-  const baseFont = '"Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif';
-
-  context.fillStyle = "#fffaf7";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
-  if (item.shape === "bubble") {
-    drawRoundRect(context, 120, 120, 960, 1250, 72, "#ffffff", "#ead9d5");
-    drawCircle(context, 875, 1378, 44, "#ffffff", "#ead9d5");
-    drawCircle(context, 942, 1440, 22, "#ffffff", "#ead9d5");
-  } else {
-    drawRoundRect(context, 120, 140, 960, 1180, 8, "#fffefc", "#ead9d5");
-  }
-
-  context.textAlign = "left";
-  context.textBaseline = "top";
-
-  context.fillStyle = "#312c35";
-  context.font = `700 42px ${baseFont}`;
-
-  let cursorY = item.shape === "paper" ? 280 : 230;
-  if (item.eyebrow) {
-    context.fillStyle = "#e95d73";
-    context.font = `700 28px ${baseFont}`;
-    context.fillText(item.eyebrow, 190, cursorY);
-    cursorY += 78;
-  }
-
-  context.fillStyle = "#312c35";
-  if (item.pageIndex === 0) {
-    context.font = `900 48px ${baseFont}`;
-    context.fillText(t("LetterTo"), 190, cursorY);
-    cursorY += 96;
-  }
-
-  if (item.title) {
-    context.font = `700 42px ${baseFont}`;
-    context.fillText(item.title, 190, cursorY);
-    cursorY += item.body ? 78 : 0;
-  }
-
-  context.fillStyle = "#756d78";
-  const bodyFontSize = item.shape === "bubble" ? 35 : 40;
-  const bodyLineHeight = item.shape === "bubble" ? 59 : 68;
-  context.font = `400 ${bodyFontSize}px ${baseFont}`;
-  if (item.body) {
-    wrapCanvasText(context, item.body, 190, cursorY, 820, bodyLineHeight);
-  }
-
-  if (item.pageIndex === LETTER_PAGES.length - 1) {
-    context.fillStyle = "#312c35";
-    context.font = `900 48px ${baseFont}`;
-    context.textAlign = "right";
-    context.fillText(t("LetterFrom"), 1010, 1148);
-  }
-
-  if (typeof item.pageIndex === "number") {
-    context.fillStyle = "#756d78";
-    context.font = `400 43px ${baseFont}`;
-    context.textAlign = "center";
-    context.fillText(String(item.pageIndex + 1), 600, 1260);
-  }
-
-  return canvas.toDataURL("image/jpeg", 0.92);
-}
-
-function drawRoundRect(context, x, y, width, height, radius, fill, stroke) {
-  context.beginPath();
-  context.moveTo(x + radius, y);
-  context.lineTo(x + width - radius, y);
-  context.quadraticCurveTo(x + width, y, x + width, y + radius);
-  context.lineTo(x + width, y + height - radius);
-  context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  context.lineTo(x + radius, y + height);
-  context.quadraticCurveTo(x, y + height, x, y + height - radius);
-  context.lineTo(x, y + radius);
-  context.quadraticCurveTo(x, y, x + radius, y);
-  context.closePath();
-  context.fillStyle = fill;
-  context.fill();
-  context.strokeStyle = stroke;
-  context.lineWidth = 3;
-  context.stroke();
-}
-
-function drawCircle(context, x, y, radius, fill, stroke) {
-  context.beginPath();
-  context.arc(x, y, radius, 0, Math.PI * 2);
-  context.fillStyle = fill;
-  context.fill();
-  context.strokeStyle = stroke;
-  context.lineWidth = 3;
-  context.stroke();
-}
-
-function wrapCanvasText(context, text, x, y, maxWidth, lineHeight) {
-  const lines = normalizeCanvasText(text).split("\n");
-  let cursorY = y;
-
-  lines.forEach((paragraph) => {
-    if (!paragraph) {
-      cursorY += lineHeight;
+    if (!downloadUrl) {
+      status.textContent = t("LetterSaveUnavailableStatus");
       return;
     }
 
-    let line = "";
-    [...paragraph].forEach((char) => {
-      const testLine = line + char;
-      if (context.measureText(testLine).width > maxWidth && line) {
-        context.fillText(line, x, cursorY);
-        line = char;
-        cursorY += lineHeight;
-        return;
-      }
-      line = testLine;
-    });
-
-    if (line) {
-      context.fillText(line, x, cursorY);
-      cursorY += lineHeight;
-    }
+    // Plain HTTPS navigation to the Cloudflare Worker URL. No fetch(), no
+    // Blob, no createObjectURL() — this is what lets KakaoTalk's in-app
+    // browser save the file.
+    status.textContent = t("LetterSavedStatus");
+    window.location.href = downloadUrl;
   });
 }
 
-function normalizeCanvasText(text) {
-  return String(text)
-    .replace(/\r\n?/g, "\n")
-    .split("\n")
-    .map((line) => line.trim().replace(/\s+/g, " "))
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
-function dataUrlToBytes(dataUrl) {
-  const base64 = dataUrl.split(",")[1] || "";
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-
-  for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i);
+function getLetterZipUrl() {
+  const configuredUrl = window.SITE_CONFIG?.LETTER_ZIP_WORKER_URL?.trim() || "";
+  if (!configuredUrl || configuredUrl.includes("WORKER_NAME.YOUR_SUBDOMAIN")) {
+    return "";
   }
-
-  return bytes;
-}
-
-function createZipBlob(files) {
-  const encoder = new TextEncoder();
-  const localParts = [];
-  const centralParts = [];
-  let offset = 0;
-
-  files.forEach((file) => {
-    const nameBytes = encoder.encode(file.filename);
-    const crc = getCrc32(file.bytes);
-    const localHeader = new Uint8Array(30 + nameBytes.length);
-    const localView = new DataView(localHeader.buffer);
-
-    localView.setUint32(0, 0x04034b50, true);
-    localView.setUint16(4, 20, true);
-    localView.setUint16(6, 0x0800, true);
-    localView.setUint16(8, 0, true);
-    localView.setUint32(14, crc, true);
-    localView.setUint32(18, file.bytes.length, true);
-    localView.setUint32(22, file.bytes.length, true);
-    localView.setUint16(26, nameBytes.length, true);
-    localHeader.set(nameBytes, 30);
-
-    localParts.push(localHeader, file.bytes);
-
-    const centralHeader = new Uint8Array(46 + nameBytes.length);
-    const centralView = new DataView(centralHeader.buffer);
-    centralView.setUint32(0, 0x02014b50, true);
-    centralView.setUint16(4, 20, true);
-    centralView.setUint16(6, 20, true);
-    centralView.setUint16(8, 0x0800, true);
-    centralView.setUint16(10, 0, true);
-    centralView.setUint32(16, crc, true);
-    centralView.setUint32(20, file.bytes.length, true);
-    centralView.setUint32(24, file.bytes.length, true);
-    centralView.setUint16(28, nameBytes.length, true);
-    centralView.setUint32(42, offset, true);
-    centralHeader.set(nameBytes, 46);
-    centralParts.push(centralHeader);
-
-    offset += localHeader.length + file.bytes.length;
-  });
-
-  const centralSize = centralParts.reduce((size, part) => size + part.length, 0);
-  const endHeader = new Uint8Array(22);
-  const endView = new DataView(endHeader.buffer);
-  endView.setUint32(0, 0x06054b50, true);
-  endView.setUint16(8, files.length, true);
-  endView.setUint16(10, files.length, true);
-  endView.setUint32(12, centralSize, true);
-  endView.setUint32(16, offset, true);
-
-  return new Blob([...localParts, ...centralParts, endHeader], { type: "application/zip" });
-}
-
-function getCrc32(bytes) {
-  let crc = 0xffffffff;
-
-  for (let i = 0; i < bytes.length; i += 1) {
-    crc ^= bytes[i];
-    for (let bit = 0; bit < 8; bit += 1) {
-      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
-    }
-  }
-
-  return (crc ^ 0xffffffff) >>> 0;
-}
-
-function downloadBlob(blob, filename) {
-  const anchor = document.createElement("a");
-  const objectUrl = URL.createObjectURL(blob);
-  anchor.href = objectUrl;
-  anchor.download = filename;
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-  setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  return `${configuredUrl}?v=${Date.now()}`;
 }
 
 function initCamera() {
@@ -2094,8 +1881,11 @@ function initGuestbook() {
 async function boot() {
   try {
     await loadResourceStrings();
+    // Exposes readiness for the GitHub Actions build (Playwright).
+    window.resourceStringsLoaded = true;
   } catch (error) {
     console.error(error);
+    window.resourceStringsLoaded = false;
   }
 
   applyResourceStrings();

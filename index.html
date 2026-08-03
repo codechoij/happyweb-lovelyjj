@@ -237,7 +237,7 @@
                 <button class="ghost-btn" type="button" data-letter-prev data-i18n="LetterPreviousButton" aria-label="이전 장" title="이전 장"></button>
                 <button class="primary-btn" type="button" data-letter-next data-i18n="LetterNextButton" aria-label="다음 장" title="다음 장"></button>
                 <a class="ghost-btn" href="#home" data-letter-home data-i18n="LetterHomeButton"></a>
-                <button class="primary-btn" type="button" data-letter-save data-i18n="LetterSaveButton"></button>
+                <a class="primary-btn" data-letter-save href="#" data-i18n="LetterSaveButton" aria-label="편지 저장하기" title="편지 저장하기"></a>
               </div>
               <p class="form-status letter-status" data-letter-status aria-live="polite"></p>
             </div>
@@ -439,6 +439,10 @@
       </form>
     </div>
 
+    <script src="./scripts/config.js"></script>
+    <script src="./scripts/letter-config.js"></script>
+    <script src="./scripts/letter-renderer.js"></script>
+    <script src="./scripts/zip.js"></script>
     <script src="./scripts/app.js"></script>
   </body>
 </html>
