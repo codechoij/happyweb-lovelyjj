@@ -121,16 +121,19 @@ const POLAROID_FONT_STYLES = {
   },
 };
 
-//<<<<<<< develop_testDownZip
+const PHOTO_OUTPUT_WIDTH = 960;
+const PHOTO_OUTPUT_HEIGHT = 1280;
+const PHOTO_ASPECT_RATIO = PHOTO_OUTPUT_WIDTH / PHOTO_OUTPUT_HEIGHT;
+
 const BUILTIN_LETTER_CONFIG = {
-  descriptionReleaseAt: "2026-07-31T14:37:00+09:00",
+  descriptionReleaseAt: "2026-08-03T00:00:00+09:00",
   pages: [
-    { bodyKey: "LetterPageOneBody", releaseAt: "2026-07-31T14:37:10+09:00" },
-    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-07-31T14:37:30+09:00" },
-    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-07-31T14:37:40+09:00" },
-    { bodyKey: "LetterPageFourBody", releaseAt: "2026-07-31T14:37:50+09:00" },
-    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-07-31T14:38:00+09:00" },
-    { bodyKey: "LetterPageSixBody", releaseAt: "2026-07-31T14:39:00+09:00" },
+    { bodyKey: "LetterPageOneBody", releaseAt: "2026-08-03T01:00:00+09:00" },
+    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-08-03T02:00:00+09:00" },
+    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-03T03:00:00+09:00" },
+    { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-03T04:00:00+09:00" },
+    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-03T05:00:00+09:00" },
+    { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-03T15:25:00+09:00" },
   ],
 };
 
@@ -140,6 +143,7 @@ const LETTER_PAGES = LETTER_CONFIG.pages.map((item) => ({
   bodyKey: item.bodyKey,
   releaseAt: new Date(item.releaseAt),
 }));
+
 //=======
 //const LETTER_DESCRIPTION_RELEASE_DATE = new Date("2026-07-31T14:37:00+09:00");
 //const LETTER_PAGES = [
@@ -1399,9 +1403,9 @@ function initCamera() {
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 960 },
-          height: { ideal: 1280 },
-          aspectRatio: { ideal: 0.75 },
+          width: { ideal: PHOTO_OUTPUT_WIDTH },
+          height: { ideal: PHOTO_OUTPUT_HEIGHT },
+          aspectRatio: { ideal: PHOTO_ASPECT_RATIO },
         },
         audio: false,
       });
@@ -1419,12 +1423,12 @@ function initCamera() {
     }
 
     const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth || 1280;
-    canvas.height = video.videoHeight || 960;
+    canvas.width = PHOTO_OUTPUT_WIDTH;
+    canvas.height = PHOTO_OUTPUT_HEIGHT;
     const context = canvas.getContext("2d");
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    drawVideoCover(context, video, canvas.width, canvas.height);
     await showCapturedCanvas(canvas);
   });
 
@@ -1440,6 +1444,26 @@ function initCamera() {
       video.play().catch(() => {});
     }
   });
+}
+
+function drawVideoCover(context, video, outputWidth, outputHeight) {
+  const sourceWidth = video.videoWidth || outputWidth;
+  const sourceHeight = video.videoHeight || outputHeight;
+  const sourceRatio = sourceWidth / sourceHeight;
+  let cropWidth = sourceWidth;
+  let cropHeight = sourceHeight;
+  let cropX = 0;
+  let cropY = 0;
+
+  if (sourceRatio > PHOTO_ASPECT_RATIO) {
+    cropWidth = Math.round(sourceHeight * PHOTO_ASPECT_RATIO);
+    cropX = Math.round((sourceWidth - cropWidth) / 2);
+  } else if (sourceRatio < PHOTO_ASPECT_RATIO) {
+    cropHeight = Math.round(sourceWidth / PHOTO_ASPECT_RATIO);
+    cropY = Math.round((sourceHeight - cropHeight) / 2);
+  }
+
+  context.drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, outputWidth, outputHeight);
 }
 
 function getCheckedValue(selector, fallback) {
@@ -1502,18 +1526,18 @@ async function ensurePolaroidFontsLoaded() {
 
 function createPolaroidDataUrl(sourceCanvas, caption, options = getSelectedPolaroidOptions()) {
   const frame = document.createElement("canvas");
-  const photoPadding = Math.round(sourceCanvas.width * 0.055);
+  frame.width = sourceCanvas.width;
+  frame.height = Math.round(frame.width / PHOTO_ASPECT_RATIO);
+
+  const photoPadding = Math.round(frame.width * 0.055);
   const topPadding = photoPadding;
-  const sidePadding = photoPadding;
-  const bottomPadding = Math.round(sourceCanvas.width * 0.18);
-  let captionSize = Math.max(28, Math.round(sourceCanvas.width * 0.038));
-  const imageWidth = sourceCanvas.width;
-  const imageHeight = sourceCanvas.height;
+  const bottomPadding = Math.round(frame.width * 0.18);
+  const imageHeight = frame.height - topPadding - bottomPadding;
+  const imageWidth = Math.round(imageHeight * PHOTO_ASPECT_RATIO);
+  const sidePadding = Math.round((frame.width - imageWidth) / 2);
+  let captionSize = Math.max(28, Math.round(frame.width * 0.038));
   const frameStyle = POLAROID_FRAME_STYLES[options.frame] || POLAROID_FRAME_STYLES.classic;
   const fontStyle = POLAROID_FONT_STYLES[options.font] || POLAROID_FONT_STYLES.default;
-
-  frame.width = imageWidth + sidePadding * 2;
-  frame.height = imageHeight + topPadding + bottomPadding;
 
   const context = frame.getContext("2d");
   context.fillStyle = frameStyle.background;

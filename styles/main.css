@@ -878,7 +878,7 @@ h2 {
   aspect-ratio: 3 / 4;
   border-radius: 8px;
   background: #241f27;
-  object-fit: contain;
+  object-fit: cover;
   transform: scaleX(-1);
 }
 
@@ -987,7 +987,7 @@ h2 {
   z-index: 1;
   display: block;
   width: 100%;
-  aspect-ratio: var(--polaroid-photo-ratio, 4 / 3);
+  aspect-ratio: var(--polaroid-photo-ratio, 3 / 4);
   object-fit: contain;
   border-radius: 4px;
   background: #f1eeee;
