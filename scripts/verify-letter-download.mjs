@@ -27,8 +27,8 @@ const EXPECTED_FILES = [
 ];
 
 function parseZip(buffer) {
-  const bytes = new Uint8Array(buffer);
-  const view = new DataView(buffer);
+  const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
   // Locate End Of Central Directory record.
   let eocdIndex = -1;
@@ -63,7 +63,7 @@ function parseZip(buffer) {
     const commentLength = view.getUint16(cursor + 32, true);
     const localHeaderOffset = view.getUint32(cursor + 42, true);
 
-    const nameBytes = new Uint8Array(buffer, cursor + 46, nameLength);
+    const nameBytes = bytes.subarray(cursor + 46, cursor + 46 + nameLength);
     const filename = new TextDecoder().decode(nameBytes);
 
     const useDataDescriptor = Boolean(flags & 0x0008);
