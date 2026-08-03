@@ -800,25 +800,7 @@ function randomBetween(min, max) {
 }
 
 function discoverGiftPhotos() {
-  const candidates = [];
-
-  for (let index = 1; index <= GIFT_PHOTO_CONFIG.maxPhotos; index += 1) {
-    GIFT_PHOTO_CONFIG.extensions.forEach((extension) => {
-      candidates.push(`${GIFT_PHOTO_CONFIG.folder}photo (${index}).${extension}`);
-    });
-  }
-
-  return Promise.all(
-    candidates.map(
-      (url) =>
-        new Promise((resolve) => {
-          const image = new Image();
-          image.onload = () => resolve(url);
-          image.onerror = () => resolve(null);
-          image.src = `${url}?v=${Date.now()}`;
-        }),
-    ),
-  ).then((urls) => urls.filter(Boolean));
+  return Promise.resolve(GIFT_PHOTO_CONFIG.files.map((file) => `${GIFT_PHOTO_CONFIG.folder}${file}`));
 }
 
 function initGiftPhotoGame(photoUrls) {
