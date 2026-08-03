@@ -1,0 +1,18 @@
+{
+  "name": "happyweb-lovelyjj",
+  "version": "1.0.0",
+  "private": true,
+  "description": "정적 1주년 기념 웹사이트 + 자동 letters.zip 생성/배포 도구",
+  "type": "module",
+  "scripts": {
+    "build:letter": "node scripts/build-letter-download.mjs",
+    "verify:letter": "node scripts/verify-letter-download.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.47.0"
+  }
+}
