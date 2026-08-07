@@ -118,7 +118,7 @@
       drawCircle(context, 875, 1378, 44, "#ffffff", "#ead9d5");
       drawCircle(context, 942, 1440, 22, "#ffffff", "#ead9d5");
     } else {
-      drawRoundRect(context, 120, 140, 960, 1420, 8, "#fffefc", "#ead9d5");
+      drawRoundRect(context, 120, 140, 960, 1400, 8, "#fffefc", "#ead9d5");
     }
 
     context.textAlign = "left";
@@ -167,7 +167,7 @@
       context.fillStyle = "#756d78";
       context.font = `400 32px ${BASE_FONT}`;
       context.textAlign = "center";
-      context.fillText(String(item.pageIndex + 1), 600, 1530);
+      context.fillText(String(item.pageIndex + 1), 600, 1438);
     }
 
     return canvas.toDataURL("image/jpeg", 0.92);
