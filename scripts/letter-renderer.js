@@ -5,7 +5,7 @@
  *   1. The website (scripts/app.js) — kept here so the browser page and the
  *      build pipeline render the letters from one implementation.
  *   2. GitHub Actions build — a headless Chromium page loads this file along
- *      with letter-config.js and zip.js and produces the 7 JPGs + letters.zip.
+ *      with letter-config.js and zip.js and produces the JPGs + letters.zip.
  *
  * Font note: the original code used "Apple SD Gothic Neo" / "Malgun Gothic".
  * Those are not available on headless CI Linux, so the renderer falls back to
@@ -174,7 +174,7 @@
   }
 
   /**
-   * Render all 7 letter images (description + 6 pages).
+   * Render all letter images (description + configured pages).
    *
    * @param {object} deps {
    *   letterTo: string,

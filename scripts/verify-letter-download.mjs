@@ -2,7 +2,7 @@
  * Verifies a generated letters.zip without extra dependencies.
  *
  * Checks:
- *   - ZIP has exactly the 7 expected files with exact names
+ *   - ZIP has exactly the expected files with exact names
  *   - every entry is non-empty
  *   - every entry starts with the JPEG magic bytes (FF D8 FF)
  *   - every entry is a decodable JPEG: parses the SOF0/SOF2 marker and
@@ -15,16 +15,21 @@
  */
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { runInNewContext } from "node:vm";
 
-const EXPECTED_FILES = [
-  "letter-description.jpg",
-  "letter-page-1.jpg",
-  "letter-page-2.jpg",
-  "letter-page-3.jpg",
-  "letter-page-4.jpg",
-  "letter-page-5.jpg",
-  "letter-page-6.jpg",
-];
+const EXPECTED_FILES = await loadExpectedFiles();
+
+async function loadExpectedFiles() {
+  const window = {};
+  const source = await readFile(resolve("scripts/letter-config.js"), "utf8");
+  runInNewContext(source, { window });
+
+  const pageCount = window.LETTER_CONFIG?.pages?.length || 0;
+  return [
+    "letter-description.jpg",
+    ...Array.from({ length: pageCount }, (_, index) => `letter-page-${index + 1}.jpg`),
+  ];
+}
 
 function parseZip(buffer) {
   const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
