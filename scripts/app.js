@@ -30,6 +30,21 @@ const gifts = [
       downloadName: "video (2).mp4",
     },
   },
+  {
+    titleKey: "GiftFourTitle",
+    type: "video",
+    resultKey: "GiftVideoThreeResult",
+    video: {
+      titleKey: "GiftVideoThreeTitle",
+      src: "./assets/gift-videos/video%20(3).mp4",
+      downloadName: "video (3).mp4",
+    },
+  },
+  {
+    titleKey: "GiftFiveTitle",
+    type: "dud",
+    resultKey: "GiftDudResult",
+  },
 ];
 
 const VISIBLE_GIFT_COUNT = 3;
@@ -579,10 +594,12 @@ function resetProtectedPage(pageId) {
   if (pageId === "gift") {
     const giftModal = $("[data-gift-modal]");
     const giftVideoModal = $("[data-gift-video-modal]");
+    const giftDudModal = $("[data-gift-dud-modal]");
     const giftVideo = $("[data-gift-video]");
 
     if (giftModal) giftModal.hidden = true;
     if (giftVideoModal) giftVideoModal.hidden = true;
+    if (giftDudModal) giftDudModal.hidden = true;
     if (giftVideo) giftVideo.pause();
     document.body.classList.remove("modal-open");
   }
@@ -902,7 +919,18 @@ function updateCountdown() {
 }
 
 function shuffleItems(items) {
-  return [...items].sort(() => Math.random() - 0.5);
+  const shuffled = [...items];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+function selectVisibleGifts(items) {
+  return shuffleItems(items).slice(0, Math.min(VISIBLE_GIFT_COUNT, items.length));
 }
 
 function randomBetween(min, max) {
@@ -1168,6 +1196,7 @@ function initGifts() {
   const grid = $("[data-gift-grid]");
   const result = $("[data-gift-result]");
   const startGiftVideo = initGiftVideo();
+  const showGiftDud = initGiftDud();
   let startPhotoGame = null;
   let photoGameReady = false;
 
@@ -1181,8 +1210,9 @@ function initGifts() {
     result.textContent = t("GiftNotReady");
   });
 
-  shuffleItems(gifts)
-    .slice(0, VISIBLE_GIFT_COUNT)
+  grid.innerHTML = "";
+
+  selectVisibleGifts(gifts)
     .forEach((gift) => {
       const button = document.createElement("button");
       button.className = "gift-box";
@@ -1206,6 +1236,12 @@ function initGifts() {
         if (gift.type === "video") {
           result.textContent = t(gift.resultKey);
           startGiftVideo(gift.video);
+          return;
+        }
+
+        if (gift.type === "dud") {
+          result.textContent = t(gift.resultKey);
+          showGiftDud();
           return;
         }
 
@@ -1254,6 +1290,27 @@ function initGiftVideo() {
   });
 
   return openVideo;
+}
+
+function initGiftDud() {
+  const modal = $("[data-gift-dud-modal]");
+  const close = $("[data-gift-dud-close]");
+  const confirm = $("[data-gift-dud-confirm]");
+
+  function closeDud() {
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+  }
+
+  function openDud() {
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+  }
+
+  close.addEventListener("click", closeDud);
+  confirm.addEventListener("click", closeDud);
+
+  return openDud;
 }
 
 function initLetter() {
