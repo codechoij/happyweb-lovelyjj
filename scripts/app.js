@@ -125,15 +125,15 @@ const POLAROID_FONT_STYLES = {
 
 const POLAROID_CAPTION_SIZE_STYLES = {
   small: {
-    previewSize: 24,
+    previewSize: 18,
     downloadScale: 1,
   },
   medium: {
-    previewSize: 31,
+    previewSize: 20,
     downloadScale: 1.3,
   },
   large: {
-    previewSize: 40,
+    previewSize: 24,
     downloadScale: 1.65,
   },
 };
