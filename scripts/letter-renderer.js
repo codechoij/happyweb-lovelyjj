@@ -18,7 +18,7 @@
   "use strict";
 
   const LETTER_CANVAS_WIDTH = 1200;
-  const LETTER_CANVAS_HEIGHT = 1720;
+  const LETTER_CANVAS_HEIGHT = 1840;
   const BASE_FONT = '"Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif';
 
   function drawRoundRect(context, x, y, width, height, radius, fill, stroke) {
@@ -118,7 +118,7 @@
       drawCircle(context, 875, 1378, 44, "#ffffff", "#ead9d5");
       drawCircle(context, 942, 1440, 22, "#ffffff", "#ead9d5");
     } else {
-      drawRoundRect(context, 120, 140, 960, 1300, 8, "#fffefc", "#ead9d5");
+      drawRoundRect(context, 120, 140, 960, 1420, 8, "#fffefc", "#ead9d5");
     }
 
     context.textAlign = "left";
@@ -127,7 +127,7 @@
     context.fillStyle = "#312c35";
     context.font = `700 42px ${BASE_FONT}`;
 
-    let cursorY = item.shape === "paper" ? 280 : 230;
+    let cursorY = item.shape === "paper" ? 230 : 230;
     if (item.eyebrow) {
       context.fillStyle = "#e95d73";
       context.font = `700 28px ${BASE_FONT}`;
@@ -139,7 +139,7 @@
     if (item.pageIndex === 0) {
       context.font = `900 48px ${BASE_FONT}`;
       context.fillText(item.letterTo || "", 190, cursorY);
-      cursorY += 124;
+      cursorY += 118;
     }
 
     if (item.title) {
@@ -160,14 +160,14 @@
       context.fillStyle = "#312c35";
       context.font = `900 48px ${BASE_FONT}`;
       context.textAlign = "right";
-      context.fillText(item.letterFrom || "", 1010, 1268);
+      context.fillText(item.letterFrom || "", 1010, 1418);
     }
 
     if (typeof item.pageIndex === "number") {
       context.fillStyle = "#756d78";
       context.font = `400 32px ${BASE_FONT}`;
       context.textAlign = "center";
-      context.fillText(String(item.pageIndex + 1), 600, 1380);
+      context.fillText(String(item.pageIndex + 1), 600, 1530);
     }
 
     return canvas.toDataURL("image/jpeg", 0.92);

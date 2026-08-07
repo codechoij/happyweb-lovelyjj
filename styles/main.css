@@ -770,7 +770,7 @@ h2 {
 .letter-page {
   display: grid;
   gap: 14px;
-  min-height: 360px;
+  min-height: 420px;
   white-space: pre-line;
 }
 
@@ -812,7 +812,7 @@ h2 {
 .letter-page-locked {
   position: relative;
   overflow: hidden;
-  min-height: 360px;
+  min-height: 420px;
 }
 
 .letter-locked-preview {
