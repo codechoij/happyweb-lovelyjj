@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker — Letter ZIP download proxy.
+ * Cloudflare Worker — Letter ZIP download proxy + trusted time endpoint.
  *
  * Role is intentionally minimal:
  *   1. Fetch the latest letters.zip from GitHub Pages.
@@ -12,7 +12,8 @@
  * Configuration (no secrets are hardcoded):
  *   - ORIGIN_ZIP_URL : the GitHub Pages URL of the generated ZIP. Defaults to
  *     this project's Pages URL; set via wrangler var or `--var`.
- *   - Route          : https://<worker>.<subdomain>.workers.dev/letters.zip
+ *   - Routes         : https://<worker>.<subdomain>.workers.dev/letters.zip
+ *                      https://<worker>.<subdomain>.workers.dev/time
  */
 const DEFAULT_ORIGIN_ZIP_URL = "https://codechoij.github.io/happyweb-lovelyjj/assets/downloads/letters.zip";
 
@@ -22,14 +23,23 @@ const MAX_BODY_BYTES = 50 * 1024 * 1024; // 50 MB safety cap
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: corsHeaders() });
+    }
+
+    if (url.pathname === "/time") {
+      return handleTimeRequest(request);
+    }
+
     if (url.pathname !== "/letters.zip") {
-      return new Response("Not Found", { status: 404 });
+      return new Response("Not Found", { status: 404, headers: corsHeaders() });
     }
 
     if (request.method !== "GET" && request.method !== "HEAD") {
       return new Response("Method Not Allowed", {
         status: 405,
-        headers: { "Allow": "GET, HEAD" },
+        headers: { ...corsHeaders(), "Allow": "GET, HEAD" },
       });
     }
 
@@ -109,6 +119,7 @@ export default {
       "Content-Type": "application/zip",
       "Content-Disposition": 'attachment; filename="letters.zip"',
       "Cache-Control": "no-store",
+      ...corsHeaders(),
     };
     if (contentLength && request.method === "HEAD") {
       headers["Content-Length"] = contentLength;
@@ -120,6 +131,34 @@ export default {
     });
   },
 };
+
+function handleTimeRequest(request) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: { ...corsHeaders(), "Allow": "GET, HEAD" },
+    });
+  }
+
+  const now = new Date();
+  const body = request.method === "HEAD"
+    ? null
+    : JSON.stringify({
+        ok: true,
+        epochMs: now.getTime(),
+        iso: now.toISOString(),
+        timeZone: "Asia/Seoul",
+      });
+
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      ...corsHeaders(),
+    },
+  });
+}
 
 function isZipMagic(bytes) {
   if (!bytes || bytes.length < 4) return false;
@@ -136,6 +175,7 @@ function withDownloadHeaders(response, filename) {
   headers.set("Content-Type", "application/zip");
   headers.set("Content-Disposition", `attachment; filename="${filename}"`);
   headers.set("Cache-Control", "no-store");
+  Object.entries(corsHeaders()).forEach(([name, value]) => headers.set(name, value));
   return new Response(response.body, {
     status: response.status,
     headers,
@@ -148,6 +188,15 @@ function jsonError(status, message) {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store",
+      ...corsHeaders(),
     },
   });
+}
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
 }

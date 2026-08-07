@@ -10,4 +10,5 @@
  */
 window.SITE_CONFIG = {
   LETTER_ZIP_WORKER_URL: "https://happyweb-letter-download.happyweb-jy1004.workers.dev/letters.zip",
+  SERVER_TIME_URL: "https://happyweb-letter-download.happyweb-jy1004.workers.dev/time",
 };

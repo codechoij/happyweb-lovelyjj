@@ -81,6 +81,8 @@ const ADMIN_SHORTCUT_CLICK_COUNT = 15;
 const ADMIN_SHORTCUT_WINDOW_MS = 4500;
 const TRUSTED_TIME_SYNC_INTERVAL_MS = 60 * 1000;
 const TRUSTED_TIME_RETRY_INTERVAL_MS = 10 * 1000;
+const TRUSTED_TIME_REQUEST_TIMEOUT_MS = 60 * 1000;
+const TRUSTED_TIME_FAST_TIMEOUT_MS = 2000;
 const PROTECTED_PAGE_IDS = ["gift", "letter"];
 
 const POLAROID_FRAME_STYLES = {
@@ -185,6 +187,7 @@ let unlockedProtectedPages = new Set();
 let trustedTimeOffsetMs = null;
 let trustedTimeSyncedAt = 0;
 let trustedTimeLastAttemptAt = 0;
+let trustedTimeSyncPromise = null;
 let updateLetterReleaseView = () => {};
 let siteConfigLoadPromise = null;
 
@@ -297,11 +300,23 @@ function clearAdminSessionToken() {
   }
 }
 
-async function requestAdminApi(action, payload = {}) {
-  const response = await fetch(ADMIN_API_URL, {
-    method: "POST",
-    body: JSON.stringify({ action, ...payload }),
-  });
+async function requestAdminApi(action, payload = {}, options = {}) {
+  const controller = options.timeoutMs ? new AbortController() : null;
+  const timeoutId = controller
+    ? setTimeout(() => controller.abort(), options.timeoutMs)
+    : null;
+
+  let response;
+  try {
+    response = await fetch(ADMIN_API_URL, {
+      method: "POST",
+      body: JSON.stringify({ action, ...payload }),
+      signal: controller?.signal,
+    });
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+
   const data = await response.json();
 
   if (!response.ok || !data.ok) {
@@ -311,6 +326,30 @@ async function requestAdminApi(action, payload = {}) {
     throw error;
   }
 
+  return data;
+}
+
+async function requestJson(url, options = {}) {
+  const controller = options.timeoutMs ? new AbortController() : null;
+  const timeoutId = controller
+    ? setTimeout(() => controller.abort(), options.timeoutMs)
+    : null;
+
+  let response;
+  try {
+    response = await fetch(url, {
+      method: options.method || "GET",
+      cache: "no-store",
+      signal: controller?.signal,
+    });
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+
+  const data = await response.json();
+  if (!response.ok || !data.ok) {
+    throw new Error(data.message || "Request failed.");
+  }
   return data;
 }
 
@@ -336,15 +375,61 @@ const sharedPasswordAuth = {
 };
 
 async function syncTrustedTime() {
+  if (trustedTimeSyncPromise) return trustedTimeSyncPromise;
+
   trustedTimeLastAttemptAt = Date.now();
-  const data = await requestAdminApi("getServerTime");
-  const epochMs = Number(data.epochMs);
+  trustedTimeSyncPromise = requestTrustedTime()
+    .then((data) => {
+      const epochMs = Number(data.epochMs);
 
-  if (!Number.isFinite(epochMs)) throw new Error("Invalid server time.");
+      if (!Number.isFinite(epochMs)) throw new Error("Invalid server time.");
 
-  trustedTimeOffsetMs = epochMs - Date.now();
-  trustedTimeSyncedAt = Date.now();
-  return getTrustedNow();
+      trustedTimeOffsetMs = epochMs - Date.now();
+      trustedTimeSyncedAt = Date.now();
+      return getTrustedNow();
+    })
+    .finally(() => {
+      trustedTimeSyncPromise = null;
+    });
+
+  return trustedTimeSyncPromise;
+}
+
+async function requestTrustedTime() {
+  const serverTimeUrl = await getServerTimeUrl();
+
+  if (serverTimeUrl) {
+    try {
+      return await requestJson(serverTimeUrl, { timeoutMs: TRUSTED_TIME_FAST_TIMEOUT_MS });
+    } catch (error) {
+      console.warn("Fast server time endpoint failed; falling back to Apps Script.", error);
+    }
+  }
+
+  return requestAdminApi("getServerTime", {}, { timeoutMs: TRUSTED_TIME_REQUEST_TIMEOUT_MS });
+}
+
+async function getServerTimeUrl() {
+  try {
+    await loadSiteConfig();
+  } catch (error) {
+    return "";
+  }
+
+  const configuredUrl = window.SITE_CONFIG?.SERVER_TIME_URL?.trim() || "";
+  if (configuredUrl) return configuredUrl;
+
+  const zipUrl = window.SITE_CONFIG?.LETTER_ZIP_WORKER_URL?.trim() || "";
+  if (!zipUrl || zipUrl.includes("WORKER_NAME.YOUR_SUBDOMAIN")) return "";
+
+  try {
+    const url = new URL(zipUrl);
+    url.pathname = "/time";
+    url.search = "";
+    return url.toString();
+  } catch (error) {
+    return "";
+  }
 }
 
 function getTrustedNow() {
@@ -1329,7 +1414,10 @@ async function loadSiteConfig() {
     const script = document.createElement("script");
     script.src = "./scripts/config.js";
     script.onload = resolve;
-    script.onerror = reject;
+    script.onerror = () => {
+      siteConfigLoadPromise = null;
+      reject(new Error("Failed to load site config."));
+    };
     document.head.appendChild(script);
   });
 }
@@ -1914,7 +2002,6 @@ async function boot() {
   initAdminAuth();
   initAdminPage();
   initProtectedPages();
-  await refreshTrustedTimeIfNeeded();
   setActivePage();
   initGifts();
   initLetter();
@@ -1924,9 +2011,17 @@ async function boot() {
   initGuestbook();
   updateCountdown();
   updateTimecapsuleGates();
+  refreshTrustedTimeIfNeeded().then(() => {
+    updateTimecapsuleGates();
+    updateLetterReleaseView();
+    setActivePage();
+  });
   setInterval(() => {
     updateCountdown();
-    refreshTrustedTimeIfNeeded();
+    refreshTrustedTimeIfNeeded().then(() => {
+      updateTimecapsuleGates();
+      updateLetterReleaseView();
+    });
     updateTimecapsuleGates();
     updateLetterReleaseView();
   }, 1000);
