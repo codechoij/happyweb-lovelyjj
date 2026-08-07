@@ -46,5 +46,9 @@ window.LETTER_CONFIG = {
       bodyKey: "LetterPageEightBody",
       releaseAt: "2026-07-31T14:41:00+09:00",
     },
+    {
+      bodyKey: "LetterPageNineBody",
+      releaseAt: "2026-07-31T14:42:00+09:00",
+    },
   ],
 };
