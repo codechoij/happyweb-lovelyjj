@@ -136,6 +136,8 @@ const BUILTIN_LETTER_CONFIG = {
     { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-03T04:00:00+09:00" },
     { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-03T05:00:00+09:00" },
     { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-03T17:05:00+09:00" },
+    { bodyKey: "LetterPageSevenBody", releaseAt: "2026-08-03T18:05:00+09:00" },
+    { bodyKey: "LetterPageEightBody", releaseAt: "2026-08-03T19:05:00+09:00" },
   ],
 };
 

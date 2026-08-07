@@ -55,6 +55,13 @@ async function loadBuildScripts(page) {
   await page.addScriptTag({ path: join(PROJECT_ROOT, "scripts", "zip.js") });
 }
 
+async function getExpectedLetterFiles(page) {
+  return page.evaluate(() => [
+    "letter-description.jpg",
+    ...window.LETTER_CONFIG.pages.map((_, index) => `letter-page-${index + 1}.jpg`),
+  ]);
+}
+
 async function generateZip(page, outputDir) {
   const result = await page.evaluate(async (fonts) => {
     async function loadFonts() {
@@ -148,18 +155,17 @@ async function main() {
     await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
     await loadBuildScripts(page);
     await waitForLetterReady(page);
+    const expectedNames = await getExpectedLetterFiles(page);
 
     const { outputPath, files } = await generateZip(page, outputDir);
 
-    if (files.length !== 7) {
-      throw new Error(`Expected 7 files in ZIP, got ${files.length}.`);
+    if (files.length !== expectedNames.length) {
+      throw new Error(`Expected ${expectedNames.length} files in ZIP, got ${files.length}.`);
     }
     if (pageErrors.length) {
       log("warn", `Page reported non-blocking errors:\n${pageErrors.join("\n")}`);
     }
 
-    const expectedNames = ["letter-description.jpg"];
-    for (let i = 1; i <= 6; i += 1) expectedNames.push(`letter-page-${i}.jpg`);
     const actualNames = files.map((file) => file.filename);
     for (const name of expectedNames) {
       if (!actualNames.includes(name)) throw new Error(`Missing expected file in ZIP: ${name}`);
