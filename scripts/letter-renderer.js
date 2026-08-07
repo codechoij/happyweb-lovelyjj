@@ -18,7 +18,7 @@
   "use strict";
 
   const LETTER_CANVAS_WIDTH = 1200;
-  const LETTER_CANVAS_HEIGHT = 1840;
+  const LETTER_CANVAS_HEIGHT = 1720;
   const BASE_FONT = '"Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif';
 
   function drawRoundRect(context, x, y, width, height, radius, fill, stroke) {
