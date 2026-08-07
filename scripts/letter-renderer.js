@@ -77,6 +77,8 @@
         cursorY += lineHeight;
       }
     });
+
+    return cursorY;
   }
 
   function normalizeCanvasText(text) {
@@ -151,16 +153,18 @@
     context.fillStyle = "#756d78";
     const bodyFontSize = item.shape === "bubble" ? 35 : 40;
     const bodyLineHeight = item.shape === "bubble" ? 59 : 68;
+    let bodyEndY = cursorY;
     context.font = `400 ${bodyFontSize}px ${BASE_FONT}`;
     if (item.body) {
-      wrapCanvasText(context, item.body, 190, cursorY, 820, bodyLineHeight);
+      bodyEndY = wrapCanvasText(context, item.body, 190, cursorY, 820, bodyLineHeight);
     }
 
     if (item.pageIndex === item.maxPageIndex) {
       context.fillStyle = "#312c35";
       context.font = `900 48px ${BASE_FONT}`;
       context.textAlign = "right";
-      context.fillText(item.letterFrom || "", 1010, 1328);
+      const fromY = Math.min(bodyEndY + bodyLineHeight * 1.35, 1288);
+      context.fillText(item.letterFrom || "", 1010, fromY);
     }
 
     if (typeof item.pageIndex === "number") {
