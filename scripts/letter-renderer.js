@@ -18,7 +18,7 @@
   "use strict";
 
   const LETTER_CANVAS_WIDTH = 1200;
-  const LETTER_CANVAS_HEIGHT = 1720;
+  const LETTER_CANVAS_HEIGHT = 1840;
   const BASE_FONT = '"Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif';
 
   function drawRoundRect(context, x, y, width, height, radius, fill, stroke) {
@@ -127,7 +127,7 @@
     context.fillStyle = "#312c35";
     context.font = `700 42px ${BASE_FONT}`;
 
-    let cursorY = item.shape === "paper" ? 252 : 230;
+    let cursorY = item.shape === "paper" ? 230 : 230;
     if (item.eyebrow) {
       context.fillStyle = "#e95d73";
       context.font = `700 28px ${BASE_FONT}`;
@@ -160,7 +160,7 @@
       context.fillStyle = "#312c35";
       context.font = `900 48px ${BASE_FONT}`;
       context.textAlign = "right";
-      context.fillText(item.letterFrom || "", 1010, 1348);
+      context.fillText(item.letterFrom || "", 1010, 1418);
     }
 
     if (typeof item.pageIndex === "number") {
