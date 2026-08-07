@@ -160,7 +160,7 @@
       context.fillStyle = "#312c35";
       context.font = `900 48px ${BASE_FONT}`;
       context.textAlign = "right";
-      context.fillText(item.letterFrom || "", 1010, 1418);
+      context.fillText(item.letterFrom || "", 1010, 1328);
     }
 
     if (typeof item.pageIndex === "number") {
