@@ -186,6 +186,7 @@ let trustedTimeOffsetMs = null;
 let trustedTimeSyncedAt = 0;
 let trustedTimeLastAttemptAt = 0;
 let updateLetterReleaseView = () => {};
+let siteConfigLoadPromise = null;
 
 async function loadResourceStrings() {
   const response = await fetch(RESOURCE_URL);
@@ -1303,9 +1304,9 @@ function initLetter() {
     if (currentPageIndex > 0) showLetterPage(currentPageIndex - 1);
   });
   next.addEventListener("click", () => showLetterPage(currentPageIndex + 1));
-  save.addEventListener("click", (event) => {
+  save.addEventListener("click", async (event) => {
     event.preventDefault();
-    const downloadUrl = getLetterZipUrl();
+    const downloadUrl = await getLetterZipUrl();
 
     if (!downloadUrl) {
       status.textContent = t("LetterSaveUnavailableStatus");
@@ -1320,7 +1321,26 @@ function initLetter() {
   });
 }
 
-function getLetterZipUrl() {
+async function loadSiteConfig() {
+  if (window.SITE_CONFIG) return;
+  if (siteConfigLoadPromise) return siteConfigLoadPromise;
+
+  siteConfigLoadPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "./scripts/config.js";
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function getLetterZipUrl() {
+  try {
+    await loadSiteConfig();
+  } catch (error) {
+    return "";
+  }
+
   const configuredUrl = window.SITE_CONFIG?.LETTER_ZIP_WORKER_URL?.trim() || "";
   if (!configuredUrl || configuredUrl.includes("WORKER_NAME.YOUR_SUBDOMAIN")) {
     return "";
