@@ -127,7 +127,7 @@
     context.fillStyle = "#312c35";
     context.font = `700 42px ${BASE_FONT}`;
 
-    let cursorY = item.shape === "paper" ? 230 : 230;
+    let cursorY = item.shape === "paper" ? 274 : 230;
     if (item.eyebrow) {
       context.fillStyle = "#e95d73";
       context.font = `700 28px ${BASE_FONT}`;
