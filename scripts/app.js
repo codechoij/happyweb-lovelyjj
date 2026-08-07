@@ -123,9 +123,26 @@ const POLAROID_FONT_STYLES = {
   },
 };
 
+const POLAROID_CAPTION_SIZE_STYLES = {
+  small: {
+    previewSize: 24,
+    downloadScale: 1,
+  },
+  medium: {
+    previewSize: 31,
+    downloadScale: 1.3,
+  },
+  large: {
+    previewSize: 40,
+    downloadScale: 1.65,
+  },
+};
+
 const PHOTO_OUTPUT_WIDTH = 960;
 const PHOTO_OUTPUT_HEIGHT = 1280;
 const PHOTO_ASPECT_RATIO = PHOTO_OUTPUT_WIDTH / PHOTO_OUTPUT_HEIGHT;
+const POLAROID_HEART_FONT_RATIO = 0.042;
+const POLAROID_HEART_GAP_RATIO = 0.083;
 
 const BUILTIN_LETTER_CONFIG = {
   descriptionReleaseAt: "2026-08-03T00:00:00+09:00",
@@ -1449,7 +1466,7 @@ function initCamera() {
   const captionDate = $("[data-polaroid-date]");
   const captionCopy = $("[data-polaroid-copy]");
   const captureButton = $("[data-camera-capture]");
-  const styleInputs = $$("[data-polaroid-style], [data-polaroid-pattern], [data-polaroid-font]");
+  const styleInputs = $$("[data-polaroid-style], [data-polaroid-pattern], [data-polaroid-font], [data-polaroid-font-size]");
   let stream;
   let captureVersion = 0;
   let renderVersion = 0;
@@ -1585,27 +1602,32 @@ function getSelectedPolaroidOptions() {
   const frame = getCheckedValue("[data-polaroid-style]", "classic");
   const pattern = getCheckedValue("[data-polaroid-pattern]", "none");
   const font = getCheckedValue("[data-polaroid-font]", "default");
+  const size = getCheckedValue("[data-polaroid-font-size]", "medium");
 
   return {
     frame: POLAROID_FRAME_STYLES[frame] ? frame : "classic",
     pattern: ["none", "dots", "hearts"].includes(pattern) ? pattern : "none",
     font: POLAROID_FONT_STYLES[font] ? font : "default",
+    size: POLAROID_CAPTION_SIZE_STYLES[size] ? size : "medium",
   };
 }
 
 function applyPolaroidPreviewStyle(polaroid, options) {
   const frameStyle = POLAROID_FRAME_STYLES[options.frame] || POLAROID_FRAME_STYLES.classic;
   const fontStyle = POLAROID_FONT_STYLES[options.font] || POLAROID_FONT_STYLES.default;
+  const sizeStyle = POLAROID_CAPTION_SIZE_STYLES[options.size] || POLAROID_CAPTION_SIZE_STYLES.medium;
 
   polaroid.dataset.frame = options.frame;
   polaroid.dataset.pattern = options.pattern;
   polaroid.dataset.font = options.font;
+  polaroid.dataset.size = options.size;
   polaroid.style.setProperty("--polaroid-bg", frameStyle.background);
   polaroid.style.setProperty("--polaroid-caption", frameStyle.captionColor);
   polaroid.style.setProperty("--polaroid-accent", frameStyle.accent);
   polaroid.style.setProperty("--polaroid-pattern-color", frameStyle.accent);
   polaroid.style.setProperty("--polaroid-date-font", fontStyle.dateFamily);
   polaroid.style.setProperty("--polaroid-copy-font", fontStyle.copyFamily);
+  polaroid.style.setProperty("--polaroid-caption-size", `${sizeStyle.previewSize}px`);
 }
 
 function getKstDateParts() {
@@ -1646,9 +1668,11 @@ function createPolaroidDataUrl(sourceCanvas, caption, options = getSelectedPolar
   const imageHeight = frame.height - topPadding - bottomPadding;
   const imageWidth = Math.round(imageHeight * PHOTO_ASPECT_RATIO);
   const sidePadding = Math.round((frame.width - imageWidth) / 2);
-  let captionSize = Math.max(28, Math.round(frame.width * 0.038));
   const frameStyle = POLAROID_FRAME_STYLES[options.frame] || POLAROID_FRAME_STYLES.classic;
   const fontStyle = POLAROID_FONT_STYLES[options.font] || POLAROID_FONT_STYLES.default;
+  const sizeStyle = POLAROID_CAPTION_SIZE_STYLES[options.size] || POLAROID_CAPTION_SIZE_STYLES.medium;
+  const baseCaptionSize = Math.max(28, Math.round(frame.width * 0.038));
+  let captionSize = Math.round(baseCaptionSize * sizeStyle.downloadScale);
 
   const context = frame.getContext("2d");
   context.fillStyle = frameStyle.background;
@@ -1732,9 +1756,9 @@ function drawPolaroidPattern(context, frame, pattern, accentColor, regions = nul
     context.fillStyle = accentColor;
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.font = `${Math.max(17, Math.round(frame.width * 0.019))}px Arial, sans-serif`;
+    context.font = `${Math.max(36, Math.round(frame.width * POLAROID_HEART_FONT_RATIO))}px Arial, sans-serif`;
 
-    const gap = Math.max(58, Math.round(frame.width * 0.052));
+    const gap = Math.max(76, Math.round(frame.width * POLAROID_HEART_GAP_RATIO));
     for (let y = gap / 2; y < frame.height; y += gap) {
       for (let x = gap / 2; x < frame.width; x += gap) {
         context.fillText("♥", x, y);
