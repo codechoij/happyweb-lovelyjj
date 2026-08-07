@@ -129,11 +129,11 @@ const POLAROID_CAPTION_SIZE_STYLES = {
     downloadScale: 1,
   },
   medium: {
-    previewSize: 23,
+    previewSize: 20,
     downloadScale: 1.3,
   },
   large: {
-    previewSize: 29,
+    previewSize: 24,
     downloadScale: 1.65,
   },
 };
