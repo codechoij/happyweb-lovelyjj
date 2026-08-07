@@ -718,6 +718,7 @@ h2 {
 }
 
 .letter-book {
+  position: relative;
   display: grid;
   width: min(720px, 100%);
   gap: 16px;
@@ -845,6 +846,11 @@ h2 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+}
+
+.letter-nav-btn span[aria-hidden="true"] {
+  font-size: 20px;
+  line-height: 0;
 }
 
 .letter-status {
@@ -1434,6 +1440,37 @@ h2 {
 
   .gift-game-toolbar > p {
     font-size: 13px;
+  }
+
+  .letter-nav-btn {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 999px;
+    transform: translateY(-50%);
+  }
+
+  .letter-nav-btn span:not([aria-hidden="true"]) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .letter-nav-prev {
+    left: -8px;
+  }
+
+  .letter-nav-next {
+    right: -8px;
   }
 
   .guestbook-heading {
