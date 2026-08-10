@@ -12,43 +12,44 @@
  * regardless of where the code runs.
  */
 window.LETTER_CONFIG = {
-  descriptionReleaseAt: "2026-07-31T14:37:00+09:00",
+  descriptionReleaseAt: "2026-08-10T13:50:50+09:00",
   pages: [
     {
       bodyKey: "LetterPageOneBody",
-      releaseAt: "2026-07-31T14:37:10+09:00",
+      releaseAt: "2026-08-10T13:51:00+09:00",
     },
     {
       bodyKey: "LetterPageTwoBody",
-      releaseAt: "2026-07-31T14:37:30+09:00",
+      releaseAt: "2026-08-10T13:51:10+09:00",
     },
     {
       bodyKey: "LetterPageThreeBody",
-      releaseAt: "2026-07-31T14:37:40+09:00",
+      releaseAt: "2026-08-10T13:51:15+09:00",
     },
     {
       bodyKey: "LetterPageFourBody",
-      releaseAt: "2026-07-31T14:37:50+09:00",
+      releaseAt: "2026-08-10T13:51:20+09:00",
     },
     {
       bodyKey: "LetterPageFiveBody",
-      releaseAt: "2026-07-31T14:38:00+09:00",
+      releaseAt: "2026-08-10T13:51:25+09:00",
     },
     {
       bodyKey: "LetterPageSixBody",
-      releaseAt: "2026-07-31T14:39:00+09:00",
+      releaseAt: "2026-08-10T13:55:00+09:00",
+      unlockByGiftNine: true,
     },
     {
       bodyKey: "LetterPageSevenBody",
-      releaseAt: "2026-07-31T14:40:00+09:00",
+      releaseAt: "2026-08-10T13:55:10+09:00",
     },
     {
       bodyKey: "LetterPageEightBody",
-      releaseAt: "2026-07-31T14:41:00+09:00",
+      releaseAt: "2026-08-10T13:55:20+09:00",
     },
     {
       bodyKey: "LetterPageNineBody",
-      releaseAt: "2026-07-31T14:42:00+09:00",
+      releaseAt: "2026-08-10T13:55:30+09:00",
     },
   ],
 };

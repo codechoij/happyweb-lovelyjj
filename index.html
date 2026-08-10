@@ -176,10 +176,14 @@
               <div class="gift-dud-box">
                 <button class="ghost-btn gift-dud-close" type="button" data-gift-dud-close data-i18n="CloseButton"></button>
                 <div class="gift-dud-card">
-                  <img src="./assets/gift-bomb.png" alt="" data-i18n-alt="GiftDudAlt" />
-                  <p class="gift-dud-pop" data-i18n="GiftDudPop"></p>
-                  <h3 id="gift-dud-title" data-i18n="GiftDudTitle"></h3>
-                  <p data-i18n="GiftDudMessage"></p>
+                  <img data-gift-dud-image src="./assets/gift-bomb.png" alt="" data-i18n-alt="GiftDudAlt" />
+                  <h3 id="gift-dud-title" data-gift-dud-title-text data-i18n="GiftDudTitle"></h3>
+                  <p data-gift-dud-message data-i18n="GiftDudMessage"></p>
+                  <form class="gift-prize-form" data-gift-prize-form hidden>
+                    <input data-gift-prize-input type="text" autocomplete="off" data-i18n-placeholder="GiftPrizeWishPlaceholder" />
+                    <button class="primary-btn" type="submit" data-gift-prize-submit data-i18n="GiftPrizeWishSubmit"></button>
+                    <p class="gift-prize-status" data-gift-prize-status aria-live="polite"></p>
+                  </form>
                   <button class="primary-btn" type="button" data-gift-dud-confirm data-i18n="ConfirmButton"></button>
                 </div>
               </div>
@@ -406,6 +410,7 @@
             <div class="guestbook-list" data-guestbook-list aria-live="polite"></div>
           </section>
           <iframe class="hidden-frame" name="guestbook-submit-frame" title="" data-i18n-title="GuestbookFrameTitle"></iframe>
+          <iframe class="hidden-frame" name="gift-prize-submit-frame" title="" data-i18n-title="GiftPrizeFrameTitle"></iframe>
         </section>
 
         <section id="admin" class="page admin-page" aria-labelledby="admin-title">

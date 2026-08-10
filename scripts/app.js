@@ -6,14 +6,18 @@ const RESOURCE_URL = "./resources/Strings.resx";
 
 const gifts = [
   {
+    id: "gift1",
     titleKey: "GiftOneTitle",
     type: "photoGame",
     resultKey: "GiftPhotoGameResult",
   },
   {
+    id: "gift2",
     titleKey: "GiftTwoTitle",
     type: "video",
     resultKey: "GiftVideoOneResult",
+    // Gift 2 공개시간 지정.
+    availableAt: "2026-08-10T14:00:00+09:00",
     video: {
       titleKey: "GiftVideoOneTitle",
       src: "./assets/gift-videos/video%20(1).mp4",
@@ -21,9 +25,12 @@ const gifts = [
     },
   },
   {
+    id: "gift3",
     titleKey: "GiftThreeTitle",
     type: "video",
     resultKey: "GiftVideoTwoResult",
+    // Gift 3 공개시간 지정.
+    availableAt: "2026-08-10T14:01:00+09:00",
     video: {
       titleKey: "GiftVideoTwoTitle",
       src: "./assets/gift-videos/video%20(2).mp4",
@@ -31,9 +38,12 @@ const gifts = [
     },
   },
   {
+    id: "gift4",
     titleKey: "GiftFourTitle",
     type: "video",
     resultKey: "GiftVideoThreeResult",
+    // Gift 4 공개시간 지정.
+    availableAt: "2026-08-10T14:02:00+09:00",
     video: {
       titleKey: "GiftVideoThreeTitle",
       src: "./assets/gift-videos/video%20(3).mp4",
@@ -41,13 +51,69 @@ const gifts = [
     },
   },
   {
+    id: "gift5",
     titleKey: "GiftFiveTitle",
     type: "dud",
     resultKey: "GiftDudResult",
   },
+  {
+    id: "gift6",
+    titleKey: "GiftSixTitle",
+    type: "dud",
+    resultKey: "GiftDudResult",
+  },
+  {
+    id: "gift7",
+    titleKey: "GiftSevenTitle",
+    type: "dud",
+    resultKey: "GiftDudResult",
+    // Gift 7 공개시간 지정.
+    availableAt: "2026-08-10T14:03:00+09:00",
+    dud: {
+      variant: "tongueDud",
+      imageSrc: "./assets/gift-tongue.png",
+      altKey: "GiftTongueAlt",
+      titleKey: "GiftTongueTitle",
+      messageKey: "GiftDudMessage",
+    },
+  },
 ];
 
+const GIFT_EIGHT = {
+  id: "gift8",
+  titleKey: "GiftEightTitle",
+  type: "prize",
+  resultKey: "GiftPrizeResult",
+  prize: {
+    variant: "prize",
+    imageSrc: "./assets/gift-winner.png",
+    altKey: "GiftPrizeAlt",
+    titleKey: "GiftPrizePop",
+    messageKey: "GiftPrizeMessage",
+  },
+};
+
+const GIFT_NINE = {
+  id: "gift9",
+  titleKey: "GiftNineTitle",
+  type: "letterBonus",
+  resultKey: "GiftLetterBonusResult",
+  availableAt: "2026-08-10T14:04:00+09:00",
+  notice: {
+    variant: "letterBonus",
+    imageSrc: "./assets/gift-letter-bonus.png",
+    altKey: "GiftLetterBonusAlt",
+    titleKey: "GiftPrizePop",
+    messageKey: "GiftLetterBonusMessage",
+  },
+};
+
 const VISIBLE_GIFT_COUNT = 3;
+// Browser storage is isolated by browser/profile; true cross-browser device counting needs a server.
+const GIFT_SEVEN_CYCLE_COUNT_KEY = "our-day-gift-seven-cycle-count";
+const GIFT_SEVEN_TOTAL_COUNT_KEY = "our-day-gift-seven-total-count";
+const GIFT_EIGHT_PENDING_KEY = "our-day-gift-eight-pending";
+const GIFT_NINE_CLAIMED_KEY = "our-day-gift-nine-claimed";
 
 const GIFT_PHOTO_CONFIG = {
   folder: "./assets/gift-photos/",
@@ -82,6 +148,11 @@ const GUESTBOOK_CONFIG = {
   nameColumnKey: "GuestbookNameLabel",
   messageColumnKey: "GuestbookMessageLabel",
   timestampColumnKey: "GuestbookTimestampColumn",
+};
+
+const GIFT_PRIZE_FORM_CONFIG = {
+  formAction: "https://docs.google.com/forms/d/e/1FAIpQLScLC30YN8SccWKBoAZf9SKa5HXPj25g8YLxm-ia0tJYAPemhg/formResponse",
+  wishEntry: "entry.483348725",
 };
 
 const GUESTBOOK_FAIL_MESSAGE =
@@ -160,17 +231,17 @@ const POLAROID_HEART_FONT_RATIO = 0.042;
 const POLAROID_HEART_GAP_RATIO = 0.083;
 
 const BUILTIN_LETTER_CONFIG = {
-  descriptionReleaseAt: "2026-08-03T00:00:00+09:00",
+  descriptionReleaseAt: "2026-08-10T13:50:00+09:00",
   pages: [
-    { bodyKey: "LetterPageOneBody", releaseAt: "2026-08-03T01:00:00+09:00" },
-    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-08-03T02:00:00+09:00" },
-    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-03T03:00:00+09:00" },
-    { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-03T04:00:00+09:00" },
-    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-03T05:00:00+09:00" },
-    { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-03T17:05:00+09:00" },
-    { bodyKey: "LetterPageSevenBody", releaseAt: "2026-08-03T18:05:00+09:00" },
-    { bodyKey: "LetterPageEightBody", releaseAt: "2026-08-03T19:05:00+09:00" },
-    { bodyKey: "LetterPageNineBody", releaseAt: "2026-08-03T20:05:00+09:00" },
+    { bodyKey: "LetterPageOneBody", releaseAt: "2026-08-10T13:50:00+09:00" },
+    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-08-10T13:50:10+09:00" },
+    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-10T13:50:20+09:00" },
+    { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-10T13:50:30+09:00" },
+    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-10T13:50:40+09:00" },
+    { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-10T13:55:00+09:00", unlockByGiftNine: true },
+    { bodyKey: "LetterPageSevenBody", releaseAt: "2026-08-10T13:55:00+09:00" },
+    { bodyKey: "LetterPageEightBody", releaseAt: "2026-08-10T13:55:10+09:00" },
+    { bodyKey: "LetterPageNineBody", releaseAt: "2026-08-10T13:50:20+09:00" },
   ],
 };
 
@@ -179,37 +250,8 @@ const LETTER_DESCRIPTION_RELEASE_DATE = new Date(LETTER_CONFIG.descriptionReleas
 const LETTER_PAGES = LETTER_CONFIG.pages.map((item) => ({
   bodyKey: item.bodyKey,
   releaseAt: new Date(item.releaseAt),
+  unlockByGiftNine: Boolean(item.unlockByGiftNine),
 }));
-
-//=======
-//const LETTER_DESCRIPTION_RELEASE_DATE = new Date("2026-07-31T14:37:00+09:00");
-//const LETTER_PAGES = [
-//  {
-//    bodyKey: "LetterPageOneBody",
-//    releaseAt: new Date("2026-07-31T14:37:10+09:00"),
-//  },
-//  {
-//    bodyKey: "LetterPageTwoBody",
-//    releaseAt: new Date("2026-07-31T14:37:30+09:00"),
-//  },
-//  {
-//    bodyKey: "LetterPageThreeBody",
-//    releaseAt: new Date("2026-07-31T14:37:40+09:00"),
-//  },
-//  {
-//    bodyKey: "LetterPageFourBody",
-//    releaseAt: new Date("2026-07-31T14:37:50+09:00"),
-//  },
-//  {
-//    bodyKey: "LetterPageFiveBody",
-//    releaseAt: new Date("2026-07-31T14:38:00+09:00"),
-//  },
-//  {
-//    bodyKey: "LetterPageSixBody",
-//    releaseAt: new Date("2026-07-31T14:39:00+09:00"),
-//  },
-//];
-//>>>>>>> main
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -224,6 +266,7 @@ let trustedTimeSyncedAt = 0;
 let trustedTimeLastAttemptAt = 0;
 let trustedTimeSyncPromise = null;
 let updateLetterReleaseView = () => {};
+let refreshGiftGridView = () => {};
 let siteConfigLoadPromise = null;
 
 async function loadResourceStrings() {
@@ -930,7 +973,65 @@ function shuffleItems(items) {
 }
 
 function selectVisibleGifts(items) {
-  return shuffleItems(items).slice(0, Math.min(VISIBLE_GIFT_COUNT, items.length));
+  if (isGiftEightPending()) {
+    return Array.from({ length: VISIBLE_GIFT_COUNT }, () => GIFT_EIGHT);
+  }
+
+  const availableGifts = getAvailableGifts(items);
+  return shuffleItems(availableGifts).slice(0, Math.min(VISIBLE_GIFT_COUNT, availableGifts.length));
+}
+
+function getGiftNow() {
+  return getTrustedNow() || new Date();
+}
+
+function isGiftAvailable(gift, now = getGiftNow()) {
+  if (!gift.availableAt) return true;
+  return now.getTime() >= new Date(gift.availableAt).getTime();
+}
+
+function isGiftNineEligible() {
+  return !isGiftNineClaimed() && isGiftAvailable(GIFT_NINE);
+}
+
+function isGiftNineClaimed() {
+  return readStoredValue(localStorage, GIFT_NINE_CLAIMED_KEY) === "1";
+}
+
+function getAvailableGifts(items) {
+  const candidates = [...items];
+  if (!isGiftNineClaimed()) candidates.push(GIFT_NINE);
+  return candidates.filter((gift) => isGiftAvailable(gift));
+}
+
+function readStoredNumber(key) {
+  const value = Number.parseInt(readStoredValue(localStorage, key) || "0", 10);
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function isGiftEightPending() {
+  return readStoredValue(localStorage, GIFT_EIGHT_PENDING_KEY) === "1";
+}
+
+function recordGiftSevenPick() {
+  const cycleCount = readStoredNumber(GIFT_SEVEN_CYCLE_COUNT_KEY) + 1;
+  const totalCount = readStoredNumber(GIFT_SEVEN_TOTAL_COUNT_KEY) + 1;
+
+  writeStoredValue(localStorage, GIFT_SEVEN_CYCLE_COUNT_KEY, String(cycleCount));
+  writeStoredValue(localStorage, GIFT_SEVEN_TOTAL_COUNT_KEY, String(totalCount));
+
+  if (cycleCount >= 2) {
+    writeStoredValue(localStorage, GIFT_EIGHT_PENDING_KEY, "1");
+  }
+}
+
+function resetGiftSevenCycle() {
+  writeStoredValue(localStorage, GIFT_SEVEN_CYCLE_COUNT_KEY, "0");
+  writeStoredValue(localStorage, GIFT_EIGHT_PENDING_KEY, "0");
+}
+
+function markGiftNineClaimed() {
+  writeStoredValue(localStorage, GIFT_NINE_CLAIMED_KEY, "1");
 }
 
 function randomBetween(min, max) {
@@ -941,7 +1042,7 @@ function discoverGiftPhotos() {
   return Promise.resolve(GIFT_PHOTO_CONFIG.files.map((file) => `${GIFT_PHOTO_CONFIG.folder}${file}`));
 }
 
-function initGiftPhotoGame(photoUrls) {
+function initGiftPhotoGame(photoUrls, onClose = () => {}) {
   const modal = $("[data-gift-modal]");
   const stage = $("[data-gift-stage]");
   const gameStatus = $("[data-gift-game-status]");
@@ -984,6 +1085,7 @@ function initGiftPhotoGame(photoUrls) {
     finishView.hidden = true;
     stage.hidden = false;
     document.body.classList.remove("modal-open");
+    onClose();
   }
 
   function getRandomSpeedMultiplier() {
@@ -1195,13 +1297,15 @@ function initGiftPhotoGame(photoUrls) {
 function initGifts() {
   const grid = $("[data-gift-grid]");
   const result = $("[data-gift-result]");
-  const startGiftVideo = initGiftVideo();
-  const showGiftDud = initGiftDud();
+  let renderGiftGrid = () => {};
+  const startGiftVideo = initGiftVideo(() => renderGiftGrid());
+  const showGiftResult = initGiftDud(() => renderGiftGrid());
   let startPhotoGame = null;
   let photoGameReady = false;
+  let giftNineWasEligible = isGiftNineEligible();
 
   discoverGiftPhotos().then((photoUrls) => {
-    startPhotoGame = initGiftPhotoGame(photoUrls);
+    startPhotoGame = initGiftPhotoGame(photoUrls, () => renderGiftGrid());
     photoGameReady = photoUrls.length > 0;
     if (photoGameReady) {
       result.textContent = t("GiftResultDefault");
@@ -1210,10 +1314,10 @@ function initGifts() {
     result.textContent = t("GiftNotReady");
   });
 
-  grid.innerHTML = "";
+  renderGiftGrid = function renderGiftGrid() {
+    grid.innerHTML = "";
 
-  selectVisibleGifts(gifts)
-    .forEach((gift) => {
+    selectVisibleGifts(gifts).forEach((gift) => {
       const button = document.createElement("button");
       button.className = "gift-box";
       button.type = "button";
@@ -1241,7 +1345,25 @@ function initGifts() {
 
         if (gift.type === "dud") {
           result.textContent = t(gift.resultKey);
-          showGiftDud();
+          if (gift.id === "gift7") {
+            recordGiftSevenPick();
+          }
+          showGiftResult(gift.dud);
+          return;
+        }
+
+        if (gift.type === "prize") {
+          result.textContent = t(gift.resultKey);
+          showGiftResult(gift.prize);
+          resetGiftSevenCycle();
+          return;
+        }
+
+        if (gift.type === "letterBonus") {
+          result.textContent = t(gift.resultKey);
+          markGiftNineClaimed();
+          updateLetterReleaseView();
+          showGiftResult(gift.notice);
           return;
         }
 
@@ -1249,9 +1371,18 @@ function initGifts() {
       });
       grid.appendChild(button);
     });
+  };
+
+  refreshGiftGridView = () => {
+    const giftNineIsEligible = isGiftNineEligible();
+    if (giftNineIsEligible === giftNineWasEligible) return;
+    giftNineWasEligible = giftNineIsEligible;
+    renderGiftGrid();
+  };
+  renderGiftGrid();
 }
 
-function initGiftVideo() {
+function initGiftVideo(onClose = () => {}) {
   const modal = $("[data-gift-video-modal]");
   const heading = $("[data-gift-video-title]");
   const video = $("[data-gift-video]");
@@ -1264,6 +1395,7 @@ function initGiftVideo() {
     video.pause();
     modal.hidden = true;
     document.body.classList.remove("modal-open");
+    onClose();
   }
 
   function openVideo(config) {
@@ -1292,20 +1424,76 @@ function initGiftVideo() {
   return openVideo;
 }
 
-function initGiftDud() {
+function initGiftDud(onClose = () => {}) {
   const modal = $("[data-gift-dud-modal]");
+  const image = $("[data-gift-dud-image]");
+  const title = $("[data-gift-dud-title-text]");
+  const message = $("[data-gift-dud-message]");
+  const prizeForm = $("[data-gift-prize-form]");
+  const prizeInput = $("[data-gift-prize-input]");
+  const prizeSubmit = $("[data-gift-prize-submit]");
+  const prizeStatus = $("[data-gift-prize-status]");
   const close = $("[data-gift-dud-close]");
   const confirm = $("[data-gift-dud-confirm]");
+  const defaultConfirmText = confirm.textContent;
+  const defaultConfig = {
+    variant: "dud",
+    imageSrc: "./assets/gift-bomb.png",
+    altKey: "GiftDudAlt",
+    titleKey: "GiftDudTitle",
+    messageKey: "GiftDudMessage",
+  };
 
   function closeDud() {
     modal.hidden = true;
     document.body.classList.remove("modal-open");
+    onClose();
   }
 
-  function openDud() {
+  function resetPrizeForm() {
+    if (!prizeForm || !prizeInput || !prizeStatus) return;
+    prizeForm.hidden = true;
+    prizeInput.value = "";
+    prizeInput.disabled = false;
+    if (prizeSubmit) prizeSubmit.disabled = false;
+    prizeStatus.textContent = "";
+  }
+
+  function openDud(config = {}) {
+    const resultConfig = { ...defaultConfig, ...config };
+
+    modal.dataset.giftResultVariant = resultConfig.variant;
+    image.src = resultConfig.imageSrc;
+    image.alt = t(resultConfig.altKey);
+    title.hidden = !resultConfig.titleKey;
+    title.textContent = resultConfig.titleKey ? t(resultConfig.titleKey) : "";
+    message.textContent = t(resultConfig.messageKey);
+    confirm.textContent = resultConfig.variant === "prize" ? t("GiftPrizeLaterButton") : defaultConfirmText;
+    resetPrizeForm();
+    if (resultConfig.variant === "prize" && prizeForm) {
+      prizeForm.hidden = false;
+    }
     modal.hidden = false;
     document.body.classList.add("modal-open");
   }
+
+  prizeForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const wish = prizeInput.value.trim();
+    if (!wish) {
+      prizeStatus.textContent = t("GiftPrizeWishRequired");
+      prizeInput.focus();
+      return;
+    }
+
+    submitGiftPrizeForm(wish);
+    const savedMessage = t("GiftPrizeWishSaved");
+    prizeInput.disabled = true;
+    if (prizeSubmit) prizeSubmit.disabled = true;
+    prizeStatus.textContent = savedMessage;
+    window.alert(savedMessage);
+    closeDud();
+  });
 
   close.addEventListener("click", closeDud);
   confirm.addEventListener("click", closeDud);
@@ -1345,12 +1533,14 @@ function initLetter() {
   }
 
   function isPageReleased(index, now = getNow()) {
-    return Boolean(now && LETTER_PAGES[index] && now.getTime() >= LETTER_PAGES[index].releaseAt.getTime());
+    const item = LETTER_PAGES[index];
+    if (!item) return false;
+    if (item.unlockByGiftNine && isGiftNineClaimed()) return true;
+    return Boolean(now && now.getTime() >= item.releaseAt.getTime());
   }
 
   function getReleasedPageCount(now = getNow()) {
-    if (!now) return 0;
-    return LETTER_PAGES.filter((item) => now.getTime() >= item.releaseAt.getTime()).length;
+    return LETTER_PAGES.filter((item, index) => isPageReleased(index, now)).length;
   }
 
   function formatLetterRelease(date) {
@@ -2008,6 +2198,23 @@ function submitGoogleForm(name, message) {
   form.remove();
 }
 
+function submitGiftPrizeForm(wish) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = GIFT_PRIZE_FORM_CONFIG.formAction;
+  form.target = "gift-prize-submit-frame";
+  form.hidden = true;
+
+  const wishInput = document.createElement("input");
+  wishInput.name = GIFT_PRIZE_FORM_CONFIG.wishEntry;
+  wishInput.value = wish;
+
+  form.append(wishInput);
+  document.body.appendChild(form);
+  form.submit();
+  form.remove();
+}
+
 async function copyMessageToClipboard(message) {
   try {
     await navigator.clipboard.writeText(message);
@@ -2105,6 +2312,7 @@ async function boot() {
     refreshTrustedTimeIfNeeded().then(() => {
       updateTimecapsuleGates();
       updateLetterReleaseView();
+      refreshGiftGridView();
     });
     updateTimecapsuleGates();
     updateLetterReleaseView();
