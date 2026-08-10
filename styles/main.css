@@ -433,6 +433,67 @@ h2 {
     repeating-linear-gradient(90deg, rgba(233, 93, 115, 0.07) 0 1px, transparent 1px 80px);
 }
 
+.gift-loading-progress {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  padding: 24px;
+  color: var(--ink);
+  text-align: center;
+}
+
+.gift-loading-ring {
+  width: clamp(150px, 42vmin, 260px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, white 0 58%, transparent 59%),
+    conic-gradient(var(--rose) var(--gift-load-progress), rgba(233, 93, 115, 0.16) 0);
+  box-shadow:
+    0 18px 36px rgba(233, 93, 115, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.88);
+}
+
+.gift-loading-ring span {
+  color: var(--rose);
+  font-size: clamp(34px, 9vmin, 64px);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.gift-loading-progress p {
+  margin: 0;
+  color: var(--rose);
+  font-size: clamp(18px, 4.8vw, 26px);
+  font-weight: 900;
+}
+
+.gift-loading-progress strong {
+  color: var(--muted);
+  font-size: clamp(18px, 4.2vw, 24px);
+  font-weight: 900;
+}
+
+.gift-countdown {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--rose);
+  font-size: clamp(150px, 50vmin, 420px);
+  font-weight: 950;
+  line-height: 1;
+  text-shadow:
+    0 4px 0 white,
+    0 22px 44px rgba(233, 93, 115, 0.26);
+  animation: gift-countdown-pop 720ms cubic-bezier(0.18, 0.9, 0.28, 1.16) both;
+}
+
 .gift-ready-view {
   display: grid;
   min-height: 0;
@@ -805,6 +866,23 @@ h2 {
 
   to {
     transform: translate3d(var(--drift), calc(100vh + var(--photo-size) * 1.5), 0) rotate(var(--rotate-end));
+  }
+}
+
+@keyframes gift-countdown-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.76);
+  }
+
+  42% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1);
   }
 }
 
@@ -1219,32 +1297,34 @@ h2 {
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 54%, #e95d73 0 38%, transparent 39%),
-    linear-gradient(180deg, #ffe7ee, #ffd4df);
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.72), transparent 22%),
+    linear-gradient(180deg, #ffe8ef 0%, #ffd4df 100%);
   color: white;
-  isolation: isolate;
+  border: 2px solid rgba(255, 255, 255, 0.86);
+  box-shadow:
+    0 10px 22px rgba(233, 93, 115, 0.18),
+    inset 0 -8px 18px rgba(233, 93, 115, 0.08);
 }
 
 .day.special .day-heart {
   position: absolute;
   inset: 50% auto auto 50%;
-  z-index: 0;
-  color: var(--rose);
-  font-size: clamp(30px, 7vw, 54px);
-  line-height: 1;
-  transform: translate(-50%, -47%) scaleX(1.08);
+  width: min(74%, 48px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -45%);
+  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 58'%3E%3Cpath fill='%23e95d73' d='M32 57s-4.6-3.7-9.8-8.3C11.3 39.1 0 29.1 0 16.8C0 7.4 7.2 0 16.3 0C21.6 0 27 2.6 32 8.3C37 2.6 42.4 0 47.7 0C56.8 0 64 7.4 64 16.8c0 12.3-11.3 22.3-22.2 31.9C36.6 53.3 32 57 32 57Z'/%3E%3C/svg%3E");
+  filter: drop-shadow(0 6px 10px rgba(188, 54, 78, 0.24));
 }
 
 .day.special .day-number {
   position: absolute;
   inset: 50% auto auto 50%;
-  z-index: 1;
-  transform: translate(-50%, -47%);
+  transform: translate(-50%, -36%);
   color: white;
-  font-size: clamp(13px, 3vw, 20px);
+  font-size: clamp(16px, 3.6vw, 24px);
   font-weight: 950;
   line-height: 1;
-  text-shadow: 0 1px 3px rgba(188, 54, 78, 0.42);
+  text-shadow: 0 1px 3px rgba(156, 39, 59, 0.38);
 }
 
 .love-note {
