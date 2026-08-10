@@ -1,0 +1,126 @@
+video (1).mp4 제작 안내
+=========================
+
+이 문서는 대화 히스토리를 모르는 사람이 봐도 video (1).mp4를 다시 만들 수 있도록 정리한 실행 설명입니다.
+
+
+1. 최종 파이썬 파일
+-------------------
+
+사용할 파일:
+
+    C:\Users\jiyun_choi\git\webTry\tools\video (1).py
+
+생성되는 기본 출력:
+
+    C:\Users\jiyun_choi\git\webTry\assets\gift-videos\video (1).mp4
+
+
+2. 필요한 입력 파일/폴더
+-----------------------
+
+아래 폴더와 그 안의 사진/영상/음악 파일이 필요합니다.
+
+    C:\Users\jiyun_choi\git\webTry\assets\gift-videos\for_videos\couple
+    C:\Users\jiyun_choi\git\webTry\assets\gift-videos\for_videos\memories
+    C:\Users\jiyun_choi\git\webTry\assets\gift-videos\for_videos\music
+
+현재 최종본에서 후처리로 사용하는 음악 파일:
+
+    C:\Users\jiyun_choi\git\webTry\assets\gift-videos\for_videos\music\사진을 넘기면.mp3
+
+
+3. 필요한 파이썬 패키지
+-----------------------
+
+파이썬에서 아래 패키지를 import할 수 있어야 합니다.
+
+    Pillow
+    imageio-ffmpeg
+
+설치가 필요하면 PowerShell에서 아래처럼 설치합니다.
+
+    py -3 -m pip install pillow imageio-ffmpeg
+
+프로젝트에 .video-deps 폴더가 있고 그 안에 패키지가 들어있으면, 스크립트가 자동으로 해당 폴더를 먼저 사용합니다.
+
+
+4. 기본 영상 생성 명령
+----------------------
+
+PowerShell을 열고 프로젝트 루트로 이동합니다.
+
+    cd C:\Users\jiyun_choi\git\webTry
+
+아래 명령으로 영상을 생성합니다.
+
+    py -3 ".\tools\video (1).py"
+
+주의:
+
+    이 명령은 assets\gift-videos\video (1).mp4를 덮어씁니다.
+    이 단계에서 스크립트 내부의 기본 생성 음악이 들어갑니다.
+
+
+5. 최종본용 음악/페이드아웃/썸네일 후처리
+-----------------------------------------
+
+현재 최종본은 기본 렌더 후 아래 후처리를 추가로 적용한 상태입니다.
+
+    - 배경음악을 for_videos\music\사진을 넘기면.mp3로 교체
+    - 58.1초부터 60.0초까지 fade out
+    - 1.3초 장면을 MP4 attached picture 썸네일로 삽입
+
+위 기본 영상 생성이 끝난 뒤, PowerShell에서 아래 명령을 실행합니다.
+
+    cd C:\Users\jiyun_choi\git\webTry\assets\gift-videos
+    $ff = py -3 -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"
+    & $ff -hide_banner -y -i "video (1).mp4" -i "for_videos\music\사진을 넘기면.mp3" -filter_complex "[1:a:0]atrim=0:60,asetpts=PTS-STARTPTS,afade=t=out:st=58.1:d=1.9[a]" -map 0:v:0 -map "[a]" -c:v copy -c:a aac -b:a 192k -movflags +faststart "video (1)_audio_tmp.mp4"
+    & $ff -hide_banner -y -ss 1.3 -i "video (1)_audio_tmp.mp4" -frames:v 1 -q:v 2 "video (1)_thumbnail_1_3s.jpg"
+    & $ff -hide_banner -y -i "video (1)_audio_tmp.mp4" -i "video (1)_thumbnail_1_3s.jpg" -map 0:v:0 -map 0:a:0 -map 1:v:0 -c:v:0 copy -c:a copy -c:v:1 mjpeg -disposition:v:1 attached_pic -movflags +faststart "video (1)_final_tmp.mp4"
+    Move-Item -Force "video (1)_final_tmp.mp4" "video (1).mp4"
+    Remove-Item -Force "video (1)_audio_tmp.mp4","video (1)_thumbnail_1_3s.jpg"
+
+
+6. 결과 확인
+------------
+
+최종 파일:
+
+    C:\Users\jiyun_choi\git\webTry\assets\gift-videos\video (1).mp4
+
+정상 결과 기준:
+
+    - 길이: 60초
+    - 해상도: 720x1280
+    - 오디오: 사진을 넘기면.mp3 기반, 58.1초부터 fade out
+    - 썸네일: 1.3초 장면
+
+
+7. 자주 수정하는 위치
+---------------------
+
+장면 시간:
+
+    SCENES = [...]
+
+장면별 사진/영상 지정:
+
+    PAGE_PHOTOS = {...}
+
+"넘겨보는 우리의 추억" 사진 이동:
+
+    draw_page_turn_scene()
+    x = 900 - phase * 700 + index * 24
+
+"함께 만들어간 우리" 스크랩북 사진 위치:
+
+    draw_memory_scrapbook_scene()
+    lower = 60
+    positions = [...]
+
+"필름에 더 담아둔 날" 필름 이동:
+
+    draw_bottom_photo_filmstrip()
+    draw_filmstrip_scene()
+
