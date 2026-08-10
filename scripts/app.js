@@ -1,20 +1,20 @@
 const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
 const START_DATE = new Date("2025-08-14T00:00:00+09:00");
 const TIMECAPSULE_OPEN_DATE = new Date("2026-08-10T12:00:00+09:00");
-const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-10T14:25:00+09:00");
+const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-15T00:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
 
 const GIFT_OPEN_TIMES = {
   // Gift 2 (멘트 작성 영상) 선물 공개시간 지정. (14일 오후 6시)
-  gift2: "2026-08-10T14:00:00+09:00",
+  gift2: "2026-08-14T18:00:00+09:00",
   // Gift 3 (니가 좋아 영상) 선물 공개시간 지정. (15일 오후 2시)
-  gift3: "2026-08-10T14:27:00+09:00",
+  gift3: "2026-08-15T14:00:00+09:00",
   // Gift 4 (사진 모음 영상) 선물 공개시간 지정. (16일 오전 10시)
-  gift4: "2026-08-10T14:28:00+09:00",
-  // Gift 7 (메롱) 선물 공개시간 지정. (18일 오전 0시)
-  gift7: "2026-08-10T14:30:00+09:00",
+  gift4: "2026-08-16T10:00:00+09:00",
+  // Gift 7 (메롱) 선물 공개시간 지정. (18일 오전 6시)
+  gift7: "2026-08-18T06:00:00+09:00",
   // Gift 9 (편지 추가 공개) 선물 공개시간 지정. (17일 오후 2시)
-  gift9: "2026-08-10T14:20:00+09:00",
+  gift9: "2026-08-17T14:00:00+09:00",
 };
 
 const gifts = [
