@@ -17,6 +17,20 @@ const GIFT_OPEN_TIMES = {
   gift9: "2026-08-17T14:00:00+09:00",
 };
 
+const GIFT_BOX_LUXURY_OPEN_DATE = new Date("2026-08-18T06:00:00+09:00");
+const GIFT_BOX_IMAGES = {
+  basic: [
+    "./assets/gift-box-blue.png",
+    "./assets/gift-box-red.png",
+    "./assets/gift-box-green.png",
+  ],
+  luxury: [
+    "./assets/gift-box-blue-luxury.png",
+    "./assets/gift-box-red-luxury.png",
+    "./assets/gift-box-green-luxury.png",
+  ],
+};
+
 const gifts = [
   {
     id: "gift1",
@@ -1008,6 +1022,14 @@ function getGiftNow() {
   return getTrustedNow() || new Date();
 }
 
+function isGiftBoxLuxuryOpen(now = getGiftNow()) {
+  return now.getTime() >= GIFT_BOX_LUXURY_OPEN_DATE.getTime();
+}
+
+function getGiftBoxImages() {
+  return isGiftBoxLuxuryOpen() ? GIFT_BOX_IMAGES.luxury : GIFT_BOX_IMAGES.basic;
+}
+
 function isGiftAvailable(gift, now = getGiftNow()) {
   if (!gift.availableAt) return true;
   return now.getTime() >= new Date(gift.availableAt).getTime();
@@ -1498,15 +1520,15 @@ function initGifts() {
 
   renderGiftGrid = function renderGiftGrid() {
     grid.innerHTML = "";
+    const giftBoxImages = getGiftBoxImages();
 
-    selectVisibleGifts(gifts).forEach((gift) => {
+    selectVisibleGifts(gifts).forEach((gift, index) => {
       const button = document.createElement("button");
       button.className = "gift-box";
       button.type = "button";
+      button.setAttribute("aria-label", "선물 상자");
       button.innerHTML = `
-      <div class="gift-ribbon"></div>
-      <div class="gift-lid"></div>
-      <div class="gift-body">${t(gift.titleKey)}</div>
+      <img class="gift-box-image" src="${giftBoxImages[index % giftBoxImages.length]}" alt="" aria-hidden="true" />
     `;
       button.addEventListener("click", () => {
         if (gift.type === "photoGame") {
