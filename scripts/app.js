@@ -147,6 +147,8 @@ const GIFT_PHOTO_CONFIG = {
   speedUpPerSecond: 100,
   minSpawnDelayMs: 250,
   maxSpawnDelayMs: 770,
+  maxInitialLoadMs: 3000,
+  countdownStepMs: 1000,
 };
 
 const GUESTBOOK_CONFIG = {
@@ -1079,18 +1081,33 @@ function initGiftPhotoGame(photoUrls, onClose = () => {}) {
   const finishView = $("[data-gift-finish-view]");
   const finishConfirm = $("[data-gift-finish-confirm]");
   let spawnTimer;
+  let countdownTimer;
+  let countdownResolve;
   let gameStartedAt = 0;
   let photoQueue = [];
   let speedMultiplier = 1;
   let capturedPhotoUrl = "";
+  let gameFlowToken = 0;
+  const preloadedPhotos = new Map();
+  const loadedPhotoUrls = new Set();
 
   function stopSpawning() {
     clearTimeout(spawnTimer);
     spawnTimer = null;
   }
 
+  function stopCountdown() {
+    clearTimeout(countdownTimer);
+    countdownTimer = null;
+    if (countdownResolve) {
+      countdownResolve();
+      countdownResolve = null;
+    }
+  }
+
   function resetStage() {
     stopSpawning();
+    stopCountdown();
     stage.innerHTML = "";
   }
 
@@ -1098,7 +1115,112 @@ function initGiftPhotoGame(photoUrls, onClose = () => {}) {
     stage.innerHTML = "";
   }
 
+  function sleep(ms) {
+    return new Promise((resolve) => {
+      countdownResolve = resolve;
+      countdownTimer = setTimeout(() => {
+        countdownTimer = null;
+        countdownResolve = null;
+        resolve();
+      }, ms);
+    });
+  }
+
+  async function preloadPhoto(url) {
+    if (preloadedPhotos.has(url)) {
+      const didLoad = await preloadedPhotos.get(url);
+      if (!didLoad) preloadedPhotos.delete(url);
+      return didLoad;
+    }
+
+    const promise = new Promise((resolve) => {
+      const loadImage = () => {
+        const image = new Image();
+        image.decoding = "async";
+        image.onload = () => {
+          loadedPhotoUrls.add(url);
+          resolve(true);
+        };
+        image.onerror = () => setTimeout(loadImage, 1000);
+        image.src = url;
+      };
+
+      loadImage();
+    });
+
+    preloadedPhotos.set(url, promise);
+    const didLoad = await promise;
+    if (!didLoad) preloadedPhotos.delete(url);
+    return didLoad;
+  }
+
+  async function preloadAllPhotos(onProgress = () => {}) {
+    const reportProgress = () => onProgress(getLoadedPhotoUrls().length, photoUrls.length);
+    reportProgress();
+
+    await Promise.all(
+      photoUrls.map(async (url) => {
+        const wasLoaded = loadedPhotoUrls.has(url);
+        const didLoad = await preloadPhoto(url);
+        if (didLoad && !wasLoaded) reportProgress();
+      }),
+    );
+  }
+
+  function getLoadedPhotoUrls() {
+    return photoUrls.filter((url) => loadedPhotoUrls.has(url));
+  }
+
+  function waitForInitialPreload(onProgress = () => {}) {
+    return new Promise((resolve) => {
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        resolve();
+      };
+      const timer = setTimeout(finish, GIFT_PHOTO_CONFIG.maxInitialLoadMs);
+
+      preloadAllPhotos((loaded, total) => {
+        if (finished) return;
+        onProgress(loaded, total);
+        if (loaded >= total) finish();
+      }).then(finish);
+    });
+  }
+
+  function showStageLoadingProgress(loaded, total) {
+    const percent = total ? Math.round((loaded / total) * 100) : 100;
+    stage.innerHTML = `
+      <div class="gift-loading-progress" style="--gift-load-progress: ${percent}%;" aria-live="polite">
+        <div class="gift-loading-ring">
+          <span>${percent}%</span>
+        </div>
+        <p>${t("GiftStatusLoadingPhotos")}</p>
+        <strong>${loaded}/${total}</strong>
+      </div>
+    `;
+  }
+
+  function showStageCountdown(value) {
+    stage.innerHTML = `<div class="gift-countdown">${value}</div>`;
+  }
+
+  function showLoadFailedView() {
+    readyView.hidden = false;
+    captureView.hidden = true;
+    finishView.hidden = true;
+    stage.hidden = true;
+    readyMessage.innerHTML = `
+      <p>${t("GiftStatusLoadFailed")}</p>
+      <strong>${t("GiftReadyQuestion")}</strong>
+    `;
+    gameStatus.textContent = t("GiftStatusLoadFailed");
+  }
+
   function exitGame() {
+    gameFlowToken += 1;
     resetStage();
     modal.hidden = true;
     readyView.hidden = false;
@@ -1264,17 +1386,54 @@ function initGiftPhotoGame(photoUrls, onClose = () => {}) {
     stage.appendChild(button);
   }
 
-  function beginRound() {
+  function startRound(roundPhotoUrls) {
+    if (!roundPhotoUrls.length) {
+      showLoadFailedView();
+      return;
+    }
+
     resetStage();
     readyView.hidden = true;
     captureView.hidden = true;
     finishView.hidden = true;
     stage.hidden = false;
     gameStartedAt = Date.now();
-    photoQueue = shuffleItems(photoUrls);
+    photoQueue = shuffleItems(roundPhotoUrls);
     gameStatus.textContent = t("GiftStatusPlaying");
     spawnPhoto();
     scheduleNextSpawn();
+  }
+
+  async function beginRound() {
+    const flowToken = gameFlowToken + 1;
+    gameFlowToken = flowToken;
+    readyStart.disabled = true;
+    readyView.hidden = true;
+    captureView.hidden = true;
+    finishView.hidden = true;
+    stage.hidden = false;
+    stage.innerHTML = "";
+    gameStatus.textContent = t("GiftStatusLoadingPhotos");
+    showStageLoadingProgress(0, photoUrls.length);
+
+    try {
+      await waitForInitialPreload((loaded, total) => {
+        if (flowToken !== gameFlowToken) return;
+        showStageLoadingProgress(loaded, total);
+      });
+      if (flowToken !== gameFlowToken) return;
+
+      for (const value of ["3", "2", "1"]) {
+        if (flowToken !== gameFlowToken) return;
+        showStageCountdown(value);
+        await sleep(GIFT_PHOTO_CONFIG.countdownStepMs);
+      }
+
+      if (flowToken !== gameFlowToken) return;
+      startRound(getLoadedPhotoUrls());
+    } finally {
+      readyStart.disabled = false;
+    }
   }
 
   function resumeRound() {
@@ -1293,7 +1452,9 @@ function initGiftPhotoGame(photoUrls, onClose = () => {}) {
 
   function openReadyView() {
     if (!photoUrls.length) return;
+    gameFlowToken += 1;
     resetStage();
+    readyStart.disabled = false;
     speedMultiplier = getRandomSpeedMultiplier();
     modal.hidden = false;
     readyView.hidden = false;
@@ -2052,7 +2213,7 @@ function initCalendar() {
     cell.className = day === 14 ? "day special" : "day";
     if (day === 14) {
       cell.setAttribute("aria-label", "August 14");
-      cell.innerHTML = `<span class="day-heart" aria-hidden="true">♥</span><span class="day-number">${day}</span>`;
+      cell.innerHTML = `<span class="day-heart" aria-hidden="true"></span><span class="day-number">${day}</span>`;
     } else {
       cell.textContent = day;
     }
