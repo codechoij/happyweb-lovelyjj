@@ -628,6 +628,14 @@ h2 {
     rgba(255, 250, 247, 0.96);
 }
 
+.gift-dud-modal[data-gift-result-variant="prize"] {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(255, 217, 131, 0.42), transparent 22rem),
+    radial-gradient(circle at 80% 18%, rgba(121, 199, 180, 0.3), transparent 20rem),
+    radial-gradient(circle at 50% 78%, rgba(233, 93, 115, 0.24), transparent 24rem),
+    rgba(255, 250, 247, 0.97);
+}
+
 .gift-dud-box {
   position: relative;
   width: min(420px, 100%);
@@ -653,6 +661,14 @@ h2 {
   animation: gift-dud-card-pop 360ms cubic-bezier(0.18, 0.9, 0.28, 1.24) both;
 }
 
+.gift-dud-modal[data-gift-result-variant="prize"] .gift-dud-card,
+.gift-dud-modal[data-gift-result-variant="letterBonus"] .gift-dud-card {
+  border-color: rgba(255, 217, 131, 0.9);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 248, 240, 0.98)),
+    white;
+}
+
 .gift-dud-card img {
   display: block;
   width: min(260px, 82%);
@@ -661,11 +677,22 @@ h2 {
   animation: gift-dud-image-pop 520ms cubic-bezier(0.2, 0.9, 0.24, 1.3) both;
 }
 
-.gift-dud-pop {
-  margin: -4px 0 0;
+.gift-dud-modal[data-gift-result-variant="prize"] .gift-dud-card img,
+.gift-dud-modal[data-gift-result-variant="letterBonus"] .gift-dud-card img {
+  width: min(300px, 88%);
+}
+
+.gift-dud-modal[data-gift-result-variant="prize"] .gift-dud-card h3,
+.gift-dud-modal[data-gift-result-variant="letterBonus"] .gift-dud-card h3,
+.gift-dud-modal[data-gift-result-variant="tongueDud"] .gift-dud-card h3 {
   color: var(--rose);
-  font-size: 28px;
-  font-weight: 900;
+  font-size: clamp(40px, 9vw, 58px);
+  line-height: 1;
+}
+
+.gift-dud-modal[data-gift-result-variant="dud"] .gift-dud-card h3 {
+  color: var(--ink);
+  font-size: clamp(40px, 9vw, 58px);
   line-height: 1;
 }
 
@@ -677,11 +704,51 @@ h2 {
   line-height: 0.95;
 }
 
-.gift-dud-card p:not(.gift-dud-pop) {
+.gift-dud-card > p {
   margin: 0 0 8px;
   color: var(--muted);
   font-weight: 800;
   line-height: 1.6;
+  white-space: pre-line;
+}
+
+.gift-prize-form {
+  display: grid;
+  width: min(320px, 100%);
+  gap: 10px;
+  margin: 2px 0 8px;
+}
+
+.gift-prize-form[hidden] {
+  display: none;
+}
+
+.gift-prize-form input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffaf7;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.gift-prize-form input:focus {
+  outline: 2px solid rgba(233, 93, 115, 0.22);
+  border-color: var(--rose);
+}
+
+.gift-prize-form .primary-btn {
+  width: 100%;
+}
+
+.gift-prize-status {
+  min-height: 22px;
+  margin: 0;
+  color: var(--rose);
+  font-weight: 900;
 }
 
 .protected-gate {
