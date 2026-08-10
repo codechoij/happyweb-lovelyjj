@@ -17,7 +17,7 @@ const GIFT_OPEN_TIMES = {
   gift9: "2026-08-17T14:00:00+09:00",
 };
 
-const GIFT_BOX_LUXURY_OPEN_DATE = new Date("2026-08-10T16:39:00+09:00");
+const GIFT_BOX_LUXURY_OPEN_DATE = new Date("2026-08-18T06:00:00+09:00");
 const GIFT_BOX_IMAGES = {
   basic: [
     "./assets/gift-box-blue.png",
