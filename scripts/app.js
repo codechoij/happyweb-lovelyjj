@@ -3,6 +3,7 @@ const START_DATE = new Date("2025-08-14T00:00:00+09:00");
 const TIMECAPSULE_OPEN_DATE = new Date("2026-08-10T12:00:00+09:00");
 const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-15T00:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
+const LOVE_PAGE_MUSIC_SRC = "./assets/love-page-music.mp3";
 
 const GIFT_OPEN_TIMES = {
   // Gift 2 (멘트 작성 영상) 선물 공개시간 지정. (14일 오후 6시)
@@ -2246,6 +2247,9 @@ function initCalendar() {
 function initMusic() {
   const button = $("[data-music-toggle]");
   const audio = $("[data-audio]");
+
+  audio.src = LOVE_PAGE_MUSIC_SRC;
+  audio.preload = "metadata";
 
   button.addEventListener("click", async () => {
     if (!audio.getAttribute("src")) {
