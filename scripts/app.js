@@ -2050,7 +2050,12 @@ function initCalendar() {
   for (let day = 1; day <= totalDays; day += 1) {
     const cell = document.createElement("span");
     cell.className = day === 14 ? "day special" : "day";
-    cell.textContent = day;
+    if (day === 14) {
+      cell.setAttribute("aria-label", "August 14");
+      cell.innerHTML = `<span class="day-heart" aria-hidden="true">♥</span><span class="day-number">${day}</span>`;
+    } else {
+      cell.textContent = day;
+    }
     days.appendChild(cell);
   }
 }

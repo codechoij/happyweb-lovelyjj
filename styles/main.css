@@ -391,6 +391,8 @@ h2 {
   grid-template-rows: auto 1fr;
   gap: 14px;
   padding: 22px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background:
     radial-gradient(circle at 18% 14%, rgba(255, 217, 131, 0.32), transparent 24rem),
     radial-gradient(circle at 84% 18%, rgba(121, 199, 180, 0.3), transparent 24rem),
@@ -538,6 +540,7 @@ h2 {
   display: grid;
   min-height: 0;
   place-items: center;
+  align-content: center;
   gap: 16px;
 }
 
@@ -1214,17 +1217,34 @@ h2 {
 
 .day.special {
   position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 54%, #e95d73 0 38%, transparent 39%),
+    linear-gradient(180deg, #ffe7ee, #ffd4df);
   color: white;
-  background: var(--rose);
+  isolation: isolate;
 }
 
-.day.special::after {
-  content: "♥";
+.day.special .day-heart {
   position: absolute;
-  right: 7px;
-  bottom: 4px;
+  inset: 50% auto auto 50%;
+  z-index: 0;
+  color: var(--rose);
+  font-size: clamp(30px, 7vw, 54px);
+  line-height: 1;
+  transform: translate(-50%, -47%) scaleX(1.08);
+}
+
+.day.special .day-number {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 1;
+  transform: translate(-50%, -47%);
   color: white;
-  font-size: 13px;
+  font-size: clamp(13px, 3vw, 20px);
+  font-weight: 950;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(188, 54, 78, 0.42);
 }
 
 .love-note {
@@ -1589,6 +1609,7 @@ h2 {
   }
 
   .gift-game-modal {
+    grid-template-rows: auto minmax(0, 1fr);
     padding: 12px;
   }
 
@@ -1599,6 +1620,25 @@ h2 {
 
   .gift-game-toolbar > p {
     font-size: 13px;
+  }
+
+  .gift-capture-view {
+    align-content: start;
+    padding-bottom: 16px;
+  }
+
+  .gift-capture-view img {
+    max-height: min(58dvh, 520px);
+  }
+
+  .gift-capture-actions {
+    width: 100%;
+  }
+
+  .gift-capture-actions .primary-btn,
+  .gift-capture-actions .ghost-btn {
+    flex: 1 1 140px;
+    justify-content: center;
   }
 
   .guestbook-heading {
