@@ -1,8 +1,21 @@
 const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
 const START_DATE = new Date("2025-08-14T00:00:00+09:00");
-const TIMECAPSULE_OPEN_DATE = new Date("2026-07-14T18:00:00+09:00");
-const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-14T19:00:00+09:00");
+const TIMECAPSULE_OPEN_DATE = new Date("2026-08-14T12:00:00+09:00");
+const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-14T20:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
+
+const GIFT_OPEN_TIMES = {
+  // Gift 2 (멘트 작성 영상) 선물 공개시간 지정. (14일 오후 6시)
+  gift2: "2026-08-10T14:00:00+09:00",
+  // Gift 3 (니가 좋아 영상) 선물 공개시간 지정. (15일 오후 2시)
+  gift3: "2026-08-10T14:27:00+09:00",
+  // Gift 4 (사진 모음 영상) 선물 공개시간 지정. (16일 오전 10시)
+  gift4: "2026-08-10T14:28:00+09:00",
+  // Gift 7 (메롱) 선물 공개시간 지정. (18일 오전 0시)
+  gift7: "2026-08-10T14:30:00+09:00",
+  // Gift 9 (편지 추가 공개) 선물 공개시간 지정. (17일 오후 2시)
+  gift9: "2026-08-10T14:20:00+09:00",
+};
 
 const gifts = [
   {
@@ -16,8 +29,7 @@ const gifts = [
     titleKey: "GiftTwoTitle",
     type: "video",
     resultKey: "GiftVideoOneResult",
-    // Gift 2 공개시간 지정.
-    availableAt: "2026-08-10T14:00:00+09:00",
+    availableAt: GIFT_OPEN_TIMES.gift2,
     video: {
       titleKey: "GiftVideoOneTitle",
       src: "./assets/gift-videos/video%20(1).mp4",
@@ -29,8 +41,7 @@ const gifts = [
     titleKey: "GiftThreeTitle",
     type: "video",
     resultKey: "GiftVideoTwoResult",
-    // Gift 3 공개시간 지정.
-    availableAt: "2026-08-10T14:01:00+09:00",
+    availableAt: GIFT_OPEN_TIMES.gift3,
     video: {
       titleKey: "GiftVideoTwoTitle",
       src: "./assets/gift-videos/video%20(2).mp4",
@@ -42,8 +53,7 @@ const gifts = [
     titleKey: "GiftFourTitle",
     type: "video",
     resultKey: "GiftVideoThreeResult",
-    // Gift 4 공개시간 지정.
-    availableAt: "2026-08-10T14:02:00+09:00",
+    availableAt: GIFT_OPEN_TIMES.gift4,
     video: {
       titleKey: "GiftVideoThreeTitle",
       src: "./assets/gift-videos/video%20(3).mp4",
@@ -67,8 +77,7 @@ const gifts = [
     titleKey: "GiftSevenTitle",
     type: "dud",
     resultKey: "GiftDudResult",
-    // Gift 7 공개시간 지정.
-    availableAt: "2026-08-10T14:03:00+09:00",
+    availableAt: GIFT_OPEN_TIMES.gift7,
     dud: {
       variant: "tongueDud",
       imageSrc: "./assets/gift-tongue.png",
@@ -98,7 +107,7 @@ const GIFT_NINE = {
   titleKey: "GiftNineTitle",
   type: "letterBonus",
   resultKey: "GiftLetterBonusResult",
-  availableAt: "2026-08-10T14:04:00+09:00",
+  availableAt: GIFT_OPEN_TIMES.gift9,
   notice: {
     variant: "letterBonus",
     imageSrc: "./assets/gift-letter-bonus.png",
@@ -230,18 +239,19 @@ const PHOTO_ASPECT_RATIO = PHOTO_OUTPUT_WIDTH / PHOTO_OUTPUT_HEIGHT;
 const POLAROID_HEART_FONT_RATIO = 0.042;
 const POLAROID_HEART_GAP_RATIO = 0.083;
 
+// Fallback only. 실제 편지 공개시간은 scripts/letter-config.js에서 수정합니다.
 const BUILTIN_LETTER_CONFIG = {
-  descriptionReleaseAt: "2026-08-10T13:50:00+09:00",
+  descriptionReleaseAt: "2026-08-10T13:50:50+09:00",
   pages: [
-    { bodyKey: "LetterPageOneBody", releaseAt: "2026-08-10T13:50:00+09:00" },
-    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-08-10T13:50:10+09:00" },
-    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-10T13:50:20+09:00" },
-    { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-10T13:50:30+09:00" },
-    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-10T13:50:40+09:00" },
+    { bodyKey: "LetterPageOneBody", releaseAt: "2026-08-10T13:51:00+09:00" },
+    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-08-10T13:51:10+09:00" },
+    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-10T13:51:15+09:00" },
+    { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-10T13:51:20+09:00" },
+    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-10T13:51:25+09:00" },
     { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-10T13:55:00+09:00", unlockByGiftNine: true },
-    { bodyKey: "LetterPageSevenBody", releaseAt: "2026-08-10T13:55:00+09:00" },
-    { bodyKey: "LetterPageEightBody", releaseAt: "2026-08-10T13:55:10+09:00" },
-    { bodyKey: "LetterPageNineBody", releaseAt: "2026-08-10T13:50:20+09:00" },
+    { bodyKey: "LetterPageSevenBody", releaseAt: "2026-08-10T13:55:10+09:00" },
+    { bodyKey: "LetterPageEightBody", releaseAt: "2026-08-10T13:55:20+09:00" },
+    { bodyKey: "LetterPageNineBody", releaseAt: "2026-08-10T13:55:30+09:00" },
   ],
 };
 
@@ -577,8 +587,19 @@ function getTimecapsuleRemainingParts(now = getTrustedNow()) {
   return { days, hours, minutes, seconds };
 }
 
+function formatKstDateTime(date) {
+  return `${new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date)} KST`;
+}
+
 function formatTimecapsuleOpenAt() {
-  return t("TimecapsuleOpenAt");
+  return formatKstDateTime(TIMECAPSULE_OPEN_DATE);
 }
 
 function updateTimecapsuleGate(pageId, now = getTrustedNow()) {
@@ -590,7 +611,7 @@ function updateTimecapsuleGate(pageId, now = getTrustedNow()) {
     title.textContent = opened
       ? t("ProtectedTitle")
       : hasTrustedTime
-        ? t("TimecapsuleTitle")
+        ? t("TimecapsuleTitle", { openAt: formatTimecapsuleOpenAt() })
         : t("TimecapsuleCheckingTitle");
   }
 
@@ -622,7 +643,7 @@ function updateTimecapsuleGate(pageId, now = getTrustedNow()) {
 
     const parts = getTimecapsuleRemainingParts(now);
     timecapsuleStatus.textContent = parts
-      ? `${formatTimecapsuleOpenAt()}\n${t("TimecapsuleCountdown", parts)}`
+      ? `${t("TimecapsuleOpenAt", { openAt: formatTimecapsuleOpenAt() })}\n${t("TimecapsuleCountdown", parts)}`
       : t("TimecapsuleTimeUnavailable");
   }
 }
