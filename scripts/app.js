@@ -1,6 +1,6 @@
 const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
 const START_DATE = new Date("2025-08-14T00:00:00+09:00");
-const TIMECAPSULE_OPEN_DATE = new Date("2026-08-10T12:00:00+09:00");
+const TIMECAPSULE_OPEN_DATE = new Date("2026-08-14T12:00:00+09:00");
 const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-15T00:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
 const LOVE_PAGE_MUSIC_SRC = "./assets/love-page-music.mp3";
@@ -258,17 +258,17 @@ const POLAROID_HEART_GAP_RATIO = 0.083;
 
 // Fallback only. 실제 편지 공개시간은 scripts/letter-config.js에서 수정합니다.
 const BUILTIN_LETTER_CONFIG = {
-  descriptionReleaseAt: "2026-08-10T13:50:50+09:00",
+  descriptionReleaseAt: "2026-08-14T12:00:00+09:00",
   pages: [
-    { bodyKey: "LetterPageOneBody", releaseAt: "2026-08-10T13:51:00+09:00" },
-    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-08-10T13:51:10+09:00" },
-    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-10T13:51:15+09:00" },
-    { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-10T13:51:20+09:00" },
-    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-10T13:51:25+09:00" },
-    { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-10T13:55:00+09:00", unlockByGiftNine: true },
-    { bodyKey: "LetterPageSevenBody", releaseAt: "2026-08-10T13:55:10+09:00" },
-    { bodyKey: "LetterPageEightBody", releaseAt: "2026-08-10T13:55:20+09:00" },
-    { bodyKey: "LetterPageNineBody", releaseAt: "2026-08-10T13:55:30+09:00" },
+    { bodyKey: "LetterPageOneBody", releaseAt: "2026-08-14T18:00:00+09:00" },
+    { bodyKey: "LetterPageTwoBody", releaseAt: "2026-08-15T09:00:00+09:00" },
+    { bodyKey: "LetterPageThreeBody", releaseAt: "2026-08-16T09:00:00+09:00" },
+    { bodyKey: "LetterPageFourBody", releaseAt: "2026-08-16T09:00:00+09:00" },
+    { bodyKey: "LetterPageFiveBody", releaseAt: "2026-08-17T09:00:00+09:00" },
+    { bodyKey: "LetterPageSixBody", releaseAt: "2026-08-18T09:00:00+09:00", unlockByGiftNine: true },
+    { bodyKey: "LetterPageSevenBody", releaseAt: "2026-08-18T09:00:00+09:00" },
+    { bodyKey: "LetterPageEightBody", releaseAt: "2026-08-19T09:00:00+09:00" },
+    { bodyKey: "LetterPageNineBody", releaseAt: "2026-08-20T09:00:00+09:00" },
   ],
 };
 
