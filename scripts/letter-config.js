@@ -15,11 +15,11 @@
  * LetterPageSixBody의 unlockByGiftNine은 Gift9 보상 공개 조건입니다.
  */
 window.LETTER_CONFIG = {
-  descriptionReleaseAt: "2026-08-14T12:00:00+09:00", // 14일 오후 12시
+  descriptionReleaseAt: "2026-08-14T00:00:00+09:00", // 14일 오전 0시
   pages: [
     {
       bodyKey: "LetterPageOneBody",
-      releaseAt: "2026-08-14T18:00:00+09:00", // 14일 오후 6시
+      releaseAt: "2026-08-14T17:00:00+09:00", // 14일 오후 5시
     },
     {
       bodyKey: "LetterPageTwoBody",

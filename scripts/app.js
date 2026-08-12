@@ -6,8 +6,8 @@ const RESOURCE_URL = "./resources/Strings.resx";
 const LOVE_PAGE_MUSIC_SRC = "./assets/love-page-music.mp3";
 
 const GIFT_OPEN_TIMES = {
-  // Gift 2 (멘트 작성 영상) 선물 공개시간 지정. (14일 오후 6시)
-  gift2: "2026-08-14T18:00:00+09:00",
+  // Gift 2 (멘트 작성 영상) 선물 공개시간 지정. (14일 오후 5시)
+  gift2: "2026-08-14T17:00:00+09:00",
   // Gift 3 (니가 좋아 영상) 선물 공개시간 지정. (15일 오후 2시)
   gift3: "2026-08-15T14:00:00+09:00",
   // Gift 4 (사진 모음 영상) 선물 공개시간 지정. (16일 오전 10시)
