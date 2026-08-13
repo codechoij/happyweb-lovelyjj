@@ -1816,7 +1816,7 @@ function initGiftTimingGame(onClose = () => {}) {
   }
 
   function finishRound() {
-    if (lastValue >= 0.14 && lastValue < 8.15) {
+    if (lastValue >= 8.14 && lastValue < 8.15) {
       showSuccess(lastValue);
       return;
     }
