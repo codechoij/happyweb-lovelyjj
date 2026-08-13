@@ -1,6 +1,6 @@
 const ANNIVERSARY_DATE = new Date("2026-08-14T00:00:00+09:00");
 const START_DATE = new Date("2025-08-14T00:00:00+09:00");
-const TIMECAPSULE_OPEN_DATE = new Date("2026-08-14T12:00:00+09:00");
+const TIMECAPSULE_OPEN_DATE = new Date("2026-08-13T20:00:00+09:00");
 const TIMECAPSULE_OPEN_NOTICE_END_DATE = new Date("2026-08-15T00:00:00+09:00");
 const RESOURCE_URL = "./resources/Strings.resx";
 const LOVE_PAGE_MUSIC_SRC = "./assets/love-page-music.mp3";
@@ -12,10 +12,14 @@ const GIFT_OPEN_TIMES = {
   gift3: "2026-08-15T14:00:00+09:00",
   // Gift 4 (사진 모음 영상) 선물 공개시간 지정. (16일 오전 10시)
   gift4: "2026-08-16T10:00:00+09:00",
+  // Gift 6 (기본 꽝) 선물 공개시간 지정. (15일 오후 2시)
+  gift6: "2026-08-15T14:00:00+09:00",
   // Gift 7 (메롱) 선물 공개시간 지정. (18일 오전 6시)
   gift7: "2026-08-18T06:00:00+09:00",
   // Gift 9 (편지 추가 공개) 선물 공개시간 지정. (17일 오후 2시)
   gift9: "2026-08-17T14:00:00+09:00",
+  // Gift 10 (신데렐라 영상) 선물 공개시간 지정. (15일 오후 2시)
+  gift10: "2026-08-15T14:00:00+09:00",
 };
 
 const GIFT_BOX_LUXURY_OPEN_DATE = new Date("2026-08-18T06:00:00+09:00");
@@ -86,6 +90,7 @@ const gifts = [
     titleKey: "GiftSixTitle",
     type: "dud",
     resultKey: "GiftDudResult",
+    availableAt: GIFT_OPEN_TIMES.gift6,
   },
   {
     id: "gift7",
@@ -132,7 +137,28 @@ const GIFT_NINE = {
   },
 };
 
+const GIFT_TEN = {
+  id: "gift10",
+  titleKey: "GiftTenTitle",
+  type: "video",
+  resultKey: "GiftVideoFourResult",
+  availableAt: GIFT_OPEN_TIMES.gift10,
+  video: {
+    titleKey: "GiftVideoFourTitle",
+    src: "./assets/gift-videos/video%20(4).mp4",
+    downloadName: "video (4).mp4",
+  },
+};
+
+const GIFT_ELEVEN = {
+  id: "gift11",
+  titleKey: "GiftElevenTitle",
+  type: "timingGame",
+  resultKey: "GiftTimingResult",
+};
+
 const VISIBLE_GIFT_COUNT = 3;
+const GIFT_TIMING_MAX = 10;
 // Browser storage is isolated by browser/profile; true cross-browser device counting needs a server.
 const GIFT_SEVEN_CYCLE_COUNT_KEY = "our-day-gift-seven-cycle-count";
 const GIFT_SEVEN_TOTAL_COUNT_KEY = "our-day-gift-seven-total-count";
@@ -675,11 +701,13 @@ function resetProtectedPage(pageId) {
   if (pageId === "gift") {
     const giftModal = $("[data-gift-modal]");
     const giftVideoModal = $("[data-gift-video-modal]");
+    const giftTimingModal = $("[data-gift-timing-modal]");
     const giftDudModal = $("[data-gift-dud-modal]");
     const giftVideo = $("[data-gift-video]");
 
     if (giftModal) giftModal.hidden = true;
     if (giftVideoModal) giftVideoModal.hidden = true;
+    if (giftTimingModal) giftTimingModal.hidden = true;
     if (giftDudModal) giftDudModal.hidden = true;
     if (giftVideo) giftVideo.pause();
     document.body.classList.remove("modal-open");
@@ -1045,7 +1073,7 @@ function isGiftNineClaimed() {
 }
 
 function getAvailableGifts(items) {
-  const candidates = [...items];
+  const candidates = [...items, GIFT_TEN, GIFT_ELEVEN];
   if (!isGiftNineClaimed()) candidates.push(GIFT_NINE);
   return candidates.filter((gift) => isGiftAvailable(gift));
 }
@@ -1504,6 +1532,7 @@ function initGifts() {
   const result = $("[data-gift-result]");
   let renderGiftGrid = () => {};
   const startGiftVideo = initGiftVideo(() => renderGiftGrid());
+  const startGiftTimingGame = initGiftTimingGame(() => renderGiftGrid());
   const showGiftResult = initGiftDud(() => renderGiftGrid());
   let startPhotoGame = null;
   let photoGameReady = false;
@@ -1545,6 +1574,12 @@ function initGifts() {
         if (gift.type === "video") {
           result.textContent = t(gift.resultKey);
           startGiftVideo(gift.video);
+          return;
+        }
+
+        if (gift.type === "timingGame") {
+          result.textContent = t(gift.resultKey);
+          startGiftTimingGame();
           return;
         }
 
@@ -1627,6 +1662,229 @@ function initGiftVideo(onClose = () => {}) {
   });
 
   return openVideo;
+}
+
+function initGiftTimingGame(onClose = () => {}) {
+  const modal = $("[data-gift-timing-modal]");
+  const status = $("[data-gift-timing-status]");
+  const startView = $("[data-gift-timing-start-view]");
+  const playView = $("[data-gift-timing-play-view]");
+  const failView = $("[data-gift-timing-fail-view]");
+  const successView = $("[data-gift-timing-success-view]");
+  const readout = $("[data-gift-timing-readout]");
+  const marker = $("[data-gift-timing-marker]");
+  const startButton = $("[data-gift-timing-start]");
+  const stopButton = $("[data-gift-timing-stop]");
+  const retryButton = $("[data-gift-timing-retry]");
+  const shareButton = $("[data-gift-timing-share]");
+  const closeButton = $("[data-gift-timing-close]");
+  const failCloseButton = $("[data-gift-timing-fail-close]");
+  const successCloseButton = $("[data-gift-timing-success-close]");
+  const failMessage = $("[data-gift-timing-fail-message]");
+  const successMessage = $("[data-gift-timing-success-message]");
+  let animationFrame = 0;
+  let startedAt = 0;
+  let lastValue = 0;
+
+  function stopLoop() {
+    cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
+  }
+
+  function formatTimingDisplay(value) {
+    return (Math.floor(value * 100) / 100).toFixed(2);
+  }
+
+  function hideAllViews() {
+    startView.hidden = true;
+    playView.hidden = true;
+    failView.hidden = true;
+    successView.hidden = true;
+  }
+
+  function updateMarker(value) {
+    if (!marker) return;
+    const ratio = Math.max(0, Math.min(1, value / GIFT_TIMING_MAX));
+    marker.style.left = `${ratio * 100}%`;
+  }
+
+  function resetBoard() {
+    lastValue = 0;
+    if (readout) readout.textContent = "0.00";
+    updateMarker(0);
+  }
+
+  function showStartView() {
+    stopLoop();
+    hideAllViews();
+    resetBoard();
+    startView.hidden = false;
+    status.textContent = t("GiftTimingIntro");
+  }
+
+  function closeGame() {
+    stopLoop();
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+    onClose();
+  }
+
+  function saveCelebrationCard(value) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1350;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, "#fff5ef");
+    gradient.addColorStop(0.5, "#fff9fd");
+    gradient.addColorStop(1, "#f2fbff");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let index = 0; index < 24; index += 1) {
+      const x = 80 + (index % 6) * 180 + ((index * 13) % 40);
+      const y = 110 + Math.floor(index / 6) * 140 + ((index * 29) % 50);
+      context.fillStyle = ["#e95d73", "#ffd983", "#79c7b4", "#a7c7e7"][index % 4];
+      context.globalAlpha = 0.22;
+      context.beginPath();
+      context.arc(x, y, 26 + (index % 3) * 6, 0, Math.PI * 2);
+      context.fill();
+    }
+    context.globalAlpha = 1;
+
+    context.fillStyle = "rgba(255,255,255,0.92)";
+    context.strokeStyle = "rgba(234, 217, 213, 0.95)";
+    context.lineWidth = 4;
+    drawRoundedRect(context, 110, 150, 860, 980, 36);
+    context.fill();
+    context.stroke();
+
+    context.textAlign = "center";
+    context.fillStyle = "#e95d73";
+    context.font = '700 54px Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    context.fillText(t("BrandName").toUpperCase(), canvas.width / 2, 250);
+
+    context.font = '900 132px Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    context.fillText("8.14", canvas.width / 2, 430);
+
+    context.fillStyle = "#312c35";
+    context.font = '900 86px Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    context.fillText(t("GiftTimingCardTitle"), canvas.width / 2, 560);
+
+    context.font = '400 190px Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
+    context.fillText("🎉", 350, 760);
+    context.fillText("👍", 730, 760);
+
+    context.fillStyle = "#756d78";
+    context.font = '700 54px Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    context.fillText(t("GiftTimingCardRecord", { value: formatTimingDisplay(value) }), canvas.width / 2, 920);
+
+    context.fillStyle = "#312c35";
+    context.font = '700 46px Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    context.fillText(t("GiftTimingCardCaption"), canvas.width / 2, 1010);
+
+    const url = canvas.toDataURL("image/png");
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "gift11-timing-success.png";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    status.textContent = t("GiftTimingSavedStatus");
+  }
+
+  function showSuccess(value) {
+    stopLoop();
+    hideAllViews();
+    successView.hidden = false;
+    if (successMessage) {
+      successMessage.textContent = `${t("GiftTimingSuccessMessage")} (${formatTimingDisplay(value)}초)`;
+    }
+    status.textContent = t("GiftTimingSuccessTitle");
+  }
+
+  function showFail(value) {
+    stopLoop();
+    hideAllViews();
+    failView.hidden = false;
+    if (failMessage) {
+      failMessage.textContent = `${formatTimingDisplay(value)}초였어요. ${t("GiftTimingFailMessage")}`;
+    }
+    status.textContent = t("GiftTimingFailTitle");
+  }
+
+  function finishRound() {
+    if (lastValue >= 0.14 && lastValue < 8.15) {
+      showSuccess(lastValue);
+      return;
+    }
+    showFail(lastValue);
+  }
+
+  function tick() {
+    if (modal.hidden) {
+      stopLoop();
+      return;
+    }
+
+    const elapsed = (performance.now() - startedAt) / 1000;
+    lastValue = Math.min(elapsed, GIFT_TIMING_MAX);
+    if (readout) readout.textContent = formatTimingDisplay(lastValue);
+    updateMarker(lastValue);
+
+    if (lastValue >= GIFT_TIMING_MAX) {
+      finishRound();
+      return;
+    }
+
+    animationFrame = requestAnimationFrame(tick);
+  }
+
+  function startRound() {
+    stopLoop();
+    hideAllViews();
+    resetBoard();
+    playView.hidden = false;
+    status.textContent = t("GiftTimingPlayingStatus");
+    startedAt = performance.now();
+    animationFrame = requestAnimationFrame(tick);
+  }
+
+  function openGame() {
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    showStartView();
+  }
+
+  startButton?.addEventListener("click", startRound);
+  stopButton?.addEventListener("click", finishRound);
+  retryButton?.addEventListener("click", startRound);
+  shareButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    saveCelebrationCard(lastValue);
+  });
+  closeButton?.addEventListener("click", closeGame);
+  failCloseButton?.addEventListener("click", closeGame);
+  successCloseButton?.addEventListener("click", closeGame);
+
+  return openGame;
+}
+
+function drawRoundedRect(context, x, y, width, height, radius) {
+  const safeRadius = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.lineTo(x + width - safeRadius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+  context.lineTo(x + width, y + height - safeRadius);
+  context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+  context.lineTo(x + safeRadius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+  context.lineTo(x, y + safeRadius);
+  context.quadraticCurveTo(x, y, x + safeRadius, y);
+  context.closePath();
 }
 
 function initGiftDud(onClose = () => {}) {

@@ -172,6 +172,61 @@
                 </div>
               </div>
             </div>
+            <div class="gift-timing-modal" data-gift-timing-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-timing-title">
+              <div class="gift-timing-box">
+                <div class="gift-timing-heading">
+                  <div>
+                    <p class="eyebrow" data-i18n="NavGift"></p>
+                    <h3 id="gift-timing-title" data-i18n="GiftTimingTitle"></h3>
+                  </div>
+                  <button class="ghost-btn" type="button" data-gift-timing-close data-i18n="ExitButton"></button>
+                </div>
+                <p class="gift-timing-status" data-gift-timing-status data-i18n="GiftTimingIntro"></p>
+                <div class="gift-timing-view" data-gift-timing-start-view>
+                  <div class="gift-timing-card">
+                    <p data-i18n="GiftTimingDescription"></p>
+                    <strong data-i18n="GiftTimingTarget"></strong>
+                    <button class="primary-btn" type="button" data-gift-timing-start data-i18n="GiftTimingStartButton"></button>
+                  </div>
+                </div>
+                <div class="gift-timing-view" data-gift-timing-play-view hidden>
+                  <div class="gift-timing-board">
+                    <div class="gift-timing-readout" data-gift-timing-readout>0.00</div>
+                    <div class="gift-timing-track" aria-hidden="true">
+                      <div class="gift-timing-target-zone"></div>
+                      <div class="gift-timing-marker" data-gift-timing-marker></div>
+                    </div>
+                    <button class="primary-btn" type="button" data-gift-timing-stop data-i18n="GiftTimingStopButton"></button>
+                  </div>
+                </div>
+                <div class="gift-timing-view" data-gift-timing-fail-view hidden>
+                  <div class="gift-timing-card gift-timing-card-fail">
+                    <div class="gift-timing-emoji">😭</div>
+                    <h4 data-i18n="GiftTimingFailTitle"></h4>
+                    <p data-gift-timing-fail-message data-i18n="GiftTimingFailMessage"></p>
+                    <div class="gift-timing-actions">
+                      <button class="primary-btn" type="button" data-gift-timing-retry data-i18n="GiftTimingRetryButton"></button>
+                      <button class="ghost-btn" type="button" data-gift-timing-fail-close data-i18n="ExitButton"></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="gift-timing-view" data-gift-timing-success-view hidden>
+                  <div class="gift-timing-card gift-timing-card-success">
+                    <div class="gift-timing-badge-row">
+                      <span class="gift-timing-badge">🎉</span>
+                      <span class="gift-timing-badge">👍</span>
+                      <span class="gift-timing-badge">💖</span>
+                    </div>
+                    <h4 data-i18n="GiftTimingSuccessTitle"></h4>
+                    <p data-gift-timing-success-message data-i18n="GiftTimingSuccessMessage"></p>
+                    <div class="gift-timing-actions">
+                      <a class="primary-btn" href="#" role="button" data-gift-timing-share data-i18n="GiftTimingShareButton"></a>
+                      <button class="ghost-btn" type="button" data-gift-timing-success-close data-i18n="ExitButton"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="gift-dud-modal" data-gift-dud-modal hidden role="dialog" aria-modal="true" aria-labelledby="gift-dud-title">
               <div class="gift-dud-box">
                 <button class="ghost-btn gift-dud-close" type="button" data-gift-dud-close data-i18n="CloseButton"></button>

@@ -67,9 +67,13 @@
   <data name="GiftVideoOneResult" xml:space="preserve"><value>1주년 축하 영상을 준비했어요.</value></data>
   <data name="GiftVideoTwoResult" xml:space="preserve"><value>또 다른 축하 영상을 준비했어요.</value></data>
   <data name="GiftVideoThreeResult" xml:space="preserve"><value>세 번째 축하 영상을 준비했어요.</value></data>
+  <data name="GiftVideoFourResult" xml:space="preserve"><value>네 번째 축하 영상을 준비했어요.</value></data>
+  <data name="GiftTimingResult" xml:space="preserve"><value>타이밍 게임에 도전해보세요.</value></data>
   <data name="GiftVideoOneTitle" xml:space="preserve"><value>1주년 축하 영상</value></data>
   <data name="GiftVideoTwoTitle" xml:space="preserve"><value>또 다른 축하 영상</value></data>
   <data name="GiftVideoThreeTitle" xml:space="preserve"><value>세 번째 축하 영상</value></data>
+  <data name="GiftVideoFourTitle" xml:space="preserve"><value>네 번째 축하 영상</value></data>
+  <data name="GiftTimingTitle" xml:space="preserve"><value>8.14 타이밍 게임</value></data>
   <data name="GiftOneTitle" xml:space="preserve"><value>Gift 1</value></data>
   <data name="GiftTwoTitle" xml:space="preserve"><value>Gift 2</value></data>
   <data name="GiftThreeTitle" xml:space="preserve"><value>Gift 3</value></data>
@@ -79,6 +83,25 @@
   <data name="GiftSevenTitle" xml:space="preserve"><value>Gift 7</value></data>
   <data name="GiftEightTitle" xml:space="preserve"><value>Gift 8</value></data>
   <data name="GiftNineTitle" xml:space="preserve"><value>Gift 9</value></data>
+  <data name="GiftTenTitle" xml:space="preserve"><value>Gift 10</value></data>
+  <data name="GiftElevenTitle" xml:space="preserve"><value>Gift 11</value></data>
+  <data name="GiftTimingIntro" xml:space="preserve"><value>8.14초에 딱 맞춰 멈추면 성공이에요.</value></data>
+  <data name="GiftTimingDescription" xml:space="preserve"><value>시작 버튼을 누르면 타이머가 빠르게 움직여요. 딱 8.14초가 되었을 때 멈춰보세요.</value></data>
+  <data name="GiftTimingTarget" xml:space="preserve"><value>목표 시간: 8.14초</value></data>
+  <data name="GiftTimingStartButton" xml:space="preserve"><value>시작하기</value></data>
+  <data name="GiftTimingStopButton" xml:space="preserve"><value>지금 눌러!</value></data>
+  <data name="GiftTimingPlayingStatus" xml:space="preserve"><value>집중... 지금이다 싶을 때 눌러요!</value></data>
+  <data name="GiftTimingSuccessTitle" xml:space="preserve"><value>성공!</value></data>
+  <data name="GiftTimingSuccessMessage" xml:space="preserve"><value>와우! 정확히 8.14초를 맞췄어요!
+  빨리 캡쳐해서 자랑하세요!!!</value></data>
+  <data name="GiftTimingFailTitle" xml:space="preserve"><value>아쉬워요...</value></data>
+  <data name="GiftTimingFailMessage" xml:space="preserve"><value>조금만 더 집중해서 다시 도전해봐요.</value></data>
+  <data name="GiftTimingRetryButton" xml:space="preserve"><value>다시 하기</value></data>
+  <data name="GiftTimingShareButton" xml:space="preserve"><value>자랑하기</value></data>
+  <data name="GiftTimingSavedStatus" xml:space="preserve"><value>축하 이미지를 저장했어요.</value></data>
+  <data name="GiftTimingCardTitle" xml:space="preserve"><value>타이밍 게임 성공!</value></data>
+  <data name="GiftTimingCardRecord" xml:space="preserve"><value>기록 {value}초</value></data>
+  <data name="GiftTimingCardCaption" xml:space="preserve"><value>정확히 맞춘 쭌이 최고</value></data>
   <data name="GiftDudResult" xml:space="preserve"><value>아쉽지만 이번 선물은 꽝이에요.</value></data>
   <data name="GiftDudTitle" xml:space="preserve"><value>꽝!</value></data>
   <data name="GiftDudMessage" xml:space="preserve"><value>이번 상자는 비어있어요.
