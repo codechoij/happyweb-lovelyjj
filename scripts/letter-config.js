@@ -19,7 +19,7 @@ window.LETTER_CONFIG = {
   pages: [
     {
       bodyKey: "LetterPageOneBody",
-      releaseAt: "2026-08-14T12:00:00+09:00", // 14일 오후 12시
+      releaseAt: "2026-08-14T07:00:00+09:00", // 14일 오전 7시
     },
     {
       bodyKey: "LetterPageTwoBody",
